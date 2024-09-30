@@ -56,6 +56,9 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+                                <configuration>
+                                    <mainClass>com.api.crud.CrudApplication</mainClass> <!-- Cambia por tu clase principal -->
+                                </configuration>
 			</plugin>
 		</plugins>
 	</build>
