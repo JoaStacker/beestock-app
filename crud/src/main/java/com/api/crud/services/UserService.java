@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
  *
  * @author ghino
  */
-@Service
+@Service 
 public class UserService {
     @Autowired
     IUserRepository userRepository;
@@ -23,13 +23,24 @@ public class UserService {
     public ArrayList<UserModel> getUser(){
         return (ArrayList<UserModel>)userRepository.findAll();
     }
-    
+    /*
+    Se crea una objeto de IUserRepo para poder usar metodos que salga del Jpa com
+    el findall() de este metodo
+    */
     public UserModel saveUser(UserModel user){
         return userRepository.save(user);
     }
-    
+    /*
+    luego de obtener los usarios, hay que guardalos. Para eso esta el saveUser
+    que hace uso de la clase Jpa
+    */
     public Optional <UserModel> getById(Long id){
         return userRepository.findById(id);
+        /*
+        busca el usuario con un id determinado
+        
+        el tipo Optional nos dice que puede devolver algo o puede devolver null
+        */
     }
     
     public UserModel updateById(UserModel request, Long id ){
@@ -38,7 +49,7 @@ public class UserService {
         user.setFirstname(request.getFirstname());
         user.setLastName(request.getLastName());
         user.setEmail(request.getEmail());
-        
+        //el request es otro metodo de JPA.Aqui se setea el user a  partir de la request
         return user;
     }
     public Boolean deleteUser(Long id){

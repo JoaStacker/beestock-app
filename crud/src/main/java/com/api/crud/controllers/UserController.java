@@ -6,11 +6,9 @@ package com.api.crud.controllers;
 
 import com.api.crud.models.UserModel;
 import com.api.crud.services.UserService;
-import java.util.ArrayList;
-import java.util.Optional;
+import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 /**
  *
  * @author ghino
@@ -18,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/user")
 public class UserController {
+
+
     //aqui se definen las peticiones http y las rutas
     @Autowired
     private UserService userService;
@@ -53,3 +53,4 @@ public class UserController {
     }
     
 }
+
