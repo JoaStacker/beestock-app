@@ -27,7 +27,7 @@ const ClientsPage = () => {
     
       return (
         <div>
-          <h2>Empleados</h2>
+          <h2>Clientes</h2>
           <GenericTable columns={columns} data={data} actions={actions} />
         </div>
       );
