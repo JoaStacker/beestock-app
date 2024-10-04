@@ -8,6 +8,7 @@ import InvoicesPage from './pages/InvoicesPage';
 import IncidentsPage from './pages/IncidentsPage';
 import EmployeesPage from './pages/EmployeesPage';
 import ClientsPage from './pages/ClientsPage';
+import LoginPage from './pages/LoginPage';
 
 const App = () => {
   return (
@@ -23,6 +24,7 @@ const App = () => {
             <Route path="/incidents" element={<IncidentsPage />} />
             <Route path="/employees" element={<EmployeesPage />} />
             <Route path="/clients" element={<ClientsPage />} />
+            <Route path="/login" element={<LoginPage />} /> {/* Default route */}
             <Route path="/" element={<ClientsPage />} /> {/* Default route */}
           </Routes>
         </Box>

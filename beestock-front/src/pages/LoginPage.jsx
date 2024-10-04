@@ -1,14 +1,17 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate(); // Hook for navigation
 
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log('Email:', email);
     console.log('Password:', password);
     // Here, you can handle login logic, such as calling an API
+    navigate('/clients'); // Change this to your clients page route
   };
 
   return (
@@ -22,7 +25,7 @@ const LoginPage = () => {
             id="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            required
+            // required
             style={styles.input}
           />
         </div>
@@ -33,7 +36,7 @@ const LoginPage = () => {
             id="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            required
+            // required
             style={styles.input}
           />
         </div>

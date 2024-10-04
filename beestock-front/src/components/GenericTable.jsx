@@ -12,12 +12,19 @@ import {
   Button,
   TextField,
   Box,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
 } from '@mui/material';
 
-const GenericTable = ({ columns, data, actions, onAddClient }) => {
+const GenericTable = ({ columns, data, actions, onAddClient, entityType='' }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [searchQuery, setSearchQuery] = useState('');
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedClient, setSelectedClient] = useState(null);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -38,6 +45,15 @@ const GenericTable = ({ columns, data, actions, onAddClient }) => {
       row[column.id].toString().toLowerCase().includes(searchQuery.toLowerCase())
     )
   );
+
+  const handleAddClient = () => {
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    setSelectedClient(null);
+  };
 
   return (
     <Paper>
@@ -77,7 +93,10 @@ const GenericTable = ({ columns, data, actions, onAddClient }) => {
                         key={idx}
                         variant="contained"
                         color={action.color || 'primary'}
-                        onClick={() => action.onClick(row)}
+                        onClick={() => {
+                          action.onClick(row);
+                          // Here you can set selectedClient if needed
+                        }}
                       >
                         {action.label}
                       </Button>
@@ -101,11 +120,45 @@ const GenericTable = ({ columns, data, actions, onAddClient }) => {
         <Button
           variant="contained"
           color="primary"
-          onClick={onAddClient}
+          onClick={handleAddClient}
         >
-          Add Client
+          {`Añadir ${entityType}`}
         </Button>
       </Box>
+
+      {/* Dialog for adding client */}
+      <Dialog open={openDialog} onClose={handleCloseDialog}>
+        <DialogTitle>{`Añadir ${entityType}`}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Please fill in the details for the new {entityType.toLowerCase()}.
+          </DialogContentText>
+          {columns.map((column) => (
+            <TextField
+              key={column.id}
+              autoFocus
+              margin="dense"
+              id={column.id}
+              label={column.label}
+              type="text"
+              fullWidth
+              variant="outlined"
+              // You can add onChange handlers to capture user input
+            />
+          ))}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="primary">
+            Cancelar
+          </Button>
+          <Button onClick={() => { 
+            // Handle the save logic here
+            handleCloseDialog(); 
+          }} color="primary">
+            Guardar
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Paper>
   );
 };

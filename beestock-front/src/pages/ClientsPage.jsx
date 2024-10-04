@@ -28,7 +28,7 @@ const ClientsPage = () => {
       return (
         <div>
           <h2>Clientes</h2>
-          <GenericTable columns={columns} data={data} actions={actions} />
+          <GenericTable columns={columns} data={data} actions={actions} entityType="Cliente"/>
         </div>
       );
 };

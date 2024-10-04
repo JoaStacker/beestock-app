@@ -60,7 +60,7 @@ const IncidentsPage = () => {
       return (
         <div>
           <h2>Incidentes</h2>
-          <GenericTable columns={columns} data={data} actions={actions} />
+          <GenericTable columns={columns} data={data} actions={actions} entityType="Incidente" />
           <IncidentList incidents={incidents} onAction={handleAction}></IncidentList>
         </div>
       );
