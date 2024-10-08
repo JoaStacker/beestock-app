@@ -29,15 +29,16 @@ import java.util.Date;
 
 @Service
 public class JWTUtilityServiceImpl implements IJWTUtilityService {
-    //creacion de jwt y su validacion
 
 
-    //despues esto. LEER ABAJO
+
+    //creo esto para poder tratar con las llaves puesto que primer onecesito leerlas
     @Value("classpath:jwtKeys/private_key.pem")
     private Resource privateKeyResource;
     @Value("classpath:jwtKeys/public_key.pem")
     private Resource publicKeyResource;
-
+    //ya con los cmetodos de más abajo que  nos permite leer las keys podemos crear los metodos que generan
+    // los jwt y su validacion
     @Override
     public String generateJWT(Long userId) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, JOSEException {
         PrivateKey privateKey = loadPrivateKey(privateKeyResource);
@@ -73,17 +74,31 @@ public class JWTUtilityServiceImpl implements IJWTUtilityService {
 
 
 
-//PRIMERO ESTO
-    private PrivateKey loadPrivateKey(Resource resource) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
-        byte[] keyBytes= Files.readAllBytes(Paths.get(resource.getURI()));//AGARRA LA RUTA Y LEE TODO L OQUE HAY EN ELLA
-        String privateKeyString = new String(keyBytes, StandardCharsets.UTF_8)//PARSE INTERNO?
-                .replace("-----BEGIN PRIVATE KEY-----", "")
-                .replace("-----END PRIVATE KEY-----", "")
-                .replaceAll("\\s","");
-        byte[] decodedKey= Base64.getDecoder().decode(privateKeyString);
-        KeyFactory keyFactory= KeyFactory.getInstance("RSA");
-        return keyFactory.generatePrivate(new PKCS8EncodedKeySpec(decodedKey));
-    }
+//PRIMERO ESTO, me permite leer las llaves
+private PrivateKey loadPrivateKey(Resource resource) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
+    // 1. Leer el archivo que contiene la llave privada
+    byte[] keyBytes = Files.readAllBytes(Paths.get(resource.getURI()));
+
+    // 2. Convertir el contenido del archivo en un String
+    String privateKeyString = new String(keyBytes, StandardCharsets.UTF_8)
+
+            // 3. Limpiar el string eliminando los delimitadores de la clave privada
+            .replace("-----BEGIN PRIVATE KEY-----", "")
+            .replace("-----END PRIVATE KEY-----", "")
+
+            // 4. Eliminar todos los espacios en blanco (incluidos saltos de línea)
+            .replaceAll("\\s", "");
+
+    // 5. Decodificar el String Base64 para obtener los bytes de la llave privada
+    byte[] decodedKey = Base64.getDecoder().decode(privateKeyString);
+
+    // 6. Crear un KeyFactory para el algoritmo RSA
+    KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+
+    // 7. Generar un objeto PrivateKey a partir de los bytes decodificados
+    return keyFactory.generatePrivate(new PKCS8EncodedKeySpec(decodedKey));
+}
+
 
     private PublicKey loadPublicKey(Resource resource) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
         byte[] keyBytes= Files.readAllBytes(Paths.get(resource.getURI()));
