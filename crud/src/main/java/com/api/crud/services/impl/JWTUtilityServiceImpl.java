@@ -29,7 +29,7 @@ import java.util.Date;
 
 @Service
 public class JWTUtilityServiceImpl implements IJWTUtilityService {
-
+//se crea y se valida los jwt con las llaves
 
 
     //creo esto para poder tratar con las llaves puesto que primer onecesito leerlas
@@ -41,40 +41,65 @@ public class JWTUtilityServiceImpl implements IJWTUtilityService {
     // los jwt y su validacion
     @Override
     public String generateJWT(Long userId) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, JOSEException {
+        // 1. Cargar la llave privada para firmar el JWT
         PrivateKey privateKey = loadPrivateKey(privateKeyResource);
+
+        // 2. Crear un firmador con la llave privada usando el algoritmo RSA
         JWSSigner signer = new RSASSASigner(privateKey);
+
+        // 3. Establecer la fecha y hora actual
         Date now = new Date();
-        JWTClaimsSet claimsSet=new JWTClaimsSet.Builder()
-                .subject(userId.toString())
-                .issueTime(now)
-                .expirationTime(new Date(now.getTime()*14400000))
+
+        // 4. Crear el conjunto de claims del JWT (cuerpo del token)
+        JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
+                .subject(userId.toString())           // El "subject" (sub) es el ID del usuario. Puede ser el email?
+                .issueTime(now)                       // Fecha en la que se emite el token
+                .expirationTime(new Date(now.getTime() + 14400000))  // Fecha de expiración (aquí 4 horas)
                 .build();
 
-        SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.RS256),claimsSet);
+        // 5. Crear un JWT firmado con el algoritmo RS256 (RSA con SHA-256)
+        SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.RS256), claimsSet);
+
+        // 6. Firmar el JWT con la llave privada usando el firmador configurado
         signedJWT.sign(signer);
 
+        // 7. Serializar el JWT firmado (convertirlo a un string para enviarlo)
         return signedJWT.serialize();
     }
 
+
     @Override
     public JWTClaimsSet parseJWT(String jwt) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, ParseException, JOSEException {
-        PublicKey publicKey=loadPublicKey(publicKeyResource);
-        SignedJWT signedJWT= SignedJWT.parse(jwt);
+        // 1. Cargar la llave pública desde un recurso
+        PublicKey publicKey = loadPublicKey(publicKeyResource);
+
+        // 2. Parsear el JWT recibido (cadena en formato compact)
+        SignedJWT signedJWT = SignedJWT.parse(jwt);
+
+        // 3. Crear un verificador para verificar la firma con la llave pública
         JWSVerifier verifier = new RSASSAVerifier((RSAPublicKey) publicKey);
-        if(!signedJWT.verify(verifier)){
-            throw new JOSEException("Invalid signature");
-        }
-        JWTClaimsSet claimsSet=signedJWT.getJWTClaimsSet();
-        if(claimsSet.getExpirationTime().before(new Date())){
-             throw new JOSEException("Expired JWT");
+        //3.5 es decir que hasta aqui tengo la jwt enviado y acabo de carga la llave publica. Luego verifico si es valida
+        // 4. Verificar la firma del JWT
+        if (!signedJWT.verify(verifier)) {
+            throw new JOSEException("Invalid signature"); // Firma no válida
         }
 
-         return signedJWT.getJWTClaimsSet();
+        // 5. Obtener los claims del JWT
+        JWTClaimsSet claimsSet = signedJWT.getJWTClaimsSet();
+
+        // 6. Comprobar si el JWT ha expirado
+        if (claimsSet.getExpirationTime().before(new Date())) {
+            throw new JOSEException("Expired JWT"); // El JWT ha expirado
+        }
+
+        // 7. Devolver los claims del JWT si la firma es válida y no ha expirado
+        return signedJWT.getJWTClaimsSet();
     }
 
 
 
-//PRIMERO ESTO, me permite leer las llaves
+
+    //PRIMERO ESTO, me permite leer las llaves
 private PrivateKey loadPrivateKey(Resource resource) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
     // 1. Leer el archivo que contiene la llave privada
     byte[] keyBytes = Files.readAllBytes(Paths.get(resource.getURI()));

@@ -4,8 +4,14 @@
  */
 package com.api.crud.controllers;
 
+import com.api.crud.persistence.entities.UserEntity;
+import com.api.crud.services.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  *
@@ -16,10 +22,15 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     @Autowired
-    private UserService userService;
+    IUserService userService;
 
 
-    //METODOS
+    @GetMapping("find-all")
+    private ResponseEntity<List<UserEntity>> getAllUsers(){
+        return new ResponseEntity<>(userService.findAllUsers(), HttpStatus.OK);
+    }
+
+
 
 }
 
