@@ -29,17 +29,16 @@ public class AuthServiceImpl implements IAuthService {
     public HashMap<String, String>login(LoginDTO login) throws Exception{
         try{
             HashMap<String, String> jwt = new HashMap<>();
-            Optional<UserEntity> user = userRepository.findByEmail(login.getEmail());
+            Optional<UserEntity> user=userRepository.findByEmail(login.getEmail());
             if(user.isPresent()){
-                if(verifyPassword(login.getPassword(), user.get().getPassword())){
-                    jwt.put("jwt",jwtUtilityService.generateJWT(user.get().getId()));//reveer este metodo en IJWTUtilityService
-                }else{
-                    jwt.put("error","Authentication failed");
-                }
-            }else{
                 jwt.put("error"," User not registered!");
+                return jwt;
             }
-
+            if(verifyPassword(login.getPassword(), user.get().getPassword())){
+                jwt.put("jwt",jwtUtilityService.generateJWT(user.get().getId()));//reveer este metodo en IJWTUtilityService
+            }else{
+                jwt.put("error","Authentication failed");
+            }
             return jwt;
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -51,11 +50,11 @@ public class AuthServiceImpl implements IAuthService {
         try{
             ResponseDTO response = new ResponseDTO();
 
-            //por si el registro ya tiene errores
+
             if(response.getNumOfErrors()>0){
                 return response;
             }
-            List<UserEntity> getAllUsers = userRepository.findAll();
+            List<UserEntity> getAllUsers=userRepository.findAll();
 
             for (UserEntity existingUser : getAllUsers) {
                 if (existingUser.getEmail().equals(user.getEmail())) {

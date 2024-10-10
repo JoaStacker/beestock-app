@@ -9,7 +9,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 
@@ -28,18 +31,11 @@ public class AuthController {
 
     @PostMapping("/login")
     private ResponseEntity<HashMap<String, String>> login(@RequestBody LoginDTO loginRequest) throws Exception {
-        System.out.println("llegue hasta aqui");
         HashMap<String, String> login = authService.login(loginRequest);
         if (login.containsKey("jwt")) {
             return new ResponseEntity<>(authService.login(loginRequest), HttpStatus.ACCEPTED);
         } else {
-            return new ResponseEntity<>(authService.login(loginRequest), HttpStatus.ACCEPTED);
+            return new ResponseEntity<>(authService.login(loginRequest), HttpStatus.UNAUTHORIZED);
         }
-    }
-    @GetMapping("/prueba")
-    public ResponseEntity<String> prueba() {
-        String mensaje = "Este es un mensaje de prueba";
-        System.out.println(mensaje); // Esto va a la consola del servidor
-        return ResponseEntity.ok(mensaje); // Esto va a Postman
     }
 }
