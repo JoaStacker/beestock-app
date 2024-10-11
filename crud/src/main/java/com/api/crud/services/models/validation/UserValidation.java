@@ -1,7 +1,7 @@
 package com.api.crud.services.models.validation;
 
 import com.api.crud.persistence.entities.UserEntity;
-import com.api.crud.services.models.dtos.ResponseDTO;
+import com.api.crud.services.models.response.ResponseDTO;
 import org.springframework.stereotype.Component;
 
 //aqui en vez de hacer est ode abajo. Podemos hacerlo mediante anotaciones de JPA en UserEntity

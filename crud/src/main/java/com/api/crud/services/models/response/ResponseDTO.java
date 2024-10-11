@@ -1,7 +1,9 @@
-package com.api.crud.services.models.dtos;
+package com.api.crud.services.models.response;
 
 public class ResponseDTO {
     //tambien se puede trabajar con hashmap pero ni idea :V
+
+    //para que sirve esta clase?
     private int numOfErrors;
     private String message;
 
