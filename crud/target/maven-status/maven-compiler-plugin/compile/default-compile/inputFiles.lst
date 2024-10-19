@@ -3,6 +3,13 @@ C:\Users\joess\IdeaProjects\beestock-app\crud\src\main\java\com\api\crud\config\
 C:\Users\joess\IdeaProjects\beestock-app\crud\src\main\java\com\api\crud\controllers\AuthController.java
 C:\Users\joess\IdeaProjects\beestock-app\crud\src\main\java\com\api\crud\controllers\UserController.java
 C:\Users\joess\IdeaProjects\beestock-app\crud\src\main\java\com\api\crud\CrudApplication.java
+C:\Users\joess\IdeaProjects\beestock-app\crud\src\main\java\com\api\crud\persistence\entities\Direccion.java
+C:\Users\joess\IdeaProjects\beestock-app\crud\src\main\java\com\api\crud\persistence\entities\Empleado.java
+C:\Users\joess\IdeaProjects\beestock-app\crud\src\main\java\com\api\crud\persistence\entities\HistorialPuesto.java
+C:\Users\joess\IdeaProjects\beestock-app\crud\src\main\java\com\api\crud\persistence\entities\Localidad.java
+C:\Users\joess\IdeaProjects\beestock-app\crud\src\main\java\com\api\crud\persistence\entities\Pais.java
+C:\Users\joess\IdeaProjects\beestock-app\crud\src\main\java\com\api\crud\persistence\entities\Provincia.java
+C:\Users\joess\IdeaProjects\beestock-app\crud\src\main\java\com\api\crud\persistence\entities\Puesto.java
 C:\Users\joess\IdeaProjects\beestock-app\crud\src\main\java\com\api\crud\persistence\entities\UserEntity.java
 C:\Users\joess\IdeaProjects\beestock-app\crud\src\main\java\com\api\crud\persistence\repositories\IUserRepository.java
 C:\Users\joess\IdeaProjects\beestock-app\crud\src\main\java\com\api\crud\security\JWTAuthorizationFilter.java
