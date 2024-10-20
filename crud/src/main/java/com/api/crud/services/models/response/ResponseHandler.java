@@ -14,4 +14,12 @@ public class ResponseHandler {
         response.put("data", data);
         return new ResponseEntity<>(response, httpStatus);
     }
+
+    public static ResponseEntity<Object> responseBuilder(HttpStatus httpStatus, String message) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", httpStatus);
+        response.put("message", message);
+        response.put("data", null);
+        return new ResponseEntity<>(response, httpStatus);
+    }
 }

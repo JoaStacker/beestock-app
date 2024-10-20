@@ -30,7 +30,6 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-
     //en vez de un hash map devolver un  DTO
     private ResponseEntity<Object> login(@RequestBody LoginDTO loginRequest) throws Exception {
         return authService.login(loginRequest);

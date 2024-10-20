@@ -10,12 +10,16 @@ com\api\crud\persistence\entities\Pais.class
 com\api\crud\services\IUserService.class
 com\api\crud\services\models\validation\UserValidation.class
 com\api\crud\config\ValidationConfig.class
+com\api\crud\services\impl\EmpleadoServiceImpl.class
 com\api\crud\persistence\entities\Localidad.class
 com\api\crud\persistence\repositories\IUserRepository.class
+com\api\crud\services\IEmpleadoService.class
 com\api\crud\services\IAuthService.class
 com\api\crud\controllers\UserController.class
+com\api\crud\persistence\repositories\IEmpleadoRepository.class
 com\api\crud\persistence\entities\Puesto.class
 com\api\crud\services\impl\AuthServiceImpl.class
+com\api\crud\controllers\EmpleadoController.class
 com\api\crud\services\models\response\ResponseHandler.class
 com\api\crud\config\CorsConfig.class
 com\api\crud\security\JWTAuthorizationFilter.class

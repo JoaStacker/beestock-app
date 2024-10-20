@@ -1,6 +1,7 @@
 C:\Users\joess\IdeaProjects\beestock-app\crud\src\main\java\com\api\crud\config\CorsConfig.java
 C:\Users\joess\IdeaProjects\beestock-app\crud\src\main\java\com\api\crud\config\ValidationConfig.java
 C:\Users\joess\IdeaProjects\beestock-app\crud\src\main\java\com\api\crud\controllers\AuthController.java
+C:\Users\joess\IdeaProjects\beestock-app\crud\src\main\java\com\api\crud\controllers\EmpleadoController.java
 C:\Users\joess\IdeaProjects\beestock-app\crud\src\main\java\com\api\crud\controllers\UserController.java
 C:\Users\joess\IdeaProjects\beestock-app\crud\src\main\java\com\api\crud\CrudApplication.java
 C:\Users\joess\IdeaProjects\beestock-app\crud\src\main\java\com\api\crud\persistence\entities\Direccion.java
@@ -11,12 +12,15 @@ C:\Users\joess\IdeaProjects\beestock-app\crud\src\main\java\com\api\crud\persist
 C:\Users\joess\IdeaProjects\beestock-app\crud\src\main\java\com\api\crud\persistence\entities\Provincia.java
 C:\Users\joess\IdeaProjects\beestock-app\crud\src\main\java\com\api\crud\persistence\entities\Puesto.java
 C:\Users\joess\IdeaProjects\beestock-app\crud\src\main\java\com\api\crud\persistence\entities\UserEntity.java
+C:\Users\joess\IdeaProjects\beestock-app\crud\src\main\java\com\api\crud\persistence\repositories\IEmpleadoRepository.java
 C:\Users\joess\IdeaProjects\beestock-app\crud\src\main\java\com\api\crud\persistence\repositories\IUserRepository.java
 C:\Users\joess\IdeaProjects\beestock-app\crud\src\main\java\com\api\crud\security\JWTAuthorizationFilter.java
 C:\Users\joess\IdeaProjects\beestock-app\crud\src\main\java\com\api\crud\security\SecurityConfiguration.java
 C:\Users\joess\IdeaProjects\beestock-app\crud\src\main\java\com\api\crud\services\IAuthService.java
+C:\Users\joess\IdeaProjects\beestock-app\crud\src\main\java\com\api\crud\services\IEmpleadoService.java
 C:\Users\joess\IdeaProjects\beestock-app\crud\src\main\java\com\api\crud\services\IJWTUtilityService.java
 C:\Users\joess\IdeaProjects\beestock-app\crud\src\main\java\com\api\crud\services\impl\AuthServiceImpl.java
+C:\Users\joess\IdeaProjects\beestock-app\crud\src\main\java\com\api\crud\services\impl\EmpleadoServiceImpl.java
 C:\Users\joess\IdeaProjects\beestock-app\crud\src\main\java\com\api\crud\services\impl\JWTUtilityServiceImpl.java
 C:\Users\joess\IdeaProjects\beestock-app\crud\src\main\java\com\api\crud\services\impl\UserServiceImpl.java
 C:\Users\joess\IdeaProjects\beestock-app\crud\src\main\java\com\api\crud\services\IUserService.java
