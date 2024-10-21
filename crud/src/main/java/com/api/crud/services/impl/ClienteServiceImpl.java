@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -115,5 +116,18 @@ public class ClienteServiceImpl implements IClienteService {
             clienteToUpdate.setEmail(clienteDetails.getEmail().get());
         }
         return clienteToUpdate;
+    }
+
+    public ResponseEntity<Object> findByMesNacimiento(String mes) throws Exception {
+        try{
+            Optional<Cliente> cliente = clienteRepository.findByFilter(mes);
+            if(cliente.isPresent()){
+                return ResponseHandler.responseBuilder(HttpStatus.OK, "Cliente encontrado con exito", cliente);
+            }else{
+                return ResponseHandler.responseBuilder(HttpStatus.NO_CONTENT, "Cliente no existe", cliente);
+            }
+        }catch(Exception e){
+            throw new Exception(e.toString());
+        }
     }
 }

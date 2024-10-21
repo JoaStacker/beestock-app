@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+
 
 @RestController
 @RequestMapping("/cliente")
@@ -37,6 +39,11 @@ public class ClienteController {
     @PutMapping("/{id}")
     private ResponseEntity<Object> updateOne(@PathVariable("id") Long id, @RequestBody ClienteDTO cliente) throws Exception {
         return new ResponseEntity<>(clienteService.updateCliente(id, cliente), HttpStatus.OK);
+    }
+
+    @GetMapping("/mes/{mesNacimiento}")
+    private ResponseEntity<Object> getByMesNacimiento(@PathVariable("mesNacimiento") String mes) throws Exception {
+        return new ResponseEntity<>(clienteService.findByMesNacimiento(mes), HttpStatus.OK);
     }
 
 }
