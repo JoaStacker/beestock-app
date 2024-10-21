@@ -27,6 +27,10 @@ public class Direccion {
     @JoinColumn(name = "empleado_id", nullable = false) // Clave foránea
     private Empleado empleado;
 
+    @ManyToOne
+    @JoinColumn(name = "cliente_id", nullable = false) // Clave foránea
+    private Cliente cliente;
+
     // Getters y Setters
     public Long getId() {
         return id;
@@ -74,5 +78,13 @@ public class Direccion {
 
     public void setEmpleado(Empleado empleado) {
         this.empleado = empleado;
+    }
+
+    public Cliente getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
     }
 }
