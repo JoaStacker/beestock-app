@@ -36,9 +36,14 @@ public class ClienteController {
         return new ResponseEntity<>(clienteService.findOne(id), HttpStatus.OK);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     private ResponseEntity<Object> updateOne(@PathVariable("id") Long id, @RequestBody ClienteDTO cliente) throws Exception {
         return new ResponseEntity<>(clienteService.updateCliente(id, cliente), HttpStatus.OK);
+    }
+
+    @PutMapping("/delete/{id}")
+    private ResponseEntity<Object> deleteOne(@PathVariable("id") Long id, @RequestBody ClienteDTO cliente) throws Exception {
+        return new ResponseEntity<>(clienteService.deleteCliente(id, cliente), HttpStatus.OK);
     }
 
     @GetMapping("/mes/{mesNacimiento}")

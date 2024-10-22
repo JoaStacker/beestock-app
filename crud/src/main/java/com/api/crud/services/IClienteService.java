@@ -12,5 +12,6 @@ public interface IClienteService {
     public ResponseEntity<Object> findAll() throws Exception;
     public ResponseEntity<Object> findOne(Long id) throws Exception;
     public ResponseEntity<Object> updateCliente(Long id, ClienteDTO cliente) throws Exception;
+    public ResponseEntity<Object> deleteCliente(Long id, ClienteDTO cliente) throws Exception;
     public ResponseEntity<Object> findByMesNacimiento(String mes) throws Exception;
 }

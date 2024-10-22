@@ -30,6 +30,8 @@ public class Cliente {
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "cliente")
     private CondicionTributaria condicionTributaria;
 
+    private Boolean borrado = false;
+
     // Getters y Setters
     public Long getId() {
         return id;
@@ -88,5 +90,13 @@ public class Cliente {
         if (condicionTributaria != null) {
             condicionTributaria.setCliente(this); // Asegurarse de mantener la relación
         }
+    }
+
+    public Boolean getBorrado() {
+        return borrado;
+    }
+
+    public void setBorrado(Boolean borrado) {
+        this.borrado = borrado;
     }
 }

@@ -41,7 +41,7 @@ public class ClienteServiceImpl implements IClienteService {
 //                return ResponseHandler.responseBuilder(HttpStatus.BAD_REQUEST, "Falta campo 'fecha de nacimiento'");
 //            }
 
-            // Check if the CUIT already exists
+            //Checkear si CUIT ya existe
             Optional<Cliente> cli = clienteRepository.findByCuit(cliente.getCuit());
             if (cli.isPresent()) {
                 return ResponseHandler.responseBuilder(HttpStatus.CONFLICT, "CUIT ya existe!");
@@ -116,6 +116,24 @@ public class ClienteServiceImpl implements IClienteService {
             clienteToUpdate.setEmail(clienteDetails.getEmail().get());
         }
         return clienteToUpdate;
+    }
+
+    public ResponseEntity<Object> deleteCliente(Long id, ClienteDTO clienteDetails) throws Exception {
+
+        try{
+            Optional<Cliente> optionalUser = clienteRepository.findById(id);
+
+            if (optionalUser.isPresent()) {
+                Cliente clienteToDelete = getClienteToUpdate(clienteDetails, optionalUser);
+                clienteToDelete.setBorrado(true);
+                clienteRepository.save(clienteToDelete);
+                return ResponseHandler.responseBuilder(HttpStatus.OK, "Cliente borrado con exito");
+            } else {
+                return ResponseHandler.responseBuilder(HttpStatus.CONFLICT, "Cliente no existe");
+            }
+        }catch(Exception e){
+            throw new Exception(e.toString());
+        }
     }
 
     public ResponseEntity<Object> findByMesNacimiento(String mes) throws Exception {
