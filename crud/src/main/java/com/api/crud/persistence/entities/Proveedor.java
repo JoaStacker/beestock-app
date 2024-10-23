@@ -1,13 +1,11 @@
 package com.api.crud.persistence.entities;
 
-
 import jakarta.persistence.*;
-import  com.api.crud.persistence.entities.TipoServicio;
-
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name = "proveedor")
+
 public class Proveedor {
 
     @Id
@@ -16,36 +14,33 @@ public class Proveedor {
 
     @Column
     private String nombre;
-    private String CUIT;
+
+    @Column
+    private String cuit;
+
+    @Column
     private String correo;
 
-    // Un proveedor puede tener muchos servicios
-    @OneToMany(mappedBy = "proveedor", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<TipoServicio> TipoServicios = new ArrayList<>();
-    // Un proveedor tiene una sola dirección
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @JoinTable(
+            name="proveedor_tipo_servicio", joinColumns = @JoinColumn(name="id_tipo_servicio", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name="id_proveedor", referencedColumnName = "id")
+    )
+    private List<TipoServicio> tipoServicios;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "direccion_id", referencedColumnName = "id")
     private Direccion direccion;
 
     // Getters y Setters
-
     public Proveedor() {
     }
 
-    public Proveedor(String nombre, String CUIT, String correo, List<TipoServicio> tipoServicios, Direccion direccion) {
+    public Proveedor(String nombre, String cuit, String correo, String calle, String numero, String piso, Localidad localidad) {
         this.nombre = nombre;
-        this.CUIT = CUIT;
+        this.cuit = cuit;
         this.correo = correo;
-        TipoServicios = tipoServicios;
-        this.direccion = direccion;
-    }
-
-    public String getCorreo() {
-        return correo;
-    }
-
-    public void setCorreo(String correo) {
-        this.correo = correo;
+        this.direccion = new Direccion(calle, numero, piso, localidad);
     }
 
     public Long getId() {
@@ -64,20 +59,28 @@ public class Proveedor {
         this.nombre = nombre;
     }
 
-    public String getCUIT() {
-        return CUIT;
+    public String getCuit() {
+        return cuit;
     }
 
-    public void setCUIT(String CUIT) {
-        this.CUIT = CUIT;
+    public void setCuit(String cuit) {
+        this.cuit = cuit;
+    }
+
+    public String getCorreo() {
+        return correo;
+    }
+
+    public void setCorreo(String correo) {
+        this.correo = correo;
     }
 
     public List<TipoServicio> getTipoServicios() {
-        return TipoServicios;
+        return tipoServicios;
     }
 
     public void setTipoServicios(List<TipoServicio> tipoServicios) {
-        TipoServicios = tipoServicios;
+        this.tipoServicios = tipoServicios;
     }
 
     public Direccion getDireccion() {

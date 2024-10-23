@@ -21,12 +21,12 @@ public class EmpleadoController {
     @Autowired
     private IAuthService authService;
 
-    @PostMapping("")
+    @PostMapping
     private ResponseEntity<Object> create(@RequestBody Empleado empleado) throws Exception {
         return new ResponseEntity<>(empleadoService.createEmpleado(empleado), HttpStatus.OK);
     }
 
-    @GetMapping("")
+    @GetMapping
     private  ResponseEntity<Object> getAll() throws Exception {
         return new ResponseEntity<>(empleadoService.findAll(), HttpStatus.OK);
     }

@@ -6,9 +6,9 @@ import com.api.crud.persistence.repositories.IUserRepository;//check
 import com.api.crud.services.IAuthService;//check
 import com.api.crud.services.IJWTUtilityService;
 import com.api.crud.services.models.dtos.*;
-import com.api.crud.services.models.response.ResponseDTO;
 import com.api.crud.services.models.response.ResponseHandler;
 import com.api.crud.services.models.response.UserResponseDTO;
+import com.api.crud.services.models.dtos.SignupDTO;
 import com.api.crud.services.models.validation.UserValidation;
 import org.springframework.beans.factory.annotation.Autowired;//check
 import org.springframework.http.HttpStatus;
@@ -25,8 +25,10 @@ public class AuthServiceImpl implements IAuthService {
 
     @Autowired
     private IUserRepository userRepository;
+
     @Autowired
     private IJWTUtilityService jwtUtilityService;
+
     @Autowired
     private UserValidation userValidation;
 
@@ -56,68 +58,34 @@ public class AuthServiceImpl implements IAuthService {
             throw new RuntimeException(e);
         }
     }
-//    public UserResponseDTO login(LoginDTO login) throws Exception{
-//        try{
-//            UserResponseDTO userResponseDTO = new UserResponseDTO();
-//            Optional<UserEntity> user=userRepository.findByEmail(login.getEmail());
-//            if(user.isEmpty()){
-//                //se busca por correo, si no esta presente el correo, entonces no esta registrado
-//                userResponseDTO.setMessage("User not registered!");
-//                userResponseDTO.setEstado(401);
-//                return userResponseDTO;
-//                }
-//            if(verifyPassword(login.getPassword(), user.get().getPassword())){
-//                userResponseDTO.setMessage("User successfully logged in!");
-//                userResponseDTO.setEstado(200);
-//                userResponseDTO.setEmail(user.get().getEmail());
-//                userResponseDTO.setAdminClientes(user.get().getAdminClientes());
-//                userResponseDTO.setAdminVentas(user.get().getAdminVentas());
-//                userResponseDTO.setAdminProveedores(user.get().getAdminProveedores());
-//                userResponseDTO.setAdminRRHH(user.get().getAdminRRHH());
-//                userResponseDTO.setJwt(jwtUtilityService.generateJWT(user.get().getId()));
-//                return userResponseDTO;
-//            }else{
-//                userResponseDTO.setMessage("Authentication failed!");
-//                userResponseDTO.setEstado(401);
-//                return userResponseDTO;
-//            }
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
 
-
-
-
-
-
-
-    public ResponseDTO register(UserEntity user) throws Exception{
+    public ResponseEntity<Object> signup(SignupDTO body) throws Exception{
         try{
-            ResponseDTO response = new ResponseDTO();
-
-
-            if(response.getNumOfErrors()>0){
-                return response;
-            }
             List<UserEntity> getAllUsers=userRepository.findAll();
 
             for (UserEntity existingUser : getAllUsers) {
-                if (existingUser.getEmail().equals(user.getEmail())) {
-                    response.setMessage("Email already exists!");
-                    return response;
+                if (existingUser.getEmail().equals(body.getEmail())) {
+                    return ResponseHandler.responseBuilder(HttpStatus.CONFLICT,
+                            "El email ya existe!");
                 }
-                // Agrega más comparaciones de campos relevantes según sea necesario.
             }
 
-
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
-            user.setPassword(encoder.encode(user.getPassword()));
+            UserEntity user = new UserEntity();
+            user.setEmail(body.getEmail());
+            user.setPassword(encoder.encode(body.getPassword()));
+            user.setAdminClientes(body.getAdminClientes());
+            user.setAdminProveedores(body.getAdminProveedores());
+            user.setAdminRRHH(body.getAdminRRHH());
+            user.setAdminVentas(body.getAdminVentas());
+
             userRepository.save(user);
-            response.setMessage("User created succesfully!");
-            return response;
+
+            return ResponseHandler.responseBuilder(HttpStatus.CONFLICT,
+                    "Usuario creado con exito!");
         }catch(Exception e){
-            throw new Exception(e.toString());
+            return ResponseHandler.responseBuilder(HttpStatus.INTERNAL_SERVER_ERROR, "Error al crear Proveedor: "
+                    + e.getMessage());
         }
     }
 

@@ -1,12 +1,15 @@
 package com.api.crud.persistence.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.util.List;
 
 
 @Entity
 @Table(name = "pais")
+
 public class Pais {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -15,6 +18,7 @@ public class Pais {
     private String nombrePais;
 
     @OneToMany(mappedBy = "pais", cascade = CascadeType.ALL) // Relación inversa
+    @JsonIgnore
     private List<Provincia> provincias;
 
     public Pais() {

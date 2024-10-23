@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 @Table(name = "direccion")
 
 public class Direccion {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -19,7 +20,7 @@ public class Direccion {
     @Column
     private String piso;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "localidad_id", nullable = false) // Clave foránea
     private Localidad localidad;
 

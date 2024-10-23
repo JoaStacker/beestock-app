@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 @Table(name = "provincia")
 
 public class Provincia {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -13,16 +14,16 @@ public class Provincia {
     @Column
     private String nombreProvincia;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "pais_id", nullable = false) // Clave foránea
     private Pais pais;
+
+    public Provincia() {
+    }
 
     public Provincia(String nombreProvincia, Pais pais) {
         this.nombreProvincia = nombreProvincia;
         this.pais = pais;
-    }
-
-    public Provincia() {
     }
 
     // Getters y Setters

@@ -1,105 +1,109 @@
 package com.api.crud.services.models.dtos;
 
-import com.api.crud.persistence.entities.TipoServicio;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
-import java.util.Optional;
 
 @JsonInclude(JsonInclude.Include.NON_NULL) // Excluir campos nulos durante la serialización
 public class ProveedorDTO {
 
+    @NotNull
+    @JsonProperty(required = true)
     private String nombre;
+
+    @NotNull
+    @JsonProperty(required = true)
     private String cuit;
+
+    @NotNull
+    @JsonProperty(required = true)
     private String correo;
+
+    @NotNull
+    @JsonProperty(required = true)
     private String numero;
+
+    @NotNull
+    @JsonProperty(required = true)
     private String calle;
+
+    @NotNull
+    @JsonProperty(required = true)
     private String piso;
-    private String localidad;
-    private String provincia;
-    private String pais;
-    private List<TipoServicio> tipoServicio;
+
+    @NotNull
+    @JsonProperty(required = true)
+    private Long localidadId;
+
+    @NotNull
+    @JsonProperty(required = true)
+    private List<Long> tipoServicios;
 
     // Getters y Setters
 
-
-    public List<TipoServicio> getTipoServicio() {
-        return tipoServicio;
-    }
-
-    public void setTipoServicio(List<TipoServicio> tipoServicio) {
-        this.tipoServicio = tipoServicio;
-    }
-
-    public String getNombre() {
+    public @NotNull String getNombre() {
         return nombre;
     }
 
-    public void setNombre(String nombre) {
+    public void setNombre(@NotNull String nombre) {
         this.nombre = nombre;
     }
 
-    public String getCUIT() {
+    public @NotNull String getCuit() {
         return cuit;
     }
 
-    public void setCUIT(String cuit) {
+    public void setCuit(@NotNull String cuit) {
         this.cuit = cuit;
     }
 
-    public String getCorreo() {
+    public @NotNull String getCorreo() {
         return correo;
     }
 
-    public void setCorreo(String correo) {
+    public void setCorreo(@NotNull String correo) {
         this.correo = correo;
     }
 
-    public String getNumero() {
+    public @NotNull String getNumero() {
         return numero;
     }
 
-    public void setNumero(String numero) {
+    public void setNumero(@NotNull String numero) {
         this.numero = numero;
     }
 
-    public String getCalle() {
+    public @NotNull String getCalle() {
         return calle;
     }
 
-    public void setCalle(String calle) {
+    public void setCalle(@NotNull String calle) {
         this.calle = calle;
     }
 
-    public String getPiso() {
+    public @NotNull String getPiso() {
         return piso;
     }
 
-    public void setPiso(String piso) {
+    public void setPiso(@NotNull String piso) {
         this.piso = piso;
     }
 
-    public String getLocalidad() {
-        return localidad;
+    public @NotNull Long getLocalidadId() {
+        return localidadId;
     }
 
-    public void setLocalidad(String localidad) {
-        this.localidad = localidad;
+    public void setLocalidadId(@NotNull Long localidadId) {
+        this.localidadId = localidadId;
     }
 
-    public String getProvincia() {
-        return provincia;
+    public @NotNull List<Long> getTipoServicios() {
+        return tipoServicios;
     }
 
-    public void setProvincia(String provincia) {
-        this.provincia = provincia;
-    }
-
-    public String getPais() {
-        return pais;
-    }
-
-    public void setPais(String pais) {
-        this.pais = pais;
+    public void setTipoServicios(@NotNull List<Long> tipoServicios) {
+        this.tipoServicios = tipoServicios;
     }
 }

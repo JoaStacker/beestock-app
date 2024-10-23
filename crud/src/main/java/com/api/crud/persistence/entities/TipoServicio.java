@@ -1,8 +1,13 @@
 package com.api.crud.persistence.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
+@Table(name = "tipo_servicio")
+
 public class TipoServicio {
 
     @Id
@@ -12,17 +17,12 @@ public class TipoServicio {
     @Column
     private String nombre;
 
-    // Muchos servicios están asociados a un solo proveedor
-    @ManyToOne
-    @JoinColumn(name = "proveedor_id")
-    private Proveedor proveedor;
+    @ManyToMany(mappedBy = "tipoServicios")
+    @JsonIgnore
+    private List<Proveedor> proveedores;
+
     // Getters y Setters
     public TipoServicio() {}
-
-    public TipoServicio(String nombre, Proveedor proveedor) {
-        this.nombre = nombre;
-        this.proveedor = proveedor;
-    }
 
     public TipoServicio(String nombre) {
         this.nombre = nombre;
@@ -44,11 +44,11 @@ public class TipoServicio {
         this.nombre = nombre;
     }
 
-    public Proveedor getProveedor() {
-        return proveedor;
+    public List<Proveedor> getProveedores() {
+        return proveedores;
     }
 
-    public void setProveedor(Proveedor proveedor) {
-        this.proveedor = proveedor;
+    public void setProveedores(List<Proveedor> proveedores) {
+        this.proveedores = proveedores;
     }
 }

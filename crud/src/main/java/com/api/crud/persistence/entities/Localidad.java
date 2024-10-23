@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "localidad")
+
 public class Localidad{
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -12,7 +14,7 @@ public class Localidad{
     @Column
     private String nombreLocalidad;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "provincia_id", nullable = false) // Clave foránea
     private Provincia provincia;
 

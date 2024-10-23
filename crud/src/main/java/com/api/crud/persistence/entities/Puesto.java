@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 @Table(name = "puesto")
 
 public class Puesto {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -13,6 +14,13 @@ public class Puesto {
     @Column
     private String nombre;
 
+    public Puesto() {
+    }
+
+    public Puesto(Long id, String nombre) {
+        this.id = id;
+        this.nombre = nombre;
+    }
 
     // Getters y Setters
     public Long getId() {

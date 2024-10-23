@@ -20,6 +20,15 @@ public class Empleado {
     @Column
     private String dni;
 
+    public Empleado() {
+    }
+
+    public Empleado(Long id, String nombre, String apellido, String dni) {
+        this.id = id;
+        this.nombre = nombre;
+        this.apellido = apellido;
+        this.dni = dni;
+    }
 
     // Getters y Setters
     public Long getId() {
