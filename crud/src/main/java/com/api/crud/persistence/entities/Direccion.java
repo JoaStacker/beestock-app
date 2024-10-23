@@ -19,13 +19,19 @@ public class Direccion {
     @Column
     private String piso;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "localidad_id", nullable = false) // Clave foránea
     private Localidad localidad;
 
-    @ManyToOne
-    @JoinColumn(name = "empleado_id", nullable = false) // Clave foránea
-    private Empleado empleado;
+    public Direccion() {
+    }
+
+    public Direccion(String calle, String numero, String piso, Localidad localidad) {
+        this.calle = calle;
+        this.numero = numero;
+        this.piso = piso;
+        this.localidad = localidad;
+    }
 
     // Getters y Setters
     public Long getId() {
@@ -68,11 +74,5 @@ public class Direccion {
         this.localidad = localidad;
     }
 
-    public Empleado getEmpleado() {
-        return empleado;
-    }
 
-    public void setEmpleado(Empleado empleado) {
-        this.empleado = empleado;
-    }
 }

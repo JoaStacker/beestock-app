@@ -17,6 +17,13 @@ public class Pais {
     @OneToMany(mappedBy = "pais", cascade = CascadeType.ALL) // Relación inversa
     private List<Provincia> provincias;
 
+    public Pais() {
+    }
+
+    public Pais(String nombrePais) {
+        this.nombrePais = nombrePais;
+    }
+
     // Getters y Setters
     public Long getId() {
         return id;

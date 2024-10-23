@@ -13,9 +13,17 @@ public class Provincia {
     @Column
     private String nombreProvincia;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "pais_id", nullable = false) // Clave foránea
     private Pais pais;
+
+    public Provincia(String nombreProvincia, Pais pais) {
+        this.nombreProvincia = nombreProvincia;
+        this.pais = pais;
+    }
+
+    public Provincia() {
+    }
 
     // Getters y Setters
     public Long getId() {
