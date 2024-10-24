@@ -18,12 +18,12 @@ const App = () => {
         <Sidebar />
         <Box sx={{ flexGrow: 1, padding: 2 }}>
           <Routes>
-            <Route path="/suppliers" element={<SuppliersPage />} />
-            <Route path="/sells" element={<SellsPage />} />
-            <Route path="/invoices" element={<InvoicesPage />} />
-            <Route path="/incidents" element={<IncidentsPage />} />
-            <Route path="/employees" element={<EmployeesPage />} />
-            <Route path="/clients" element={<ClientsPage />} />
+            <Route path="/proveedores" element={<SuppliersPage />} />
+            <Route path="/ventas" element={<SellsPage />} />
+            <Route path="/facturas" element={<InvoicesPage />} />
+            <Route path="/incidentes" element={<IncidentsPage />} />
+            <Route path="/empleados" element={<EmployeesPage />} />
+            <Route path="/clientes" element={<ClientsPage />} />
             <Route path="/login" element={<LoginPage />} /> {/* Default route */}
             <Route path="/" element={<ClientsPage />} /> {/* Default route */}
           </Routes>
