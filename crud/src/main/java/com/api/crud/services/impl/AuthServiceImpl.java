@@ -1,8 +1,11 @@
 package com.api.crud.services.impl;
 
+import com.api.crud.persistence.entities.Empleado;
 import com.api.crud.persistence.entities.UserEntity;
+import com.api.crud.persistence.repositories.IEmpleadoRepository;
 import com.api.crud.persistence.repositories.IUserRepository;//check
 import com.api.crud.services.IAuthService;//check
+import com.api.crud.services.IEmpleadoService;
 import com.api.crud.services.IJWTUtilityService;
 import com.api.crud.services.models.dtos.*;
 import com.api.crud.services.models.response.ResponseHandler;
@@ -24,6 +27,9 @@ public class AuthServiceImpl implements IAuthService {
 
     @Autowired
     private IUserRepository userRepository;
+
+    @Autowired
+    private IEmpleadoRepository empleadoRepository;
 
     @Autowired
     private IJWTUtilityService jwtUtilityService;
@@ -59,13 +65,19 @@ public class AuthServiceImpl implements IAuthService {
 
     public ResponseEntity<Object> signup(SignupDTO body) throws Exception{
         try{
-            List<UserEntity> getAllUsers=userRepository.findAll();
+            List<UserEntity> getAllUsers = userRepository.findAll();
 
             for (UserEntity existingUser : getAllUsers) {
                 if (existingUser.getEmail().equals(body.getEmail())) {
                     return ResponseHandler.responseBuilder(HttpStatus.CONFLICT,
                             "El email ya existe!");
                 }
+            }
+
+            Optional<Empleado> empleadoFound = empleadoRepository.findByDni(body.getDni());
+            if(empleadoFound.isEmpty()){
+                return ResponseHandler.responseBuilder(HttpStatus.UNAUTHORIZED,
+                        "No existe un empleado con ese DNI.");
             }
 
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
@@ -76,6 +88,7 @@ public class AuthServiceImpl implements IAuthService {
             user.setAdminProveedores(body.getAdminProveedores());
             user.setAdminRRHH(body.getAdminRRHH());
             user.setAdminVentas(body.getAdminVentas());
+            user.setEmpleado(empleadoFound.get());
 
             userRepository.save(user);
 

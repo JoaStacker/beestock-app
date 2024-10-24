@@ -10,6 +10,9 @@ import jakarta.validation.constraints.NotNull;
 
 @JsonInclude(JsonInclude.Include.NON_NULL) // Excluir campos nulos durante la serialización
 public class SignupDTO {
+    @NotNull
+    @JsonProperty(required = true)
+    private String dni;
 
     @NotNull
     @JsonProperty(required = true)
@@ -30,13 +33,22 @@ public class SignupDTO {
     public SignupDTO() {
     }
 
-    public SignupDTO(String email, String password, Boolean adminRRHH, Boolean adminClientes, Boolean adminProveedores, Boolean adminVentas) {
+    public SignupDTO(String dni, String email, String password, Boolean adminRRHH, Boolean adminClientes, Boolean adminProveedores, Boolean adminVentas) {
+        this.dni = dni;
         this.email = email;
         this.password = password;
         this.adminRRHH = adminRRHH;
         this.adminClientes = adminClientes;
         this.adminProveedores = adminProveedores;
         this.adminVentas = adminVentas;
+    }
+
+    public @NotNull String getDni() {
+        return dni;
+    }
+
+    public void setDni(@NotNull String dni) {
+        this.dni = dni;
     }
 
     public @NotNull String getEmail() {

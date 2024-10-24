@@ -1,6 +1,7 @@
 package com.api.crud.services.impl;
 
 
+import com.api.crud.persistence.entities.Direccion;
 import com.api.crud.persistence.entities.Empleado;
 import com.api.crud.persistence.entities.HistorialPuesto;
 import com.api.crud.persistence.entities.Puesto;
@@ -9,6 +10,7 @@ import com.api.crud.persistence.repositories.IHistorialPuestoRepository;
 import com.api.crud.persistence.repositories.IPuestoRepository;
 import com.api.crud.services.IHistorialPuestoService;
 import com.api.crud.services.models.dtos.HistorialPuestoDTO;
+import com.api.crud.services.models.response.direccion.DireccionResponseDTO;
 import com.api.crud.services.models.response.empleado.EmpleadoResponseDTO;
 import com.api.crud.services.models.response.historialpuestos.HistorialPuestoEmpleadoResponseDTO;
 import com.api.crud.services.models.response.ResponseHandler;

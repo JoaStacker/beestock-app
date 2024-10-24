@@ -1,6 +1,7 @@
 package com.api.crud.persistence.entities;
 
 import jakarta.persistence.*;
+import org.springframework.cglib.core.Local;
 
 @Entity
 @Table(name = "empleado")
@@ -20,13 +21,18 @@ public class Empleado {
     @Column
     private String dni;
 
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "direccion_id", referencedColumnName = "id")
+    private Direccion direccion;
+
     public Empleado() {
     }
 
-    public Empleado(String nombre, String apellido, String dni) {
+    public Empleado(String nombre, String apellido, String dni, String calle, String numero, String piso, Localidad localidad) {
         this.nombre = nombre;
         this.apellido = apellido;
         this.dni = dni;
+        this.direccion = new Direccion(calle, numero, piso, localidad);
     }
 
     // Getters y Setters
@@ -62,4 +68,11 @@ public class Empleado {
         this.dni = dni;
     }
 
+    public Direccion getDireccion() {
+        return direccion;
+    }
+
+    public void setDireccion(Direccion direccion) {
+        this.direccion = direccion;
+    }
 }

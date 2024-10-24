@@ -19,7 +19,7 @@ public class AuthController {
     @Autowired
     private IAuthService authService;
 
-    @PostMapping("/register")
+    @PostMapping("/signup")
     private ResponseEntity<Object> signup(@Valid @RequestBody SignupDTO user) throws Exception {
         return new ResponseEntity<>(authService.signup(user), HttpStatus.OK);
     }

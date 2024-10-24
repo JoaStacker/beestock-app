@@ -33,10 +33,14 @@ public class UserEntity {
     @Column
     private Boolean adminVentas;
 
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "empleado_id", referencedColumnName = "id")
+    private Empleado empleado;
+
     public UserEntity() {
     }
 
-    public UserEntity(Long id, String email, String password, Boolean adminRRHH, Boolean adminClientes, Boolean adminProveedores, Boolean adminVentas) {
+    public UserEntity(Long id, String email, String password, Boolean adminRRHH, Boolean adminClientes, Boolean adminProveedores, Boolean adminVentas, Empleado empleado) {
         this.id = id;
         this.email = email;
         this.password = password;
@@ -44,6 +48,7 @@ public class UserEntity {
         this.adminClientes = adminClientes;
         this.adminProveedores = adminProveedores;
         this.adminVentas = adminVentas;
+        this.empleado = empleado;
     }
 
     public String getPassword() {
@@ -102,5 +107,12 @@ public class UserEntity {
         this.adminVentas = adminVentas;
     }
 
+    public Empleado getEmpleado() {
+        return empleado;
+    }
+
+    public void setEmpleado(Empleado empleado) {
+        this.empleado = empleado;
+    }
 
 }

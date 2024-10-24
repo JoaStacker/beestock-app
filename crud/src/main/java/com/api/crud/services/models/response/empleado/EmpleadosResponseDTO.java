@@ -1,22 +1,21 @@
 package com.api.crud.services.models.response.empleado;
-import com.api.crud.persistence.entities.Empleado;
 import java.util.List;
 
 public class EmpleadosResponseDTO {
-    private List<Empleado> empleados;
+    private List<EmpleadoResponseDTO> empleados;
 
     public EmpleadosResponseDTO() {
     }
 
-    public EmpleadosResponseDTO(List<Empleado> emps) {
+    public EmpleadosResponseDTO(List<EmpleadoResponseDTO> emps) {
         this.empleados = emps;
     }
 
-    public List<Empleado> getEmpleados() {
+    public List<EmpleadoResponseDTO> getEmpleados() {
         return empleados;
     }
 
-    public void setEmpleados(List<Empleado> empleados) {
+    public void setEmpleados(List<EmpleadoResponseDTO> empleados) {
         this.empleados = empleados;
     }
 

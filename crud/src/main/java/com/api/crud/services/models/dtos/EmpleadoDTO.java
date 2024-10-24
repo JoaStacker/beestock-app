@@ -20,13 +20,33 @@ public class EmpleadoDTO {
     @JsonProperty(required = true)
     private String apellido;
 
+    @NotNull
+    @JsonProperty(required = true)
+    private String numero;
+
+    @NotNull
+    @JsonProperty(required = true)
+    private String calle;
+
+    @NotNull
+    @JsonProperty(required = true)
+    private String piso;
+
+    @NotNull
+    @JsonProperty(required = true)
+    private Long localidadId;
+
     public EmpleadoDTO() {
     }
 
-    public EmpleadoDTO(String dni, String nombre, String apellido) {
+    public EmpleadoDTO(String dni, String nombre, String apellido, String numero, String calle, String piso, Long localidadId) {
         this.dni = dni;
         this.nombre = nombre;
         this.apellido = apellido;
+        this.numero = numero;
+        this.calle = calle;
+        this.piso = piso;
+        this.localidadId = localidadId;
     }
 
     public @NotNull String getDni() {
@@ -51,5 +71,37 @@ public class EmpleadoDTO {
 
     public void setApellido(@NotNull String apellido) {
         this.apellido = apellido;
+    }
+
+    public @NotNull String getNumero() {
+        return numero;
+    }
+
+    public void setNumero(@NotNull String numero) {
+        this.numero = numero;
+    }
+
+    public @NotNull String getCalle() {
+        return calle;
+    }
+
+    public void setCalle(@NotNull String calle) {
+        this.calle = calle;
+    }
+
+    public @NotNull String getPiso() {
+        return piso;
+    }
+
+    public void setPiso(@NotNull String piso) {
+        this.piso = piso;
+    }
+
+    public @NotNull Long getLocalidadId() {
+        return localidadId;
+    }
+
+    public void setLocalidadId(@NotNull Long localidadId) {
+        this.localidadId = localidadId;
     }
 }
