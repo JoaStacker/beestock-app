@@ -8,29 +8,43 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "user")
+
 public class UserEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column
     private String email;
+
     @Column
     private String password;
 
     @Column
     private Boolean adminRRHH;
+
     @Column
     private Boolean adminClientes;
+
     @Column
     private Boolean adminProveedores;
+
     @Column
     private Boolean adminVentas;
 
+    public UserEntity() {
+    }
 
-
-    //METODOS
-
+    public UserEntity(Long id, String email, String password, Boolean adminRRHH, Boolean adminClientes, Boolean adminProveedores, Boolean adminVentas) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+        this.adminRRHH = adminRRHH;
+        this.adminClientes = adminClientes;
+        this.adminProveedores = adminProveedores;
+        this.adminVentas = adminVentas;
+    }
 
     public String getPassword() {
         return password;

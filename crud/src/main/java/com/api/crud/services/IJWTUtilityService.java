@@ -14,6 +14,5 @@ public interface IJWTUtilityService {
             , JOSEException;
     public JWTClaimsSet parseJWT(String jwt) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException,
             ParseException, JOSEException;
-
 //esto proviene de JWTUtilityServiceImpl
 }

@@ -16,11 +16,12 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("/historial-puesto")
+@RequestMapping("/historial-puestos")
 public class HistorialPuestoController {
 
     @Autowired
     private IHistorialPuestoService historialPuestoService;
+
     @Autowired
     private IAuthService authService;
 

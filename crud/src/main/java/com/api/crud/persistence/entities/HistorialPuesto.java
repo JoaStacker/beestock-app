@@ -1,13 +1,13 @@
 package com.api.crud.persistence.entities;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "historialPuesto")
+@Table(name = "historial_puesto")
 
 public class HistorialPuesto {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,6 +26,16 @@ public class HistorialPuesto {
     @JoinColumn(name = "puesto_id", nullable = false) // Clave foránea
     private Puesto puesto;
 
+    public HistorialPuesto() {
+    }
+
+    public HistorialPuesto(Long id, LocalDateTime fechaIngreso, LocalDateTime fechaSalida, Empleado empleado, Puesto puesto) {
+        this.id = id;
+        this.fechaIngreso = fechaIngreso;
+        this.fechaSalida = fechaSalida;
+        this.empleado = empleado;
+        this.puesto = puesto;
+    }
 
     // Getters y Setters
     public Long getId() {
