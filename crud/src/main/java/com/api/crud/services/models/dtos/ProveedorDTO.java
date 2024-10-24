@@ -41,6 +41,20 @@ public class ProveedorDTO {
     @JsonProperty(required = true)
     private List<Long> tipoServicios;
 
+    public ProveedorDTO() {
+    }
+
+    public ProveedorDTO(String nombre, String cuit, String correo, String numero, String calle, String piso, Long localidadId, List<Long> tipoServicios) {
+        this.nombre = nombre;
+        this.cuit = cuit;
+        this.correo = correo;
+        this.numero = numero;
+        this.calle = calle;
+        this.piso = piso;
+        this.localidadId = localidadId;
+        this.tipoServicios = tipoServicios;
+    }
+
     // Getters y Setters
 
     public @NotNull String getNombre() {

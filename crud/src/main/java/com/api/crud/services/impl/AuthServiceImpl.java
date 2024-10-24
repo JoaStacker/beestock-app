@@ -1,6 +1,5 @@
 package com.api.crud.services.impl;
 
-
 import com.api.crud.persistence.entities.UserEntity;
 import com.api.crud.persistence.repositories.IUserRepository;//check
 import com.api.crud.services.IAuthService;//check
@@ -31,7 +30,6 @@ public class AuthServiceImpl implements IAuthService {
 
     @Autowired
     private UserValidation userValidation;
-
 
     public ResponseEntity<Object> login(LoginDTO login) throws Exception{
         try{

@@ -23,8 +23,7 @@ public class Empleado {
     public Empleado() {
     }
 
-    public Empleado(Long id, String nombre, String apellido, String dni) {
-        this.id = id;
+    public Empleado(String nombre, String apellido, String dni) {
         this.nombre = nombre;
         this.apellido = apellido;
         this.dni = dni;

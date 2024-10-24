@@ -1,8 +1,5 @@
 package com.api.crud.persistence.repositories;
 
-
-import com.api.crud.persistence.entities.HistorialPuesto;
-import com.api.crud.persistence.entities.Proveedor;
 import com.api.crud.persistence.entities.TipoServicio;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

@@ -18,14 +18,13 @@ import java.util.List;
  * @author ghino
  */
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/usuarios")
 public class UserController {
 
     @Autowired
     IUserService userService;
 
-
-    @GetMapping("find-all")
+    @GetMapping
     private ResponseEntity<List<UserEntity>> getAllUsers(){
         return new ResponseEntity<>(userService.findAllUsers(), HttpStatus.OK);
     }

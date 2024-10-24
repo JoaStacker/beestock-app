@@ -56,14 +56,12 @@ public class ProveedorServiceImpl implements IProveedorService {
                 }
             }
 
-            // Realizar la operacion principal.
             List<TipoServicio> listaServicios = tipoServiciosRepository.findByFilter(listaIds);
             Proveedor nuevoProveedor = new Proveedor(body.getNombre(), body.getCuit(), body.getCorreo(),
                     body.getCalle(), body.getNumero(), body.getPiso(), localidad.get());
             nuevoProveedor.setTipoServicios(listaServicios);
             proveedorRepository.save(nuevoProveedor);
 
-            // Construir el DTO de respuesta.
             ProveedorResponseDTO response = new ProveedorResponseDTO();
             response.setCuit(nuevoProveedor.getCuit());
             response.setNombre(nuevoProveedor.getNombre());

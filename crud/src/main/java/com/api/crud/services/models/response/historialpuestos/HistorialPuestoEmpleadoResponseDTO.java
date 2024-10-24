@@ -1,6 +1,5 @@
-package com.api.crud.services.models.response;
+package com.api.crud.services.models.response.historialpuestos;
 
-import com.api.crud.persistence.entities.Empleado;
 import com.api.crud.persistence.entities.HistorialPuesto;
 
 import java.util.List;

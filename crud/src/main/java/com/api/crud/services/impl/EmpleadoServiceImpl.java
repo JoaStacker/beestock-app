@@ -2,14 +2,12 @@ package com.api.crud.services.impl;
 
 
 import com.api.crud.persistence.entities.Empleado;
-import com.api.crud.persistence.entities.UserEntity;
 import com.api.crud.persistence.repositories.IEmpleadoRepository;//check
 import com.api.crud.services.IEmpleadoService;
 import com.api.crud.services.models.dtos.EmpleadoDTO;
-import com.api.crud.services.models.response.EmpleadosResponseDTO;
-import com.api.crud.services.models.response.ResponseDTO;
+import com.api.crud.services.models.response.empleado.EmpleadoResponseDTO;
+import com.api.crud.services.models.response.empleado.EmpleadosResponseDTO;
 import com.api.crud.services.models.response.ResponseHandler;
-import com.api.crud.services.models.response.UserResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;//check
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,28 +22,23 @@ public class EmpleadoServiceImpl implements IEmpleadoService {
     @Autowired
     private IEmpleadoRepository empleadoRepository;
 
-    public ResponseEntity<Object> createEmpleado(Empleado empleado) throws Exception{
+    public ResponseEntity<Object> createEmpleado(EmpleadoDTO body) throws Exception{
         try{
-            // Check if the required fields are present
-            if (empleado.getDni() == null || empleado.getDni().isEmpty()) {
-                return ResponseHandler.responseBuilder(HttpStatus.BAD_REQUEST, "Falta campo 'dni'");
-            }
-            if (empleado.getNombre() == null || empleado.getNombre().isEmpty()) {
-                return ResponseHandler.responseBuilder(HttpStatus.BAD_REQUEST, "Falta campo 'nombre'");
-            }
-            if (empleado.getApellido() == null || empleado.getApellido().isEmpty()) {
-                return ResponseHandler.responseBuilder(HttpStatus.BAD_REQUEST, "Falta campo 'apellido'");
-            }
-
-            // Check if the DNI already exists
-            Optional<Empleado> emp = empleadoRepository.findByDni(empleado.getDni());
+            Optional<Empleado> emp = empleadoRepository.findByDni(body.getDni());
             if (emp.isPresent()) {
                 return ResponseHandler.responseBuilder(HttpStatus.CONFLICT, "DNI ya existe!");
             }
 
-            // Save the new employee
-            empleadoRepository.save(empleado);
-            return ResponseHandler.responseBuilder(HttpStatus.CREATED, "Empleado creado con éxito!", empleado);
+            Empleado nuevoEmpleado = new Empleado(body.getDni(), body.getNombre(), body.getApellido());
+            empleadoRepository.save(nuevoEmpleado);
+
+            EmpleadoResponseDTO response = new EmpleadoResponseDTO();
+            response.setId(nuevoEmpleado.getId());
+            response.setDni(nuevoEmpleado.getDni());
+            response.setNombre(nuevoEmpleado.getNombre());
+            response.setApellido(nuevoEmpleado.getApellido());
+
+            return ResponseHandler.responseBuilder(HttpStatus.CREATED, "Empleado creado con éxito!", response);
         }catch(Exception e){
             return ResponseHandler.responseBuilder(HttpStatus.INTERNAL_SERVER_ERROR, "Error al crear empleado: " + e.getMessage());
         }
@@ -54,13 +47,13 @@ public class EmpleadoServiceImpl implements IEmpleadoService {
     public ResponseEntity<Object> findAll() {
         try {
             List<Empleado> allEmpleados = empleadoRepository.findAll();
-
             if (allEmpleados.isEmpty()) {
                 return ResponseHandler.responseBuilder(HttpStatus.NO_CONTENT, "No hay empleados disponibles");
             }
 
             EmpleadosResponseDTO response = new EmpleadosResponseDTO();
             response.setEmpleados(allEmpleados);
+
             return ResponseHandler.responseBuilder(HttpStatus.OK, "Empleados encontrados con exito", response);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -81,12 +74,13 @@ public class EmpleadoServiceImpl implements IEmpleadoService {
         }
     }
 
-    public ResponseEntity<Object> updateEmpleado(Long id, EmpleadoDTO empleadoDetails) throws Exception {
+    public ResponseEntity<Object> updateEmpleado(Long id, EmpleadoDTO body) throws Exception {
         try{
-            Optional<Empleado> optionalUser = empleadoRepository.findById(id);
+            Optional<Empleado> optionalEmpleado = empleadoRepository.findById(id);
 
-            if (optionalUser.isPresent()) {
-                Empleado empleadoToUpdate = getEmpleadoToUpdate(empleadoDetails, optionalUser);
+            if (optionalEmpleado.isPresent()) {
+                Empleado empleado = optionalEmpleado.get();
+                Empleado empleadoToUpdate = getEmpleadoToUpdate(body, empleado);
                 empleadoRepository.save(empleadoToUpdate);
                 return ResponseHandler.responseBuilder(HttpStatus.OK, "Empleado actualizado con exito", empleadoToUpdate);
             } else {
@@ -97,17 +91,16 @@ public class EmpleadoServiceImpl implements IEmpleadoService {
         }
     }
 
-    private static Empleado getEmpleadoToUpdate(EmpleadoDTO empleadoDetails, Optional<Empleado> optionalUser) {
-        Empleado empleadoToUpdate = optionalUser.get();
-        if(empleadoDetails.getDni().isPresent()){
-            empleadoToUpdate.setDni(empleadoDetails.getDni().get());
+    private static Empleado getEmpleadoToUpdate(EmpleadoDTO body, Empleado empleado) {
+        if(!body.getDni().isEmpty()){
+            empleado.setDni(body.getDni());
         }
-        if(empleadoDetails.getNombre().isPresent()){
-            empleadoToUpdate.setNombre(empleadoDetails.getNombre().get());
+        if(!body.getNombre().isEmpty()){
+            empleado.setNombre(body.getNombre());
         }
-        if(empleadoDetails.getApellido().isPresent()){
-            empleadoToUpdate.setApellido(empleadoDetails.getApellido().get());
+        if(!body.getApellido().isEmpty()){
+            empleado.setApellido(body.getApellido());
         }
-        return empleadoToUpdate;
+        return empleado;
     }
 }

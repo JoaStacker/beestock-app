@@ -17,7 +17,7 @@ public class Pais {
     @Column
     private String nombrePais;
 
-    @OneToMany(mappedBy = "pais", cascade = CascadeType.ALL) // Relación inversa
+    @OneToMany(mappedBy = "pais", cascade = CascadeType.ALL, fetch = FetchType.LAZY) // Relación inversa
     @JsonIgnore
     private List<Provincia> provincias;
 

@@ -2,8 +2,6 @@ package com.api.crud.controllers;
 
 import com.api.crud.services.IAuthService;
 import com.api.crud.services.models.dtos.EmpleadoDTO;
-import com.api.crud.services.models.response.EmpleadosResponseDTO;
-import com.api.crud.services.models.response.ResponseDTO;
 import com.api.crud.persistence.entities.Empleado;
 import com.api.crud.services.IEmpleadoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,18 +9,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
 @RestController
-@RequestMapping("/empleado")
+@RequestMapping("/empleados")
 public class EmpleadoController {
 
     @Autowired
     private IEmpleadoService empleadoService;
+
     @Autowired
     private IAuthService authService;
 
     @PostMapping
-    private ResponseEntity<Object> create(@RequestBody Empleado empleado) throws Exception {
+    private ResponseEntity<Object> create(@RequestBody EmpleadoDTO empleado) throws Exception {
         return new ResponseEntity<>(empleadoService.createEmpleado(empleado), HttpStatus.OK);
     }
 

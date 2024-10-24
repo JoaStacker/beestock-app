@@ -7,13 +7,13 @@ import com.api.crud.persistence.entities.Puesto;
 import com.api.crud.persistence.repositories.IEmpleadoRepository;
 import com.api.crud.persistence.repositories.IHistorialPuestoRepository;
 import com.api.crud.persistence.repositories.IPuestoRepository;
-import com.api.crud.services.IEmpleadoService;
 import com.api.crud.services.IHistorialPuestoService;
-import com.api.crud.services.models.dtos.EmpleadoDTO;
 import com.api.crud.services.models.dtos.HistorialPuestoDTO;
-import com.api.crud.services.models.response.EmpleadosResponseDTO;
-import com.api.crud.services.models.response.HistorialPuestoEmpleadoResponseDTO;
+import com.api.crud.services.models.response.empleado.EmpleadoResponseDTO;
+import com.api.crud.services.models.response.historialpuestos.HistorialPuestoEmpleadoResponseDTO;
 import com.api.crud.services.models.response.ResponseHandler;
+import com.api.crud.services.models.response.historialpuestos.HistorialPuestoResponseDTO;
+import com.api.crud.services.models.response.puesto.PuestoResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +31,6 @@ public class HistorialPuestoServiceImpl implements IHistorialPuestoService {
     private IPuestoRepository puestoRepository;
     @Autowired
     private IEmpleadoRepository empleadoRepository;
-
 
     public ResponseEntity<Object> create(HistorialPuestoDTO body) throws Exception{
         try{
@@ -58,7 +57,17 @@ public class HistorialPuestoServiceImpl implements IHistorialPuestoService {
             nuevoHistorialPuesto.setPuesto(pue.get());
 
             historialPuestoRepository.save(nuevoHistorialPuesto);
-            return ResponseHandler.responseBuilder(HttpStatus.CREATED, "Nuevo puesto asignado al empleado.", nuevoHistorialPuesto);
+
+            HistorialPuestoResponseDTO response = new HistorialPuestoResponseDTO();
+            response.setId(nuevoHistorialPuesto.getId());
+            response.setFechaIngreso(nuevoHistorialPuesto.getFechaIngreso());
+            response.setFechaSalida(nuevoHistorialPuesto.getFechaSalida());
+            Puesto puesto = nuevoHistorialPuesto.getPuesto();
+            response.setPuesto(new PuestoResponseDTO(puesto.getId(), puesto.getNombre()));
+            Empleado empleado = nuevoHistorialPuesto.getEmpleado();
+            response.setEmpleado(new EmpleadoResponseDTO(empleado.getId(), empleado.getDni(), empleado.getNombre(), empleado.getApellido()));
+
+            return ResponseHandler.responseBuilder(HttpStatus.CREATED, "Nuevo puesto asignado al empleado.", response);
         }catch(Exception e){
             return ResponseHandler.responseBuilder(HttpStatus.INTERNAL_SERVER_ERROR, "Error al crear historial de puesto: " + e.getMessage());
         }
@@ -74,6 +83,7 @@ public class HistorialPuestoServiceImpl implements IHistorialPuestoService {
             HistorialPuestoEmpleadoResponseDTO response = new HistorialPuestoEmpleadoResponseDTO();
             response.setEmpleadoId(id);
             response.setHistorialPuestos(historialPuestos);
+
             return ResponseHandler.responseBuilder(HttpStatus.OK, "Historial de puestos del empleado", response);
         }catch(Exception e){
             return ResponseHandler.responseBuilder(HttpStatus.INTERNAL_SERVER_ERROR, "Error al crear historial de puesto: " + e.getMessage());

@@ -14,7 +14,7 @@ public class Provincia {
     @Column
     private String nombreProvincia;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "pais_id", nullable = false) // Clave foránea
     private Pais pais;
 

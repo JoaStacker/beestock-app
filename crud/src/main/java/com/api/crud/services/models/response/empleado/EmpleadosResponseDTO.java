@@ -1,4 +1,4 @@
-package com.api.crud.services.models.response;
+package com.api.crud.services.models.response.empleado;
 import com.api.crud.persistence.entities.Empleado;
 import java.util.List;
 

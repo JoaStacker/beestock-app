@@ -35,6 +35,7 @@ public class SecurityConfiguration {
                         csrf.disable())
                 .authorizeHttpRequests(authRequest ->
                         authRequest
+                                //TODO controlar mejor las URL para la autenticacióm.
                                 .requestMatchers("/**").permitAll()
                                 .anyRequest().authenticated()
                 )

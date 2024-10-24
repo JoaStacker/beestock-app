@@ -1,7 +1,6 @@
 package com.api.crud.persistence.entities;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
 
 @Entity
