@@ -29,7 +29,15 @@ public class VentaController {
         return new ResponseEntity<>(ventaService.createVenta(venta), HttpStatus.OK);
     }
 
+    @GetMapping("/{:id}")
+    private ResponseEntity<Object> getOne(@PathVariable("id") Long id) throws Exception {
+        return new ResponseEntity<>(ventaService.findOne(id), HttpStatus.OK);
+    }
 
+    @GetMapping("/cliente/{:id}")
+    private ResponseEntity<Object> getVentasByCliente(@PathVariable("id") Long id) throws Exception {
+        return new ResponseEntity<>(ventaService.getAllByCliente(id), HttpStatus.OK);
+    }
 
 }
 

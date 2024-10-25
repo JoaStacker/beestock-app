@@ -47,6 +47,9 @@ public class VentaServiceImpl implements IVentaService {
                 VentaResponseDTO ven = new VentaResponseDTO();
                 ven.setId(venta.getId());
                 ven.setFechaVenta(venta.getFechaVenta());
+                ven.setCantidadCuotas(venta.getCantidadCuotas());
+                ven.setMontoTotal(venta.getMontoTotal());
+                ven.setEstado(venta.getEstado());
                 Empleado empleado = venta.getEmpleado();
                 ven.setEmpleado(new EmpleadoResponseDTO(empleado.getId(), empleado.getDni(), empleado.getNombre(), empleado.getApellido()));
                 ventasList.add(ven);
@@ -100,4 +103,54 @@ public class VentaServiceImpl implements IVentaService {
                     + e.getMessage());
         }
     }
+
+    public ResponseEntity<Object> findOne(Long id) throws Exception {
+        try{
+            Optional<Venta> ventaFound = ventaRepository.findById(id);
+            if(ventaFound.isPresent()){
+                Venta venta = ventaFound.get();
+                VentaResponseDTO response = new VentaResponseDTO();
+                response.setId(venta.getId());
+                response.setFechaVenta(venta.getFechaVenta());
+                Empleado empleado = venta.getEmpleado();
+//                Cliente cliente = venta.getCliente();
+                response.setEmpleado(new EmpleadoResponseDTO(empleado.getId(), empleado.getDni(), empleado.getNombre(), empleado.getApellido()));
+//                ven.setCliente(new ClienteResponseDTO());
+
+                return ResponseHandler.responseBuilder(HttpStatus.OK, "Venta encontrado con exito", response);
+            }else{
+                return ResponseHandler.responseBuilder(HttpStatus.NO_CONTENT, "Venta no existe");
+            }
+        }catch(Exception e){
+            throw new Exception(e.toString());
+        }
+    }
+
+
+    public ResponseEntity<Object> getAllByCliente(Long id) throws Exception {
+        try{
+            List<Venta> allVentas = ventaRepository.findAllByClienteId(id);
+            if (allVentas.isEmpty()) {
+                return ResponseHandler.responseBuilder(HttpStatus.NO_CONTENT, "No hay ventas para el cliente");
+            }
+
+            VentasResponseDTO response = new VentasResponseDTO();
+            List<VentaResponseDTO> ventasList = new ArrayList<>();
+            for(Venta venta: allVentas){
+                VentaResponseDTO ven = new VentaResponseDTO();
+                ven.setId(venta.getId());
+                ven.setFechaVenta(venta.getFechaVenta());
+                Empleado empleado = venta.getEmpleado();
+                ven.setEmpleado(new EmpleadoResponseDTO(empleado.getId(), empleado.getDni(), empleado.getNombre(), empleado.getApellido()));
+                ventasList.add(ven);
+            }
+            response.setVentas(ventasList);
+
+            return ResponseHandler.responseBuilder(HttpStatus.OK, "Ventas devueltas con exito del cliente", response);
+        }catch(Exception e){
+            return ResponseHandler.responseBuilder(HttpStatus.INTERNAL_SERVER_ERROR, "Error al listar Ventas del cliente: "
+                    + e.getMessage());
+        }
+    }
+
 }

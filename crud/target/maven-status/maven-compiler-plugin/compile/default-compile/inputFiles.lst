@@ -8,6 +8,7 @@
 /home/joessar/utn/admin/beestock-app/crud/src/main/java/com/api/crud/controllers/ProveedorController.java
 /home/joessar/utn/admin/beestock-app/crud/src/main/java/com/api/crud/controllers/PuestoController.java
 /home/joessar/utn/admin/beestock-app/crud/src/main/java/com/api/crud/controllers/UserController.java
+/home/joessar/utn/admin/beestock-app/crud/src/main/java/com/api/crud/controllers/VentaController.java
 /home/joessar/utn/admin/beestock-app/crud/src/main/java/com/api/crud/persistence/entities/Direccion.java
 /home/joessar/utn/admin/beestock-app/crud/src/main/java/com/api/crud/persistence/entities/Empleado.java
 /home/joessar/utn/admin/beestock-app/crud/src/main/java/com/api/crud/persistence/entities/HistorialPuesto.java
@@ -18,6 +19,7 @@
 /home/joessar/utn/admin/beestock-app/crud/src/main/java/com/api/crud/persistence/entities/Puesto.java
 /home/joessar/utn/admin/beestock-app/crud/src/main/java/com/api/crud/persistence/entities/TipoServicio.java
 /home/joessar/utn/admin/beestock-app/crud/src/main/java/com/api/crud/persistence/entities/UserEntity.java
+/home/joessar/utn/admin/beestock-app/crud/src/main/java/com/api/crud/persistence/entities/Venta.java
 /home/joessar/utn/admin/beestock-app/crud/src/main/java/com/api/crud/persistence/repositories/IEmpleadoRepository.java
 /home/joessar/utn/admin/beestock-app/crud/src/main/java/com/api/crud/persistence/repositories/IHistorialPuestoRepository.java
 /home/joessar/utn/admin/beestock-app/crud/src/main/java/com/api/crud/persistence/repositories/ILocalidadRepository.java
@@ -25,6 +27,7 @@
 /home/joessar/utn/admin/beestock-app/crud/src/main/java/com/api/crud/persistence/repositories/IPuestoRepository.java
 /home/joessar/utn/admin/beestock-app/crud/src/main/java/com/api/crud/persistence/repositories/ITipoServicioRepository.java
 /home/joessar/utn/admin/beestock-app/crud/src/main/java/com/api/crud/persistence/repositories/IUserRepository.java
+/home/joessar/utn/admin/beestock-app/crud/src/main/java/com/api/crud/persistence/repositories/IVentaRepository.java
 /home/joessar/utn/admin/beestock-app/crud/src/main/java/com/api/crud/security/JWTAuthorizationFilter.java
 /home/joessar/utn/admin/beestock-app/crud/src/main/java/com/api/crud/security/SecurityConfiguration.java
 /home/joessar/utn/admin/beestock-app/crud/src/main/java/com/api/crud/services/IAuthService.java
@@ -34,6 +37,7 @@
 /home/joessar/utn/admin/beestock-app/crud/src/main/java/com/api/crud/services/IProveedorService.java
 /home/joessar/utn/admin/beestock-app/crud/src/main/java/com/api/crud/services/IPuestoService.java
 /home/joessar/utn/admin/beestock-app/crud/src/main/java/com/api/crud/services/IUserService.java
+/home/joessar/utn/admin/beestock-app/crud/src/main/java/com/api/crud/services/IVentaService.java
 /home/joessar/utn/admin/beestock-app/crud/src/main/java/com/api/crud/services/impl/AuthServiceImpl.java
 /home/joessar/utn/admin/beestock-app/crud/src/main/java/com/api/crud/services/impl/EmpleadoServiceImpl.java
 /home/joessar/utn/admin/beestock-app/crud/src/main/java/com/api/crud/services/impl/HistorialPuestoServiceImpl.java
@@ -41,6 +45,7 @@
 /home/joessar/utn/admin/beestock-app/crud/src/main/java/com/api/crud/services/impl/ProveedorServiceImpl.java
 /home/joessar/utn/admin/beestock-app/crud/src/main/java/com/api/crud/services/impl/PuestoServiceImpl.java
 /home/joessar/utn/admin/beestock-app/crud/src/main/java/com/api/crud/services/impl/UserServiceImpl.java
+/home/joessar/utn/admin/beestock-app/crud/src/main/java/com/api/crud/services/impl/VentaServiceImpl.java
 /home/joessar/utn/admin/beestock-app/crud/src/main/java/com/api/crud/services/models/dtos/EmpleadoDTO.java
 /home/joessar/utn/admin/beestock-app/crud/src/main/java/com/api/crud/services/models/dtos/HistorialPuestoDTO.java
 /home/joessar/utn/admin/beestock-app/crud/src/main/java/com/api/crud/services/models/dtos/LoginDTO.java
@@ -61,4 +66,6 @@
 /home/joessar/utn/admin/beestock-app/crud/src/main/java/com/api/crud/services/models/response/proveedor/ProveedoresResponseDTO.java
 /home/joessar/utn/admin/beestock-app/crud/src/main/java/com/api/crud/services/models/response/puesto/PuestoResponseDTO.java
 /home/joessar/utn/admin/beestock-app/crud/src/main/java/com/api/crud/services/models/response/puesto/PuestosResponseDTO.java
+/home/joessar/utn/admin/beestock-app/crud/src/main/java/com/api/crud/services/models/response/ventas/VentaResponseDTO.java
+/home/joessar/utn/admin/beestock-app/crud/src/main/java/com/api/crud/services/models/response/ventas/VentasResponseDTO.java
 /home/joessar/utn/admin/beestock-app/crud/src/main/java/com/api/crud/services/models/validation/UserValidation.java

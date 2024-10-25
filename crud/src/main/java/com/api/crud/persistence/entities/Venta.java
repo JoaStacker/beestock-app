@@ -32,7 +32,9 @@ public class Venta {
     @JoinColumn(name = "empleado_id", nullable = false) // Clave foránea
     private Empleado empleado;
 
-    //TODO agregar cliente
+//    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    @JoinColumn(name = "cliente_id", nullable = false) // Clave foránea
+//    private Cliente cliente;
 
     public Venta() {
     }
