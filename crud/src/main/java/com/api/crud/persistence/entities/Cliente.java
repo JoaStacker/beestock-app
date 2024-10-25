@@ -1,6 +1,7 @@
 package com.api.crud.persistence.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 
@@ -27,12 +28,36 @@ public class Cliente {
     @Column
     private LocalDateTime fechaNacimiento;
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "cliente")
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "condicion_tributaria_id", referencedColumnName = "id") // Clave foránea
     private CondicionTributaria condicionTributaria;
+
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "direccion_id", referencedColumnName = "id")
+    private Direccion direccion;
+
+
 
     private Boolean borrado = false;
 
     // Getters y Setters
+    public Cliente() {}
+
+    public Cliente(String cuit, String nombre, String apellido, String email, LocalDateTime fechaNacimiento, CondicionTributaria condicionTributaria, String calle, String numero, String piso, Localidad localidad) {
+        this.cuit = cuit;
+        this.nombre = nombre;
+        this.apellido = apellido;
+        this.email = email;
+        this.fechaNacimiento = fechaNacimiento;
+        this.condicionTributaria = condicionTributaria;
+        this.direccion = new Direccion(calle, numero, piso, localidad);
+
+    }
+
+
+
+
     public Long getId() {
         return id;
     }
@@ -81,16 +106,22 @@ public class Cliente {
         this.fechaNacimiento = fechaNacimiento;
     }
 
+    public Direccion getDireccion() {
+        return direccion;
+    }
+
+    public void setDireccion(Direccion direccion) {
+        this.direccion = direccion;
+    }
+
     public CondicionTributaria getCondicionTributaria() {
         return condicionTributaria;
     }
 
     public void setCondicionTributaria(CondicionTributaria condicionTributaria) {
         this.condicionTributaria = condicionTributaria;
-        if (condicionTributaria != null) {
-            condicionTributaria.setCliente(this); // Asegurarse de mantener la relación
-        }
     }
+
 
     public Boolean getBorrado() {
         return borrado;

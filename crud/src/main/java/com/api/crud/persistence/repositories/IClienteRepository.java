@@ -11,7 +11,7 @@ import java.util.Optional;
 @Repository
 public interface IClienteRepository extends JpaRepository<Cliente, Long> {
     // Original method with all three parameters
-    @Query(value = "SELECT * FROM cliente WHERE cuit LIKE %:searchstring% OR nombre LIKE %:searchstring% OR apellido LIKE %:searchstring% OR email LIKE %:searchstring% OR MONTH(fecha_nacimiento) = :searchstring",
+    @Query(value = "SELECT * FROM cliente WHERE (cuit LIKE %:searchstring% OR nombre LIKE %:searchstring% OR apellido LIKE %:searchstring% OR email LIKE %:searchstring% OR MONTH(fecha_nacimiento) = :searchstring) AND borrado = false",
             nativeQuery = true)
     Optional<Cliente> findByFilter(String searchstring);
 

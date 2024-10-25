@@ -13,11 +13,16 @@ public class CondicionTributaria {
     @Column
     private String tipo;
 
-    @OneToOne
-    @JoinColumn(name = "cliente_id") // Nombre de la columna en la tabla CondicionTributaria
-    private Cliente cliente;
+
 
     // Getters y Setters
+    public CondicionTributaria(){
+    }
+
+    public CondicionTributaria(String tipo) {
+        this.tipo = tipo;
+    }
+
     public Long getId() {
         return id;
     }
@@ -34,11 +39,4 @@ public class CondicionTributaria {
         this.tipo = tipo;
     }
 
-    public Cliente getCliente() {
-        return cliente;
-    }
-
-    public void setCliente(Cliente cliente) {
-        this.cliente = cliente;
-    }
 }

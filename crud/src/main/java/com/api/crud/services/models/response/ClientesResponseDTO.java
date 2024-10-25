@@ -1,24 +1,26 @@
 package com.api.crud.services.models.response;
 
 import com.api.crud.persistence.entities.Cliente;
+import com.api.crud.services.models.response.Cliente.ClienteResponseDTO;
 
 import java.util.List;
 
 public class ClientesResponseDTO {
-    private List<Cliente> clientes;
+    private List<ClienteResponseDTO> clientes;
 
     public ClientesResponseDTO() {
     }
 
-    public ClientesResponseDTO(List<Cliente> cls) {
+    public ClientesResponseDTO(List<ClienteResponseDTO> cls) {
         this.clientes = cls;
     }
 
-    public List<Cliente> getClientes() {
+
+    public List<ClienteResponseDTO> getClientes() {
         return clientes;
     }
 
-    public void setClientes(List<Cliente> clientes) {
+    public void setClientes(List<ClienteResponseDTO> clientes) {
         this.clientes = clientes;
     }
 

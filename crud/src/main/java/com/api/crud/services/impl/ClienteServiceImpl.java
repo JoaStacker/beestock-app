@@ -1,18 +1,26 @@
 package com.api.crud.services.impl;
 
 
-import com.api.crud.persistence.entities.Cliente;
+import com.api.crud.persistence.entities.*;
 import com.api.crud.persistence.repositories.IClienteRepository;
+import com.api.crud.persistence.repositories.ICondicionTributariaRepository;
+import com.api.crud.persistence.repositories.ILocalidadRepository;
 import com.api.crud.services.IClienteService;
 import com.api.crud.services.models.dtos.ClienteDTO;
+import com.api.crud.services.models.response.Cliente.ClienteResponseDTO;
 import com.api.crud.services.models.response.ClientesResponseDTO;
+import com.api.crud.services.models.response.CondicionTributaria.CondicionTributariaResponseDTO;
 import com.api.crud.services.models.response.ResponseHandler;
+import com.api.crud.services.models.response.direccion.DireccionResponseDTO;
+import com.api.crud.services.models.response.direccion.LocalidadResponseDTO;
+import com.api.crud.services.models.response.direccion.PaisResponseDTO;
+import com.api.crud.services.models.response.direccion.ProvinciaResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,34 +30,64 @@ public class ClienteServiceImpl implements IClienteService {
     @Autowired
     private IClienteRepository clienteRepository;
 
-    public ResponseEntity<Object> createCliente(Cliente cliente) throws Exception{
-        try{
-            // Check if the required fields are present
-            if (cliente.getCuit() == null || cliente.getCuit().isEmpty()) {
-                return ResponseHandler.responseBuilder(HttpStatus.BAD_REQUEST, "Falta campo 'cuit'");
-            }
-            if (cliente.getNombre() == null || cliente.getNombre().isEmpty()) {
-                return ResponseHandler.responseBuilder(HttpStatus.BAD_REQUEST, "Falta campo 'nombre'");
-            }
-            if (cliente.getApellido() == null || cliente.getApellido().isEmpty()) {
-                return ResponseHandler.responseBuilder(HttpStatus.BAD_REQUEST, "Falta campo 'apellido'");
-            }
-            if (cliente.getEmail() == null || cliente.getEmail().isEmpty()) {
-                return ResponseHandler.responseBuilder(HttpStatus.BAD_REQUEST, "Falta campo 'email'");
-            }
-//            if (cliente.getFechaNacimiento() == null) {
-//                return ResponseHandler.responseBuilder(HttpStatus.BAD_REQUEST, "Falta campo 'fecha de nacimiento'");
-//            }
+    @Autowired
+    private ILocalidadRepository localidadRepository;
 
-            //Checkear si CUIT ya existe
-            Optional<Cliente> cli = clienteRepository.findByCuit(cliente.getCuit());
+    @Autowired
+    private ICondicionTributariaRepository condicionTributariaRepository;
+
+    public ResponseEntity<Object> createCliente(ClienteDTO body) throws Exception{
+        try{
+
+            // Validar existencias en base de datos.
+            Optional<Cliente> cli = clienteRepository.findByCuit(body.getCuit());
             if (cli.isPresent()) {
                 return ResponseHandler.responseBuilder(HttpStatus.CONFLICT, "CUIT ya existe!");
             }
 
-            // Save the new employee
-            clienteRepository.save(cliente);
-            return ResponseHandler.responseBuilder(HttpStatus.CREATED, "Cliente creado con éxito!", cliente);
+            Optional<Localidad> localidad = localidadRepository.findById(body.getLocalidadId());
+            if(localidad.isEmpty()){
+                return ResponseHandler.responseBuilder(HttpStatus.CONFLICT, "Localidad id no existe!");
+            }
+
+            Optional<CondicionTributaria> condicionTributaria = condicionTributariaRepository.findById(body.getCondicionTributariaId());
+            if(condicionTributaria.isEmpty()){
+                return ResponseHandler.responseBuilder(HttpStatus.CONFLICT, "Condicion Tributaria id no existe!");
+            }
+
+
+            Cliente nuevoCliente = new Cliente(body.getCuit(), body.getNombre(), body.getApellido(), body.getEmail(), body.getFechaNacimiento(), condicionTributaria.get(),
+                    body.getCalle(), body.getNumero(), body.getPiso(), localidad.get());
+
+            clienteRepository.save(nuevoCliente);
+
+            ClienteResponseDTO response = new ClienteResponseDTO();
+            response.setId(nuevoCliente.getId());
+            response.setCuit(nuevoCliente.getCuit());
+            response.setNombre(nuevoCliente.getNombre());
+            response.setApellido(nuevoCliente.getApellido());
+            response.setEmail(nuevoCliente.getEmail());
+            response.setFechaNacimiento(nuevoCliente.getFechaNacimiento());
+
+            CondicionTributaria condTributaria = nuevoCliente.getCondicionTributaria();
+            CondicionTributariaResponseDTO cond = new CondicionTributariaResponseDTO(
+                    condTributaria.getId(),
+                    condTributaria.getTipo()
+            );
+            response.setCondicionTributaria(cond);
+
+            Direccion direccion = nuevoCliente.getDireccion();
+            DireccionResponseDTO dir = new DireccionResponseDTO(
+                    direccion.getId(),
+                    direccion.getCalle(),
+                    direccion.getNumero(),
+                    direccion.getPiso()
+            );
+            response.setDireccion(dir);
+
+            return ResponseHandler.responseBuilder(HttpStatus.CREATED, "Cliente creado con éxito!", response);
+
+
         }catch(Exception e){
             return ResponseHandler.responseBuilder(HttpStatus.INTERNAL_SERVER_ERROR, "Error al crear cliente: " + e.getMessage());
         }
@@ -58,13 +96,31 @@ public class ClienteServiceImpl implements IClienteService {
     public ResponseEntity<Object> findAll() {
         try {
             List<Cliente> allClientes = clienteRepository.findAll();
-
             if (allClientes.isEmpty()) {
                 return ResponseHandler.responseBuilder(HttpStatus.NO_CONTENT, "No hay clientes disponibles");
             }
 
             ClientesResponseDTO response = new ClientesResponseDTO();
-            response.setClientes(allClientes);
+            List<ClienteResponseDTO> clientesList = new ArrayList<>();
+            for(Cliente cliente: allClientes){
+                ClienteResponseDTO cli = new ClienteResponseDTO();
+                cli.setId(cliente.getId());
+                cli.setCuit(cliente.getCuit());
+                cli.setNombre(cliente.getNombre());
+                cli.setApellido(cliente.getApellido());
+                cli.setFechaNacimiento(cliente.getFechaNacimiento());
+                Direccion direccion = cliente.getDireccion();
+                DireccionResponseDTO dir = new DireccionResponseDTO(
+                        direccion.getId(),
+                        direccion.getCalle(),
+                        direccion.getNumero(),
+                        direccion.getPiso()
+                );
+                cli.setDireccion(dir);
+                clientesList.add(cli);
+            }
+            response.setClientes(clientesList);
+
             return ResponseHandler.responseBuilder(HttpStatus.OK, "Clientes encontrados con exito", response);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -74,25 +130,124 @@ public class ClienteServiceImpl implements IClienteService {
 
     public ResponseEntity<Object> findOne(Long id) throws Exception {
         try{
-            Optional<Cliente> cliente = clienteRepository.findById(id);
-            if(cliente.isPresent()){
-                return ResponseHandler.responseBuilder(HttpStatus.OK, "Cliente encontrado con exito", cliente);
+            Optional<Cliente> clienteFound = clienteRepository.findById(id);
+            if(clienteFound.isPresent()){
+                Cliente cliente = clienteFound.get();
+                ClienteResponseDTO response = new ClienteResponseDTO();
+                response.setId(cliente.getId());
+                response.setCuit(cliente.getCuit());
+                response.setNombre(cliente.getNombre());
+                response.setApellido(cliente.getApellido());
+                response.setFechaNacimiento(cliente.getFechaNacimiento());
+                Direccion direccion = cliente.getDireccion();
+                Localidad localidad = direccion.getLocalidad();
+                Provincia provincia = localidad.getProvincia();
+                Pais pais = provincia.getPais();
+
+                response.setDireccion(new DireccionResponseDTO(
+                        direccion.getId(),
+                        direccion.getCalle(),
+                        direccion.getNumero(),
+                        direccion.getPiso()
+                ));
+                response.setLocalidad(new LocalidadResponseDTO(
+                        localidad.getId(),
+                        localidad.getNombreLocalidad()
+                ));
+                response.setProvincia(new ProvinciaResponseDTO(
+                        provincia.getId(),
+                        provincia.getNombreProvincia()
+                ));
+                response.setPais(new PaisResponseDTO(
+                        pais.getId(),
+                        pais.getNombrePais()
+                ));
+
+                return ResponseHandler.responseBuilder(HttpStatus.OK, "Cliente encontrado con exito", response);
             }else{
-                return ResponseHandler.responseBuilder(HttpStatus.NO_CONTENT, "Cliente no existe", cliente);
+                return ResponseHandler.responseBuilder(HttpStatus.NO_CONTENT, "Cliente no existe");
             }
         }catch(Exception e){
             throw new Exception(e.toString());
         }
     }
 
-    public ResponseEntity<Object> updateCliente(Long id, ClienteDTO clienteDetails) throws Exception {
+    public ResponseEntity<Object> updateCliente(Long id, ClienteDTO body) throws Exception {
         try{
-            Optional<Cliente> optionalUser = clienteRepository.findById(id);
+            Optional<Cliente> optionalCliente = clienteRepository.findById(id);
 
-            if (optionalUser.isPresent()) {
-                Cliente clienteToUpdate = getClienteToUpdate(clienteDetails, optionalUser);
+            if (optionalCliente.isPresent()) {
+                Cliente clienteToUpdate = optionalCliente.get();
+                if(body.getCuit() != null){
+                    clienteToUpdate.setCuit(body.getCuit());
+                }
+                if(body.getNombre() != null){
+                    clienteToUpdate.setNombre(body.getNombre());
+                }
+                if(body.getApellido() != null){
+                    clienteToUpdate.setApellido(body.getApellido());
+                }
+                if(body.getFechaNacimiento() != null){
+                    clienteToUpdate.setFechaNacimiento(body.getFechaNacimiento());
+                }
+                if(body.getCalle() != null){
+                    Direccion direccion = clienteToUpdate.getDireccion();
+                    direccion.setCalle(body.getCalle());
+                    clienteToUpdate.setDireccion(direccion);
+                }
+                if(body.getNumero() != null){
+                    Direccion direccion = clienteToUpdate.getDireccion();
+                    direccion.setNumero(body.getNumero());
+                    clienteToUpdate.setDireccion(direccion);
+                }
+                if(body.getPiso() != null){
+                    Direccion direccion = clienteToUpdate.getDireccion();
+                    direccion.setPiso(body.getPiso());
+                    clienteToUpdate.setDireccion(direccion);
+                }
+                if(body.getLocalidadId() != null){
+                    Direccion direccion = clienteToUpdate.getDireccion();
+                    Optional<Localidad> localidad = localidadRepository.findById(body.getLocalidadId());
+                    if(localidad.isEmpty()){
+                        return ResponseHandler.responseBuilder(HttpStatus.CONFLICT, "Localidad id no existe!", localidad);
+                    }
+                    direccion.setLocalidad(localidad.get());
+                    clienteToUpdate.setDireccion(direccion);
+                }
+
                 clienteRepository.save(clienteToUpdate);
-                return ResponseHandler.responseBuilder(HttpStatus.OK, "Cliente actualizado con exito", clienteToUpdate);
+
+                ClienteResponseDTO response = new ClienteResponseDTO();
+                response.setId(clienteToUpdate.getId());
+                response.setCuit(clienteToUpdate.getCuit());
+                response.setNombre(clienteToUpdate.getNombre());
+                response.setApellido(clienteToUpdate.getApellido());
+                response.setFechaNacimiento(clienteToUpdate.getFechaNacimiento());
+                Direccion direccion = clienteToUpdate.getDireccion();
+                Localidad localidad = direccion.getLocalidad();
+                Provincia provincia = localidad.getProvincia();
+                Pais pais = provincia.getPais();
+
+                response.setDireccion(new DireccionResponseDTO(
+                        direccion.getId(),
+                        direccion.getCalle(),
+                        direccion.getNumero(),
+                        direccion.getPiso()
+                ));
+                response.setLocalidad(new LocalidadResponseDTO(
+                        localidad.getId(),
+                        localidad.getNombreLocalidad()
+                ));
+                response.setProvincia(new ProvinciaResponseDTO(
+                        provincia.getId(),
+                        provincia.getNombreProvincia()
+                ));
+                response.setPais(new PaisResponseDTO(
+                        pais.getId(),
+                        pais.getNombrePais()
+                ));
+
+                return ResponseHandler.responseBuilder(HttpStatus.OK, "Cliente actualizado con exito", response);
             } else {
                 return ResponseHandler.responseBuilder(HttpStatus.CONFLICT, "Cliente no existe");
             }
@@ -101,32 +256,16 @@ public class ClienteServiceImpl implements IClienteService {
         }
     }
 
-    private static Cliente getClienteToUpdate(ClienteDTO clienteDetails, Optional<Cliente> optionalUser) {
-        Cliente clienteToUpdate = optionalUser.get();
-        if(clienteDetails.getCuit().isPresent()){
-            clienteToUpdate.setCuit(clienteDetails.getCuit().get());
-        }
-        if(clienteDetails.getNombre().isPresent()){
-            clienteToUpdate.setNombre(clienteDetails.getNombre().get());
-        }
-        if(clienteDetails.getApellido().isPresent()){
-            clienteToUpdate.setApellido(clienteDetails.getApellido().get());
-        }
-        if(clienteDetails.getEmail().isPresent()){
-            clienteToUpdate.setEmail(clienteDetails.getEmail().get());
-        }
-        return clienteToUpdate;
-    }
 
     public ResponseEntity<Object> deleteCliente(Long id, ClienteDTO clienteDetails) throws Exception {
 
         try{
-            Optional<Cliente> optionalUser = clienteRepository.findById(id);
+            Optional<Cliente> optionalCliente = clienteRepository.findById(id);
 
-            if (optionalUser.isPresent()) {
-                Cliente clienteToDelete = getClienteToUpdate(clienteDetails, optionalUser);
-                clienteToDelete.setBorrado(true);
-                clienteRepository.save(clienteToDelete);
+            if (optionalCliente.isPresent()) {
+               // Cliente clienteToDelete = getClienteToUpdate(clienteDetails, optionalCliente);
+                // clienteToDelete.setBorrado(true);
+                //clienteRepository.save(clienteToDelete);
                 return ResponseHandler.responseBuilder(HttpStatus.OK, "Cliente borrado con exito");
             } else {
                 return ResponseHandler.responseBuilder(HttpStatus.CONFLICT, "Cliente no existe");
@@ -140,9 +279,16 @@ public class ClienteServiceImpl implements IClienteService {
         try{
             Optional<Cliente> cliente = clienteRepository.findByFilter(mes);
             if(cliente.isPresent()){
-                return ResponseHandler.responseBuilder(HttpStatus.OK, "Cliente encontrado con exito", cliente);
+                Cliente cli = cliente.get();
+                ClienteResponseDTO response = new ClienteResponseDTO();
+                response.setId(cli.getId());
+                response.setCuit(cli.getCuit());
+                response.setNombre(cli.getNombre());
+                response.setApellido(cli.getApellido());
+                response.setEmail(cli.getEmail());
+                return ResponseHandler.responseBuilder(HttpStatus.OK, "Cliente encontrado con exito", response);
             }else{
-                return ResponseHandler.responseBuilder(HttpStatus.NO_CONTENT, "Cliente no existe", cliente);
+                return ResponseHandler.responseBuilder(HttpStatus.NO_CONTENT, "Cliente no existe");
             }
         }catch(Exception e){
             throw new Exception(e.toString());

@@ -22,8 +22,8 @@ public class ClienteController {
     private IAuthService authService;
 
     @PostMapping("")
-    private ResponseEntity<Object> create(@RequestBody Cliente cliente) throws Exception {
-        return new ResponseEntity<>(clienteService.createCliente(cliente), HttpStatus.OK);
+    private ResponseEntity<Object> create(@RequestBody ClienteDTO clienteDTO) throws Exception {
+        return new ResponseEntity<>(clienteService.createCliente(clienteDTO), HttpStatus.OK);
     }
 
     @GetMapping("")
