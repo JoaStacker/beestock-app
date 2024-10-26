@@ -1,1 +1,0 @@
-# beestock-app
