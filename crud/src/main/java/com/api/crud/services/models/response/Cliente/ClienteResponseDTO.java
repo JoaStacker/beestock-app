@@ -20,6 +20,7 @@ public class ClienteResponseDTO {
     private String apellido;
     private String email;
     private LocalDateTime fechaNacimiento;
+    private Boolean borrado;
     private DireccionResponseDTO direccion;
     private CondicionTributariaResponseDTO condicionTributaria;
     private LocalidadResponseDTO localidad;
@@ -87,6 +88,14 @@ public class ClienteResponseDTO {
 
     public void setFechaNacimiento(LocalDateTime fechaNacimiento) {
         this.fechaNacimiento = fechaNacimiento;
+    }
+
+    public Boolean getBorrado() {
+        return borrado;
+    }
+
+    public void setBorrado(Boolean borrado) {
+        this.borrado = borrado;
     }
 
     public CondicionTributariaResponseDTO getCondicionTributaria() {

@@ -95,7 +95,7 @@ public class ClienteServiceImpl implements IClienteService {
 
     public ResponseEntity<Object> findAll() {
         try {
-            List<Cliente> allClientes = clienteRepository.findAll();
+            List<Cliente> allClientes = clienteRepository.findAllNotDeleted();
             if (allClientes.isEmpty()) {
                 return ResponseHandler.responseBuilder(HttpStatus.NO_CONTENT, "No hay clientes disponibles");
             }
@@ -257,16 +257,25 @@ public class ClienteServiceImpl implements IClienteService {
     }
 
 
-    public ResponseEntity<Object> deleteCliente(Long id, ClienteDTO clienteDetails) throws Exception {
+    public ResponseEntity<Object> deleteCliente(Long id) throws Exception {
 
         try{
             Optional<Cliente> optionalCliente = clienteRepository.findById(id);
 
             if (optionalCliente.isPresent()) {
-               // Cliente clienteToDelete = getClienteToUpdate(clienteDetails, optionalCliente);
-                // clienteToDelete.setBorrado(true);
-                //clienteRepository.save(clienteToDelete);
-                return ResponseHandler.responseBuilder(HttpStatus.OK, "Cliente borrado con exito");
+                Cliente clienteToDelete = optionalCliente.get();
+                clienteToDelete.setBorrado(true);
+
+                clienteRepository.save(clienteToDelete);
+
+                ClienteResponseDTO response = new ClienteResponseDTO();
+                response.setBorrado(clienteToDelete.getBorrado());
+                response.setId(clienteToDelete.getId());
+                response.setNombre(clienteToDelete.getNombre());
+                response.setApellido(clienteToDelete.getApellido());
+
+
+                return ResponseHandler.responseBuilder(HttpStatus.OK, "Cliente eliminado con exito", response);
             } else {
                 return ResponseHandler.responseBuilder(HttpStatus.CONFLICT, "Cliente no existe");
             }
