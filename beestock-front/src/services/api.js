@@ -13,7 +13,7 @@ export const useApi = (url) => {
   useEffect(() => {
     const fetchDataAsync = async () => {
       try {
-        const result = await fetchData(url);
+        const result = await fetchData("http://localhost:8000/"+url);
         setData(result);
       } catch (err) {
         setError(err);
