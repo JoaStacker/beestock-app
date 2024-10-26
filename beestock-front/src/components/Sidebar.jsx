@@ -5,7 +5,7 @@ const Sidebar = () => {
   return (
     <Box sx={{ width: 250 }}>
       <List>
-        {['Clients', 'Suppliers', 'Sells', 'Incidents', 'Invoices', 'Employees'].map((text) => (
+        {['Clientes', 'Proveedores', 'Ventas', 'Incidentes', 'Facturas', 'Empleados'].map((text) => (
           <ListItem button key={text} component={Link} to={`/${text.replace(' ', '').toLowerCase()}`}>
             <ListItemText primary={text} />
           </ListItem>

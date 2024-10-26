@@ -3,14 +3,14 @@ import GenericTable from "../components/GenericTable";
 const SuppliersPage = () => {
     const columns = [
         { id: 'name', label: 'Name' },
-        { id: 'age', label: 'Age' },
+        { id: 'direccion', label: 'Direccion' },
         { id: 'email', label: 'Email' },
       ];
     
       const data = [
-        { name: 'John Doe', age: 30, email: 'john@example.com' },
-        { name: 'Jane Smith', age: 25, email: 'jane@example.com' },
-        { name: 'Alice Johnson', age: 35, email: 'alice@example.com' },
+        { name: 'Amazon Web Services', direccion: "www.aws.com", email: 'john@support.com' },
+        { name: 'Microsoft Azure', direccion: "www.azure.com", email: 'jane@support.com' },
+        { name: 'Vultr', direccion: "www.vultr.com", email: 'alice@support.com' },
       ];
     
       const actions = [
