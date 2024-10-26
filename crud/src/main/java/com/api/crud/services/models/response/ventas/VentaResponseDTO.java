@@ -1,5 +1,6 @@
 package com.api.crud.services.models.response.ventas;
 
+import com.api.crud.services.models.response.Cliente.ClienteResponseDTO;
 import com.api.crud.services.models.response.empleado.EmpleadoResponseDTO;
 
 import java.time.LocalDateTime;
@@ -11,8 +12,7 @@ public class VentaResponseDTO {
     private Long cantidadCuotas;
     private Long estado;
     private EmpleadoResponseDTO empleado;
-//    TODO agregar
-//    private ClienteResponseDTO cliente;
+    private ClienteResponseDTO cliente;
 
     public VentaResponseDTO() {
     }
@@ -63,5 +63,13 @@ public class VentaResponseDTO {
 
     public void setEmpleado(EmpleadoResponseDTO empleado) {
         this.empleado = empleado;
+    }
+
+    public ClienteResponseDTO getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(ClienteResponseDTO cliente) {
+        this.cliente = cliente;
     }
 }

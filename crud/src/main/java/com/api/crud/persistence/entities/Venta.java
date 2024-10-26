@@ -32,19 +32,20 @@ public class Venta {
     @JoinColumn(name = "empleado_id", nullable = false) // Clave foránea
     private Empleado empleado;
 
-//    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-//    @JoinColumn(name = "cliente_id", nullable = false) // Clave foránea
-//    private Cliente cliente;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "cliente_id", nullable = false) // Clave foránea
+    private Cliente cliente;
 
     public Venta() {
     }
 
-    public Venta(LocalDateTime fechaVenta, Float montoTotal, Long cantidadCuotas, Long estado, Empleado empleado) {
+    public Venta(LocalDateTime fechaVenta, Float montoTotal, Long cantidadCuotas, Long estado, Empleado empleado, Cliente cliente) {
         this.fechaVenta = fechaVenta;
         this.montoTotal = montoTotal;
         this.cantidadCuotas = cantidadCuotas;
         this.estado = estado;
         this.empleado = empleado;
+        this.cliente = cliente;
     }
 
     // Getters y Setters
@@ -95,5 +96,13 @@ public class Venta {
 
     public void setEmpleado(Empleado empleado) {
         this.empleado = empleado;
+    }
+
+    public Cliente getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
     }
 }

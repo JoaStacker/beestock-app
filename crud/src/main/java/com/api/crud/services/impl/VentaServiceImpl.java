@@ -2,11 +2,13 @@ package com.api.crud.services.impl;
 
 
 import com.api.crud.persistence.entities.*;
+import com.api.crud.persistence.repositories.IClienteRepository;
 import com.api.crud.persistence.repositories.IEmpleadoRepository;
 import com.api.crud.persistence.repositories.IVentaRepository;
 import com.api.crud.services.IVentaService;
 import com.api.crud.services.models.dtos.ProveedorDTO;
 import com.api.crud.services.models.dtos.VentaDTO;
+import com.api.crud.services.models.response.Cliente.ClienteResponseDTO;
 import com.api.crud.services.models.response.ResponseHandler;
 import com.api.crud.services.models.response.direccion.DireccionResponseDTO;
 import com.api.crud.services.models.response.direccion.LocalidadResponseDTO;
@@ -33,6 +35,9 @@ public class VentaServiceImpl implements IVentaService {
 
     @Autowired
     private IEmpleadoRepository empleadoRepository;
+
+    @Autowired
+    private IClienteRepository clienteRepository;
 
     public ResponseEntity<Object> getAll() throws Exception {
         try{
@@ -70,20 +75,20 @@ public class VentaServiceImpl implements IVentaService {
                 return ResponseHandler.responseBuilder(HttpStatus.CONFLICT, "El Empleado no existe.");
             }
 
-//              TODO
-//            Optional<Cliente> clienteExistente = clienteRepository.findById(body.getClienteId());
-//            if(clienteExistente.isEmpty()){
-//                return ResponseHandler.responseBuilder(HttpStatus.CONFLICT, "El Cliente no existe.");
-//            }
+            Optional<Cliente> clienteExistente = clienteRepository.findById(body.getClienteId());
+            if(clienteExistente.isEmpty()){
+                return ResponseHandler.responseBuilder(HttpStatus.CONFLICT, "El Cliente no existe.");
+            }
 
             Empleado empleado = empleadoExistente.get();
-//            Cliente cliente = clienteExistente.get();
+            Cliente cliente = clienteExistente.get();
             Venta venta = new Venta(
                     body.getFechaVenta(),
                     body.getMontoTotal(),
                     body.getCantidadCuotas(),
                     body.getEstado(),
-                    empleado
+                    empleado,
+                    cliente
             );
 
             // TODO Agregar detalles de venta
@@ -97,6 +102,13 @@ public class VentaServiceImpl implements IVentaService {
             response.setCantidadCuotas(venta.getCantidadCuotas());
             response.setEstado(venta.getEstado());
             response.setEmpleado(new EmpleadoResponseDTO(empleado.getId(), empleado.getDni(), empleado.getNombre(), empleado.getApellido()));
+            ClienteResponseDTO cli = new ClienteResponseDTO();
+            cli.setId(cliente.getId());
+            cli.setNombre(cliente.getNombre());
+            cli.setApellido(cliente.getApellido());
+            cli.setCuit(cliente.getCuit());
+            response.setCliente(cli);
+
             return ResponseHandler.responseBuilder(HttpStatus.CREATED, "Venta creada con éxito!", response);
         }catch(Exception e){
             return ResponseHandler.responseBuilder(HttpStatus.INTERNAL_SERVER_ERROR, "Error al crear Venta: "

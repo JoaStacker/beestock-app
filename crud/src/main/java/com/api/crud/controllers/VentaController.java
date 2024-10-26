@@ -1,6 +1,5 @@
 package com.api.crud.controllers;
 
-import com.api.crud.persistence.entities.UserEntity;
 import com.api.crud.services.IVentaService;
 import com.api.crud.services.models.dtos.VentaDTO;
 import jakarta.validation.Valid;
@@ -29,12 +28,12 @@ public class VentaController {
         return new ResponseEntity<>(ventaService.createVenta(venta), HttpStatus.OK);
     }
 
-    @GetMapping("/{:id}")
+    @GetMapping("/{id}")
     private ResponseEntity<Object> getOne(@PathVariable("id") Long id) throws Exception {
         return new ResponseEntity<>(ventaService.findOne(id), HttpStatus.OK);
     }
 
-    @GetMapping("/cliente/{:id}")
+    @GetMapping("/cliente/{id}")
     private ResponseEntity<Object> getVentasByCliente(@PathVariable("id") Long id) throws Exception {
         return new ResponseEntity<>(ventaService.getAllByCliente(id), HttpStatus.OK);
     }
