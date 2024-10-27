@@ -81,7 +81,7 @@ const EditClientPopup = ({ onClose, interactionId, onUpdated }) => {
                 updateGlobalState({
                     openSnackbar: true,
                     snackbarSeverity: "success",
-                    snackbarMessage: locales.updatedCliente
+                    snackbarMessage: locales.updated
                 });
             })
             .catch((error) => {

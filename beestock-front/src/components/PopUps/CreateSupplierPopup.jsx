@@ -1,83 +1,112 @@
 // src/components/ClientPopup.js
 import React, { useEffect, useState } from 'react';
 import {
-    createClient,
-    getClients,
-    getCondicionesTributarias,
-    getOneClient,
-    updateClient
-} from '../../services/clientService';
-import {
-    Button,
+    Box,
+    Button, Chip,
     DialogActions,
     DialogContent,
     DialogTitle,
     FormControl,
-    InputLabel, MenuItem, Select,
+    InputLabel, MenuItem, OutlinedInput, Select,
     TextField,
-    Typography
+    Typography,
 } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import locales from "../../local/en";
 import { useGlobalContext } from "../../context/GlobalContext";
 import { HorizontalRule} from "@mui/icons-material";
-import { getLocalidadesByProvinciaId, getPaises, getProvinciasByPaisId } from "../../services/locationService";
-import { DateField, LocalizationProvider} from "@mui/x-date-pickers";
-import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
-import excludeVariablesFromRoot from "@mui/material/styles/excludeVariablesFromRoot";
+import {createSupplier, getTiposServicio} from "../../services/supplierService";
+import {getCondicionesTributarias} from "../../services/clientService";
+import {getLocalidadesByProvinciaId, getPaises, getProvinciasByPaisId} from "../../services/locationService";
 
-const EditClientPopup = ({ onClose, onClientCreated }) => {
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+    PaperProps: {
+        style: {
+            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+            width: 250,
+        },
+    },
+};
+
+function getStyles(id, data, theme) {
+    return {
+        fontWeight: data.some(s => s.id === id)
+            ? theme.typography.fontWeightMedium
+            : theme.typography.fontWeightRegular,
+    };
+}
+
+const CreateInteractionPopup = ({ onClose, onCreated }) => {
+    const theme = useTheme();
     const { globalState, updateGlobalState } = useGlobalContext();
-    const [dateFechaNacimiento, setDateFechaNacimiento] = useState(dayjs(''));
+    const [dateFechaInteraccion, setDateFechaInteraccion] = useState(dayjs(''));
 
     // Fields and Validations
-    const [client, setClient] = useState({
-        cuit: '',
-        nombre: '',
-        apellido: '',
-        email: '',
-        calle: '',
-        numero: '',
+    const [data, setData] = useState({
         piso: '',
-        fechaNacimiento: '',
+        cuit: '',
+        numero: '',
+        calle: '',
+        correo: '',
+        tipoServicios: [],
         localidadId: '',
-        condicionTributariaId: ''
-
+        nombre: 'Azure'
     });
     const defaultInvalid = {
-        cuit: false,
-        nombre: false,
-        apellido: false,
-        email: false,
-        calle: false,
-        numero: false,
         piso: false,
-        fechaNacimiento: false,
+        cuit: false,
+        numero: false,
+        calle: false,
+        correo: false,
+        tipoServicios: false,
         localidadId: false,
-        condicionTributariaId: false
+        nombre: false,
     }
     const [invalid, setInvalid] = useState(defaultInvalid);
 
     const validForm = () => {
         const newState = {
-            cuit: !client.cuit,
-            nombre: !client.nombre,
-            apellido: !client.apellido,
-            email: !client.email,
-            calle: !client.calle,
-            numero: !client.numero,
-            piso: !client.piso,
-            fechaNacimiento: !client.fechaNacimiento,
-            localidadId: !client.localidadId,
-            condicionTributariaId: !client.condicionTributariaId,
+            piso: !data.piso,
+            cuit: !data.cuit,
+            numero: !data.numero,
+            calle: !data.calle,
+            correo: !data.correo,
+            tipoServicios: !data.tipoServicios || data.tipoServicios?.length === 0,
+            localidadId: !data.localidadId,
+            nombre: !data.nombre,
         };
         setInvalid(newState);
         return Object.values(newState).every(el => el === false);
     };
 
+    const [tipoServicios, setTipoServicios] = useState([]);
+    useEffect(() => {
+        getTiposServicio().then((res) => {
+            updateGlobalState({ loadingPage: false });
+
+            if (res.error) {
+                updateGlobalState({
+                    openSnackbar: true,
+                    snackbarSeverity: "error",
+                    snackbarMessage: res.message
+                });
+                return;
+            }
+
+            const tipoServicios = res.data.tiposServicio;
+            setTipoServicios(tipoServicios)
+        }).catch((error) => {
+            updateGlobalState({ loadingPage: false });
+            console.error(error);
+        });
+    }, []);
+
     useEffect(() => {
         setInvalid(defaultInvalid);
-    }, [client]);
+    }, [data]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -92,7 +121,8 @@ const EditClientPopup = ({ onClose, onClientCreated }) => {
         }
 
         updateGlobalState({ loadingPage: true });
-        await createClient(client)
+
+        await createSupplier(data)
             .then((res) => {
                 updateGlobalState({ loadingPage: false });
 
@@ -116,7 +146,7 @@ const EditClientPopup = ({ onClose, onClientCreated }) => {
                 console.error(error);
             });
 
-        onClientCreated();
+        onCreated();
         onClose();
     };
 
@@ -125,9 +155,8 @@ const EditClientPopup = ({ onClose, onClientCreated }) => {
         if (propName) {
             name = propName;
         }
-        setClient(prevClient => ({ ...prevClient, [name]: value }));
+        setData(prevData => ({ ...prevData, [name]: value }));
     };
-
 
     const [condicionesTributarias, setCondicionesTributarias] = useState([]);
     const [paises, setPaises] = useState([]);
@@ -228,107 +257,78 @@ const EditClientPopup = ({ onClose, onClientCreated }) => {
         }
     }, [selectedProvincia]);
 
+    const handleChangeServicio = (event) => {
+        const {
+            target: { value },
+        } = event;
+        setData(prevData => ({
+            ...prevData,
+            tipoServicios: typeof value === 'string' ? value.split(',') : value
+        }));
+    };
+
     return (
         <>
             <DialogTitle>
                 <Typography variant="h6" gutterBottom>
-                    Nuevo cliente
+                    Nuevo proveedor
                 </Typography>
                 <HorizontalRule />
             </DialogTitle>
             <DialogContent>
-                <Typography variant="subtitle1" gutterBottom>
-                    Datos fiscales
-                </Typography>
                 <TextField
                     error={invalid.cuit}
                     label="CUIT"
                     required
                     margin="dense"
                     name="cuit"
-                    value={client.cuit || ''}
+                    value={data.cuit || ''}
                     type="text"
                     onChange={handleChange}
                     fullWidth
                     variant="outlined"
                 />
-                <FormControl fullWidth margin="dense" variant="outlined">
-                    <InputLabel>Condicion tributaria</InputLabel>
+                <FormControl sx={{ m: 1, width: 300 }}>
+                    <InputLabel id="demo-multiple-chip-label">Servicios</InputLabel>
                     <Select
-                        error={invalid.condicionTributariaId}
-                        required
-                        value={client.condicionTributariaId}
-                        onChange={(e) => {
-                            handleChange(e, 'condicionTributariaId'); // Update parent state if needed
-                        }}
-                        label="Condicion tributaria"
+                        labelId="demo-multiple-chip-label"
+                        id="demo-multiple-chip"
+                        multiple
+                        value={data.tipoServicios}
+                        onChange={handleChangeServicio}
+                        input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
+                        renderValue={(selected) => (
+                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                {selected.map((value) => (
+                                    <Chip key={value} label={tipoServicios.find(el => el.id === value).nombre} />
+                                ))}
+                            </Box>
+                        )}
+                        MenuProps={MenuProps}
                     >
-                        {condicionesTributarias.map((condicion) => (
-                            <MenuItem key={condicion.id} value={condicion.id}>
-                                {condicion.tipo}
+                        {tipoServicios.map((servicio) => (
+                            <MenuItem
+                                key={servicio.id}
+                                value={servicio.id}
+                                style={getStyles(servicio.id, data.tipoServicios, theme)}
+                            >
+                                {servicio.nombre}
                             </MenuItem>
                         ))}
                     </Select>
                 </FormControl>
                 <TextField
-                    error={invalid.nombre}
-                    label="Nombre"
+                    error={invalid.correo}
+                    label="Correo"
                     required
                     margin="dense"
-                    name="nombre"
-                    value={client.nombre || ''}
-                    type="text"
+                    name="correo"
+                    value={data.correo || ''}
+                    type="correo"
                     onChange={handleChange}
                     fullWidth
                     variant="outlined"
                 />
-                <TextField
-                    error={invalid.apellido}
-                    label="Apellido"
-                    required
-                    margin="dense"
-                    name="apellido"
-                    value={client.apellido || ''}
-                    type="text"
-                    onChange={handleChange}
-                    fullWidth
-                    variant="outlined"
-                />
-                <TextField
-                    error={invalid.email}
-                    label="Email"
-                    required
-                    margin="dense"
-                    name="email"
-                    value={client.email || ''}
-                    type="email"
-                    onChange={handleChange}
-                    fullWidth
-                    variant="outlined"
-                />
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DateField
-                        error={invalid.fechaNacimiento}
-                        name="fechaNacimiento"
-                        label="Fecha de Nacimiento"
-                        value={dateFechaNacimiento}
-                        onChange={(newValue) => {
-                            console.log(newValue)
-                            let value = undefined
-                            try {
-                                value = newValue.toISOString()
-                            }catch(err) {
-
-                            }
-                            setClient({
-                                ...client,
-                                fechaNacimiento: value,
-                            })
-                            setDateFechaNacimiento(newValue)}
-                        }
-                    />
-
-                </LocalizationProvider>
                 <Typography variant="subtitle1" gutterBottom>
                     Direccion
                 </Typography>
@@ -338,7 +338,7 @@ const EditClientPopup = ({ onClose, onClientCreated }) => {
                     required
                     margin="dense"
                     name="calle"
-                    value={client.calle || ''}
+                    value={data.calle || ''}
                     type="text"
                     onChange={handleChange}
                     fullWidth
@@ -350,7 +350,7 @@ const EditClientPopup = ({ onClose, onClientCreated }) => {
                     required
                     margin="dense"
                     name="numero"
-                    value={client.numero || ''}
+                    value={data.numero || ''}
                     type="text"
                     onChange={handleChange}
                     fullWidth
@@ -362,7 +362,7 @@ const EditClientPopup = ({ onClose, onClientCreated }) => {
                     required
                     margin="dense"
                     name="piso"
-                    value={client.piso || ''}
+                    value={data.piso || ''}
                     type="text"
                     onChange={handleChange}
                     fullWidth
@@ -411,7 +411,7 @@ const EditClientPopup = ({ onClose, onClientCreated }) => {
                     <InputLabel>Localidad</InputLabel>
                     <Select
                         required
-                        value={client.localidadId || ''}
+                        value={data.localidadId || ''}
                         onChange={(e) => {
                             handleChange(e, 'localidadId'); // Update parent state if needed
                         }} // Update parent state for localidad
@@ -437,4 +437,4 @@ const EditClientPopup = ({ onClose, onClientCreated }) => {
     );
 };
 
-export default EditClientPopup;
+export default CreateInteractionPopup;

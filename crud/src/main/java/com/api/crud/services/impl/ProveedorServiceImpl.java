@@ -17,6 +17,8 @@ import com.api.crud.services.models.response.empleado.EmpleadosResponseDTO;
 import com.api.crud.services.models.response.proveedor.ProveedorResponseDTO;
 import com.api.crud.services.models.response.ResponseHandler;
 import com.api.crud.services.models.response.proveedor.ProveedoresResponseDTO;
+import com.api.crud.services.models.response.tipoServicio.TipoServicioResponseDTO;
+import com.api.crud.services.models.response.tipoServicio.TiposServicioResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -108,6 +110,7 @@ public class ProveedorServiceImpl implements IProveedorService {
             List<ProveedorResponseDTO> proveedoresList = new ArrayList<>();
             for(Proveedor pov : allProveedores){
                 ProveedorResponseDTO proveedorResponseDTO = new ProveedorResponseDTO();
+                proveedorResponseDTO.setId(pov.getId());
                 proveedorResponseDTO.setCuit(pov.getCuit());
                 proveedorResponseDTO.setNombre(pov.getNombre());
                 proveedorResponseDTO.setCorreo(pov.getCorreo());
@@ -270,6 +273,29 @@ public class ProveedorServiceImpl implements IProveedorService {
             }
         }catch(Exception e){
             throw new Exception(e.toString());
+        }
+    }
+
+    public ResponseEntity<Object> findAllTiposServicios() throws Exception {
+        try{
+            List<TipoServicio> allServicios = tipoServiciosRepository.findAll();
+
+            List<TipoServicioResponseDTO> serviciosList = new ArrayList<>();
+            for(TipoServicio pov : allServicios){
+                TipoServicioResponseDTO serv = new TipoServicioResponseDTO();
+                serv.setId(pov.getId());
+                serv.setNombre(pov.getNombre());
+                serviciosList.add(serv);
+            }
+
+            TiposServicioResponseDTO response = new TiposServicioResponseDTO();
+            response.setTiposServicio(serviciosList);
+
+            return ResponseHandler.responseBuilder(HttpStatus.OK, "Tipos de servicio encontrados con exito", response);
+
+        }catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al obtener tipos de servicio: " + e.getMessage());
         }
     }
 

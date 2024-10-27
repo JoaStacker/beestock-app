@@ -4,27 +4,25 @@ import { createClient, getClients, getOneClient, updateClient } from '../../serv
 import { Button, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
 import locales from "../../local/en";
 import { useGlobalContext } from "../../context/GlobalContext";
+import {getOneSupplier, updateSupplier} from "../../services/supplierService";
 
-const EditClientPopup = ({ onClose, clientId, onClientUpdated }) => {
+const EditSupplierPopup = ({ onClose, supplierId, onUpdated }) => {
     const { globalState, updateGlobalState } = useGlobalContext();
 
     // Fields and Validations
-    const [client, setClient] = useState({
+    const [data, setData] = useState({
         nombre: '',
-        apellido: '',
-        email: ''
+        correo: ''
     });
     const defaultInvalid = {
         nombre: false,
-        apellido: false,
-        email: false
+        correo: false
     }
     const [invalid, setInvalid] = useState(defaultInvalid);
     const validForm = () => {
         const newState = {
-            nombre: !client.nombre,
-            apellido: !client.apellido,
-            email: !client.email,
+            nombre: !data.nombre,
+            correo: !data.correo,
         };
         setInvalid(newState);
         return Object.values(newState).every(el => el === false);
@@ -33,10 +31,10 @@ const EditClientPopup = ({ onClose, clientId, onClientUpdated }) => {
 
     useEffect(() => {
         setInvalid(defaultInvalid);
-    }, [client]);
+    }, [data]);
 
     useEffect(() => {
-        getOneClient(clientId)
+        getOneSupplier(supplierId)
             .then((res) => {
                 updateGlobalState({ loadingPage: false });
 
@@ -49,14 +47,14 @@ const EditClientPopup = ({ onClose, clientId, onClientUpdated }) => {
                     return;
                 }
 
-                const cliente = res.data;
-                setClient(cliente);
+                const supplier = res.data;
+                setData(supplier);
             })
             .catch((error) => {
                 updateGlobalState({ loadingPage: false });
                 console.error(error);
             });
-    }, [clientId]);
+    }, [supplierId]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -64,11 +62,10 @@ const EditClientPopup = ({ onClose, clientId, onClientUpdated }) => {
 
         updateGlobalState({ loadingPage: true });
         let payload = {
-            nombre: client.nombre,
-            apellido: client.apellido,
-            email: client.email
+            nombre: data.nombre,
+            correo: data.correo
         }
-        await updateClient(clientId, payload)
+        await updateSupplier(supplierId, payload)
             .then((res) => {
                 updateGlobalState({ loadingPage: false });
 
@@ -92,18 +89,18 @@ const EditClientPopup = ({ onClose, clientId, onClientUpdated }) => {
                 console.error(error);
             });
 
-        onClientUpdated();
+        onUpdated();
         onClose();
     };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setClient(prevClient => ({ ...prevClient, [name]: value }));
+        setData(prevData => ({ ...prevData, [name]: value }));
     };
 
     return (
         <>
-            <DialogTitle>{`Editar cliente`}</DialogTitle>
+            <DialogTitle>{`Editar proveedor`}</DialogTitle>
             <DialogContent>
                 <TextField
                     error={invalid.nombre}
@@ -111,32 +108,20 @@ const EditClientPopup = ({ onClose, clientId, onClientUpdated }) => {
                     required
                     margin="dense"
                     name="nombre"
-                    value={client.nombre || ''}
+                    value={data.nombre || ''}
                     type="text"
                     onChange={handleChange}
                     fullWidth
                     variant="outlined"
                 />
                 <TextField
-                    error={invalid.apellido}
-                    label="Apellido"
+                    error={invalid.correo}
+                    label="Correo"
                     required
                     margin="dense"
-                    name="apellido"
-                    value={client.apellido || ''}
-                    type="text"
-                    onChange={handleChange}
-                    fullWidth
-                    variant="outlined"
-                />
-                <TextField
-                    error={invalid.email}
-                    label="Email"
-                    required
-                    margin="dense"
-                    name="email"
-                    value={client.email || ''}
-                    type="email"
+                    name="correo"
+                    value={data.correo || ''}
+                    type="correo"
                     onChange={handleChange}
                     fullWidth
                     variant="outlined"
@@ -154,4 +139,4 @@ const EditClientPopup = ({ onClose, clientId, onClientUpdated }) => {
     );
 };
 
-export default EditClientPopup;
+export default EditSupplierPopup;

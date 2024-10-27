@@ -11,6 +11,7 @@ import java.util.List;
 
 public class ProveedorResponseDTO {
 
+    private Long id;
     private String nombre;
     private String cuit;
     private String correo;
@@ -34,6 +35,14 @@ public class ProveedorResponseDTO {
         this.localidad = localidad;
         this.provincia = provincia;
         this.pais = pais;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getNombre() {
