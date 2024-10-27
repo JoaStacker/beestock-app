@@ -9,6 +9,7 @@ import {useGlobalContext} from "./context/GlobalContext";
 import NotFoundPage from "./pages/NotFoundPage";
 import BasePage from "./pages/BasePage";
 import HomePage from "./pages/HomePage";
+import InteractionsPopup from "./components/PopUps/InteractionsPopup";
 
 const LoginRoute = ({children, isAuthenticated}) => {
   return isAuthenticated ? <Navigate to="/home" /> : children;

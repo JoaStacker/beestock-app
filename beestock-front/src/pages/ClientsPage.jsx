@@ -15,10 +15,11 @@ import {
 } from "@mui/material";
 import { useGlobalContext } from "../context/GlobalContext";
 import GenericTable from "../components/GenericTable";
-import {Add, Delete, Edit} from "@mui/icons-material";
+import {Add, Delete, Edit, ViewAgenda} from "@mui/icons-material";
 import CreateClientPopup from "../components/PopUps/CreateClientPopup";
 import TopBar from "../components/TopBar";
 import Sidebar from "../components/Sidebar";
+import InteractionsPopup from "../components/PopUps/InteractionsPopup";
 
 const ClientsPage = () => {
     const { globalState, updateGlobalState } = useGlobalContext();
@@ -28,6 +29,7 @@ const ClientsPage = () => {
 
     const [editDialogOpen, setEditDialogOpen] = useState(false);
     const [createDialogOpen, setCreateDialogOpen] = useState(false);
+    const [interaccionesDialogOpen, setInteraccionesDialogOpen] = useState(false);
 
     const reloadData = () => {
         updateGlobalState({ loadingPage: true });
@@ -80,6 +82,11 @@ const ClientsPage = () => {
         reloadData();
     };
 
+    const handleOpenInteracciones = async (client) => {
+        setInteraccionesDialogOpen(true)
+        setSelectedClient(client);
+    }
+
     const columns = [
         { id: 'cuit', label: 'CUIT' },
         { id: 'nombre', label: 'Nombre' },
@@ -99,6 +106,12 @@ const ClientsPage = () => {
             onClick: (row) => handleDeleteClient(row.id),
             color: 'secondary',
             icon: <Delete />
+        },
+        {
+            label: 'Ver interacciones',
+            onClick: (row) => handleOpenInteracciones(row),
+            color: 'secondary',
+            icon: <ViewAgenda />
         },
     ];
 
@@ -141,6 +154,14 @@ const ClientsPage = () => {
                 <CreateClientPopup
                     onClose={() => setCreateDialogOpen(false)}
                     onClientCreated={handleClientCreated}
+                />
+            </Dialog>
+
+            {/*INTERACCIONES*/}
+            <Dialog open={interaccionesDialogOpen} onClose={() => setInteraccionesDialogOpen(false)}>
+                <InteractionsPopup
+                    idCliente={selectedClient?.id}
+                    onClose={() => setInteraccionesDialogOpen(false)}
                 />
             </Dialog>
         </Box>

@@ -24,8 +24,6 @@ const GenericTable = ({ columns, data=[], actions, onAddClient, entityType='' })
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [searchQuery, setSearchQuery] = useState('');
-  const [openDialog, setOpenDialog] = useState(false);
-  const [selectedClient, setSelectedClient] = useState(null);
   const [selectedMonth, setSelectedMonth] = useState('');
 
   const handleChangePage = (event, newPage) => {
@@ -58,15 +56,6 @@ const GenericTable = ({ columns, data=[], actions, onAddClient, entityType='' })
         return row[column.id].toString().toLowerCase().includes(searchQuery.toLowerCase()) && conditionB
       })
   );
-
-  const handleAddClient = () => {
-    setOpenDialog(true);
-  };
-
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
-    setSelectedClient(null);
-  };
 
   return (
       <Paper>
@@ -111,7 +100,7 @@ const GenericTable = ({ columns, data=[], actions, onAddClient, entityType='' })
                       <TableSortLabel>{column.label}</TableSortLabel>
                     </TableCell>
                 ))}
-                <TableCell>Actions</TableCell>
+                  <TableCell>Acciones</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>

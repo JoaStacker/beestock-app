@@ -1,15 +1,17 @@
 package com.api.crud.services.impl;
 
-import com.api.crud.persistence.entities.Empleado;
+import com.api.crud.persistence.entities.*;
 import com.api.crud.persistence.repositories.IClienteRepository;
 import com.api.crud.persistence.repositories.IEmpleadoRepository;
 import com.api.crud.services.models.dtos.InteraccionDTO;
 import com.api.crud.services.models.response.Cliente.ClienteResponseDTO;
-import com.api.crud.persistence.entities.Cliente;
-import com.api.crud.persistence.entities.Interaccion;
 import com.api.crud.persistence.repositories.IInteraccionRepository;
 import com.api.crud.services.IInteraccionService;
 import com.api.crud.services.models.response.ResponseHandler;
+import com.api.crud.services.models.response.direccion.DireccionResponseDTO;
+import com.api.crud.services.models.response.direccion.LocalidadResponseDTO;
+import com.api.crud.services.models.response.direccion.PaisResponseDTO;
+import com.api.crud.services.models.response.direccion.ProvinciaResponseDTO;
 import com.api.crud.services.models.response.empleado.EmpleadoResponseDTO;
 import com.api.crud.services.models.response.interaccion.InteraccionResponseDTO;
 import com.api.crud.services.models.response.interaccion.InteraccionesResponseDTO;
@@ -67,7 +69,16 @@ public class InteraccionServiceImpl implements IInteraccionService {
 
     public ResponseEntity<Object> findOne(Long id) throws Exception {
         try {
+            Optional<Interaccion> foundInteraccion = interaccionRepository.findById(id);
+            if (foundInteraccion.isEmpty()) {
+                return ResponseHandler.responseBuilder(HttpStatus.CONFLICT, "La interaccion no existe.");
+            }
+            Interaccion interaccion = foundInteraccion.get();
             InteraccionResponseDTO response = new InteraccionResponseDTO();
+            response.setId(interaccion.getId());
+            response.setFechaInteraccion(interaccion.getFechaInteraccion());
+            response.setMedio(interaccion.getMedio());
+
             return ResponseHandler.responseBuilder(HttpStatus.OK, "Interaccion listada con exito.", response);
         } catch (Exception e) {
             return ResponseHandler.responseBuilder(HttpStatus.INTERNAL_SERVER_ERROR, "internal Server Error.");
@@ -112,6 +123,27 @@ public class InteraccionServiceImpl implements IInteraccionService {
 
     }
 
+    public ResponseEntity<Object> updateOne(Long id, InteraccionDTO body) throws Exception {
+        try{
+            Optional<Interaccion> optionalInteraccion = interaccionRepository.findById(id);
 
+            if (optionalInteraccion.isPresent()) {
+                Interaccion interaccionToUpdate = optionalInteraccion.get();
+                if(body.getMedio() != null){
+                    interaccionToUpdate.setMedio(body.getMedio());
+                }
+                if(body.getFechaInteraccion() != null){
+                    interaccionToUpdate.setFechaInteraccion(body.getFechaInteraccion());
+                }
+                interaccionRepository.save(interaccionToUpdate);
+
+                return ResponseHandler.responseBuilder(HttpStatus.OK, "Cliente actualizado con exito");
+            } else {
+                return ResponseHandler.responseBuilder(HttpStatus.CONFLICT, "Cliente no existe");
+            }
+        }catch(Exception e){
+            return ResponseHandler.responseBuilder(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error.");
+        }
+    }
 
 }

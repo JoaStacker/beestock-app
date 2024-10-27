@@ -35,4 +35,10 @@ public class InteraccionController {
         return new ResponseEntity<>(interaccionService.getAllByCliente(id), HttpStatus.OK);
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
+    @PutMapping("/{id}/")
+    private ResponseEntity<Object> updateOne(@PathVariable("id") Long id, @RequestBody InteraccionDTO interaccion) throws Exception {
+        return new ResponseEntity<>(interaccionService.updateOne(id, interaccion), HttpStatus.OK);
+    }
+
 }
