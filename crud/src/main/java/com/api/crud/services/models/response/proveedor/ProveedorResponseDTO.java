@@ -1,6 +1,7 @@
 package com.api.crud.services.models.response.proveedor;
 
 import com.api.crud.persistence.entities.*;
+import com.api.crud.services.models.response.CondicionTributaria.CondicionTributariaResponseDTO;
 import com.api.crud.services.models.response.direccion.DireccionResponseDTO;
 import com.api.crud.services.models.response.direccion.LocalidadResponseDTO;
 import com.api.crud.services.models.response.direccion.PaisResponseDTO;
@@ -16,13 +17,16 @@ public class ProveedorResponseDTO {
     private String correo;
     private List<TipoServicio> tipoServicios;
     private DireccionResponseDTO direccion;
+    //private CondicionTributariaResponseDTO condicionTributaria;
     private LocalidadResponseDTO localidad;
     private ProvinciaResponseDTO provincia;
     private PaisResponseDTO pais;
 
     public ProveedorResponseDTO() {}
 
-    public ProveedorResponseDTO(String nombre, String cuit, String correo, List<TipoServicio> tipoServicios, DireccionResponseDTO direccion, LocalidadResponseDTO localidad, ProvinciaResponseDTO provincia, PaisResponseDTO pais) {
+    public ProveedorResponseDTO(String nombre, String cuit, String correo, List<TipoServicio> tipoServicios,
+                                DireccionResponseDTO direccion, LocalidadResponseDTO localidad,
+                                ProvinciaResponseDTO provincia, PaisResponseDTO pais) {
         this.nombre = nombre;
         this.cuit = cuit;
         this.correo = correo;

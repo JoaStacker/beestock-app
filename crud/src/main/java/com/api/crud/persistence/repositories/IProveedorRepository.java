@@ -10,4 +10,10 @@ import java.util.Optional;
 public interface IProveedorRepository extends JpaRepository<Proveedor, Long> {
     @Query(value="SELECT * FROM proveedor WHERE cuit= :cuit", nativeQuery = true)
     Optional<Proveedor> findByCuit(String cuit);
+
+    Optional<Proveedor> findById(Long id);
+
+
+
+
 }

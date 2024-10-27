@@ -55,6 +55,7 @@ public class ProveedorDTO {
         this.tipoServicios = tipoServicios;
     }
 
+
     // Getters y Setters
 
     public @NotNull String getNombre() {
