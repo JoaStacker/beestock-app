@@ -14,12 +14,9 @@ public class Proveedor {
 
     @Column
     private String nombre;
-
-    @Column
     private String cuit;
-
-    @Column
     private String correo;
+    private boolean estado;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinTable(
@@ -41,6 +38,15 @@ public class Proveedor {
         this.cuit = cuit;
         this.correo = correo;
         this.direccion = new Direccion(calle, numero, piso, localidad);
+        estado = true;
+    }
+
+    public boolean isEstado() {
+        return estado;
+    }
+
+    public void setEstado(boolean estado) {
+        this.estado = estado;
     }
 
     public Long getId() {

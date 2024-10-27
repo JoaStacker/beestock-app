@@ -74,7 +74,6 @@ public class EmpleadoServiceImpl implements IEmpleadoService {
                 return ResponseHandler.responseBuilder(HttpStatus.NO_CONTENT, "No hay empleados disponibles");
             }
 
-            EmpleadosResponseDTO response = new EmpleadosResponseDTO();
             List<EmpleadoResponseDTO> empleadoList = new ArrayList<>();
             for(Empleado empleado: allEmpleados){
                 EmpleadoResponseDTO emp = new EmpleadoResponseDTO();
@@ -92,6 +91,7 @@ public class EmpleadoServiceImpl implements IEmpleadoService {
                 emp.setDireccion(dir);
                 empleadoList.add(emp);
             }
+            EmpleadosResponseDTO response = new EmpleadosResponseDTO();
             response.setEmpleados(empleadoList);
 
             return ResponseHandler.responseBuilder(HttpStatus.OK, "Empleados encontrados con exito", response);
