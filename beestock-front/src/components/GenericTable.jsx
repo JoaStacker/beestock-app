@@ -51,7 +51,6 @@ const GenericTable = ({ columns, data=[], actions, onAddClient, entityType='' })
         if(entityType === 'Cliente' && selectedMonth){
             const birthMonth = new Date(row.fechaNacimiento).getMonth(); // 0-11
             conditionB = birthMonth === parseInt(selectedMonth);
-            console.log(birthMonth, parseInt(selectedMonth))
         }
         return row[column.id].toString().toLowerCase().includes(searchQuery.toLowerCase()) && conditionB
       })
