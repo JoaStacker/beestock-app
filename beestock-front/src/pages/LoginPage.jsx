@@ -1,17 +1,57 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import {useGlobalContext} from "../context/GlobalContext";
+import {loginUser} from "../services/authService";
 
 const LoginPage = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const { globalState, updateGlobalState } = useGlobalContext();
+
+  const [email, setEmail] = useState('joaquin@gmail.com');
+  const [password, setPassword] = useState('1234');
   const navigate = useNavigate(); // Hook for navigation
 
   const handleSubmit = (e) => {
+    updateGlobalState({ loadingPage: true });
+
     e.preventDefault();
-    console.log('Email:', email);
-    console.log('Password:', password);
-    // Here, you can handle login logic, such as calling an API
-    navigate('/clients'); // Change this to your clients page route
+    let payload = {
+        email: email,
+        password: password
+    }
+
+    loginUser(payload)
+        .then((res) => {
+          updateGlobalState({ loadingPage: false });
+
+          if (res.error) {
+            updateGlobalState({
+              openSnackbar: true,
+              snackbarSeverity: "error",
+              snackbarMessage: res.message
+            });
+            return;
+          }
+
+          updateGlobalState({
+            openSnackbar: true,
+            snackbarSeverity: "success",
+            snackbarMessage: res.message
+          });
+
+          const userData = res.data;
+
+          updateGlobalState({
+            isAuthenticated: true,
+            user: userData,
+          })
+
+          localStorage.setItem("user", JSON.stringify(userData));
+            navigate('/home');
+        })
+        .catch((error) => {
+          updateGlobalState({ loadingPage: false });
+          console.error(error);
+        })
   };
 
   return (

@@ -61,7 +61,7 @@ export const updateClient = async (clientId, clientData) => {
 };
 
 export const deleteClient = async (clientId) => {
-    return handleResponse(axiosInstance.delete(`/${clientId}/`));
+    return handleResponse(axiosInstance.put(`/delete/${clientId}/`));
 };
 
 

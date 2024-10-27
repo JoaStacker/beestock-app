@@ -28,7 +28,7 @@ import excludeVariablesFromRoot from "@mui/material/styles/excludeVariablesFromR
 
 const EditClientPopup = ({ onClose, onClientCreated }) => {
     const { globalState, updateGlobalState } = useGlobalContext();
-    const [dateFechaNacimiento, setDateFechaNacimiento] = useState(dayjs('2022-04-17'));
+    const [dateFechaNacimiento, setDateFechaNacimiento] = useState(dayjs(''));
 
     // Fields and Validations
     const [client, setClient] = useState({
@@ -255,6 +255,7 @@ const EditClientPopup = ({ onClose, onClientCreated }) => {
                 <FormControl fullWidth margin="dense" variant="outlined">
                     <InputLabel>Condicion tributaria</InputLabel>
                     <Select
+                        error={invalid.condicionTributariaId}
                         required
                         value={client.condicionTributariaId}
                         onChange={(e) => {

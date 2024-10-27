@@ -17,6 +17,8 @@ import { useGlobalContext } from "../context/GlobalContext";
 import GenericTable from "../components/GenericTable";
 import {Add, Delete, Edit} from "@mui/icons-material";
 import CreateClientPopup from "../components/PopUps/CreateClientPopup";
+import TopBar from "../components/TopBar";
+import Sidebar from "../components/Sidebar";
 
 const ClientsPage = () => {
     const { globalState, updateGlobalState } = useGlobalContext();
@@ -101,7 +103,7 @@ const ClientsPage = () => {
     ];
 
     return (
-        <div>
+        <Box sx={{ flexGrow: 1, padding: 2 }}>
             <Grid container spacing={2} alignItems="flex-end" justifyContent="flex-start">
                 <Grid item xs={2}>
                     <h2>Clientes</h2>
@@ -141,7 +143,7 @@ const ClientsPage = () => {
                     onClientCreated={handleClientCreated}
                 />
             </Dialog>
-        </div>
+        </Box>
     );
 };
 

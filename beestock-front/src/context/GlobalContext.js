@@ -6,7 +6,8 @@ const GlobalContext = createContext();
 export const GlobalProvider = ({ children }) => {
     const [globalState, setGlobalState] = useState({
         // Initialize your global variables here
-        user: null,
+        user: JSON.parse(localStorage.getItem("user")),
+        isAuthenticated: !!JSON.parse(localStorage.getItem("user")),
         theme: 'light',
 
         // Add more variables as needed

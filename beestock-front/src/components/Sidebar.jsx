@@ -1,14 +1,25 @@
 import { Box, List, ListItem, ListItemText } from '@mui/material';
 import { Link } from 'react-router-dom';
+import {useGlobalContext} from "../context/GlobalContext";
 
 const Sidebar = () => {
-  return (
+    const { globalState, updateGlobalState } = useGlobalContext();
+    const menus = [
+        { to: '/proveedores', label: 'Proveedores', show: globalState.user?.adminProveedores },
+        { to: '/incidentes', label: 'Incidentes', show: globalState.user?.adminProveedores },
+        { to: '/clientes', label: 'Clientes', show: globalState.user?.adminClientes },
+        { to: '/ventas', label: 'Ventas', show: globalState.user?.adminVentas },
+        { to: '/empleados', label: 'Empleados', show: globalState.user?.adminRRHH },
+    ];
+
+    return (
     <Box sx={{ width: 250 }}>
       <List>
-        {['Clientes', 'Proveedores', 'Ventas', 'Incidentes', 'Facturas', 'Empleados'].map((text) => (
-          <ListItem button key={text} component={Link} to={`/${text.replace(' ', '').toLowerCase()}`}>
-            <ListItemText primary={text} />
-          </ListItem>
+        {menus.map((menu) => (
+            menu.show &&
+            <ListItem button key={menu.label} component={Link} to={menu.to}>
+                <ListItemText primary={menu.label} />
+            </ListItem>
         ))}
       </List>
     </Box>
