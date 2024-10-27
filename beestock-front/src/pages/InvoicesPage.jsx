@@ -2,25 +2,34 @@ import GenericTable from "../components/GenericTable";
 
 const InvoicesPage = () => {
     const columns = [
-        { id: 'name', label: 'Name' },
-        { id: 'age', label: 'Age' },
+        { id: 'numero', label: 'Numero' },
         { id: 'email', label: 'Email' },
+        { id: 'horas', label: 'Horas' },
+        { id: 'total', label: 'Total' },
+
       ];
     
       const data = [
-        { name: 'John Doe', age: 30, email: 'john@example.com' },
-        { name: 'Jane Smith', age: 25, email: 'jane@example.com' },
-        { name: 'Alice Johnson', age: 35, email: 'alice@example.com' },
+        { numero: '#2', horas: 50, email: 'john@example.com', total: "$3500" },
+        { numero: '#3', horas: 75, email: 'jane@example.com' , total: "$5000"},
+        { numero: '#4', horas: 120, email: 'alice@example.com', total: "$8500" },
+        { numero: '#2', horas: 50, email: 'john@example.com', total: "$3500" },
+        { numero: '#3', horas: 75, email: 'jane@example.com' , total: "$5000"},
+        { numero: '#4', horas: 120, email: 'alice@example.com', total: "$8500" },
+        { numero: '#2', horas: 50, email: 'john@example.com', total: "$3500" },
+        { numero: '#3', horas: 75, email: 'jane@example.com' , total: "$5000"},
+        { numero: '#4', horas: 120, email: 'alice@example.com', total: "$8500" },
+        
       ];
     
       const actions = [
         {
           label: 'Edit',
-          onClick: (row) => alert(`Editing ${row.name}`),
+          onClick: (row) => alert(`Editing ${row.numero}`),
         },
         {
           label: 'Delete',
-          onClick: (row) => alert(`Deleting ${row.name}`),
+          onClick: (row) => alert(`Deleting ${row.numero}`),
           color: 'secondary',
         },
       ];

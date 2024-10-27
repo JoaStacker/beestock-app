@@ -42,8 +42,8 @@ public class ClienteController {
     }
 
     @PutMapping("/delete/{id}")
-    private ResponseEntity<Object> deleteOne(@PathVariable("id") Long id, @RequestBody ClienteDTO cliente) throws Exception {
-        return new ResponseEntity<>(clienteService.deleteCliente(id, cliente), HttpStatus.OK);
+    private ResponseEntity<Object> deleteOne(@PathVariable("id") Long id) throws Exception {
+        return new ResponseEntity<>(clienteService.deleteCliente(id), HttpStatus.OK);
     }
 
     @GetMapping("/mes/{mesNacimiento}")
