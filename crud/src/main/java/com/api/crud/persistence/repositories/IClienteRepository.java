@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -17,4 +18,8 @@ public interface IClienteRepository extends JpaRepository<Cliente, Long> {
 
     @Query(value="SELECT * FROM cliente WHERE cuit= :cuit", nativeQuery = true)
     Optional<Cliente> findByCuit(String cuit);
+
+    @Query(value = "SELECT * FROM cliente WHERE borrado = false",
+            nativeQuery = true)
+    List<Cliente> findAllNotDeleted();
 }

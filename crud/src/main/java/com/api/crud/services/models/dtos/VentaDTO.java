@@ -2,7 +2,9 @@ package com.api.crud.services.models.dtos;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -35,10 +37,14 @@ public class VentaDTO {
     @JsonProperty(required = true)
     private Long clienteId;
 
-    // TODO
-//    @NotNull
-//    @JsonProperty(required = true)
-//    private List<DetalleVentaDTO> detallesVenta;
+    @NotNull
+    @Valid
+    @JsonProperty(required = true)
+    @Size(min = 1, max = 100)
+    private List<DetalleVentaDTO> detallesVenta;
+
+    public VentaDTO() {
+    }
 
     public @NotNull LocalDateTime getFechaVenta() {
         return fechaVenta;
@@ -86,5 +92,13 @@ public class VentaDTO {
 
     public void setClienteId(@NotNull Long clienteId) {
         this.clienteId = clienteId;
+    }
+
+    public @NotNull @Size(min = 1, max = 100) List<DetalleVentaDTO> getDetallesVenta() {
+        return detallesVenta;
+    }
+
+    public void setDetallesVenta(@NotNull @Size(min = 1, max = 100) List<DetalleVentaDTO> detallesVenta) {
+        this.detallesVenta = detallesVenta;
     }
 }

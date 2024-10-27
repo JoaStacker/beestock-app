@@ -34,8 +34,12 @@ public class ClienteDTO {
     private LocalDateTime fechaNacimiento;
 
     @NotNull
+    private Boolean borrado;
+
+    @NotNull
     @JsonProperty(required = true)
     private Long condicionTributariaId;
+
     @NotNull
     @JsonProperty(required = true)
     private String numero;
@@ -109,6 +113,14 @@ public class ClienteDTO {
 
     public void setFechaNacimiento(@NotNull LocalDateTime fechaNacimiento) {
         this.fechaNacimiento = fechaNacimiento;
+    }
+
+    public @NotNull Boolean getBorrado() {
+        return borrado;
+    }
+
+    public void setBorrado(@NotNull Boolean borrado) {
+        this.borrado = borrado;
     }
 
     public @NotNull Long getCondicionTributariaId() {

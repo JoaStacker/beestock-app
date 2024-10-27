@@ -38,7 +38,7 @@ public class Cliente {
     private Direccion direccion;
 
 
-
+    @Column
     private Boolean borrado = false;
 
     // Getters y Setters
