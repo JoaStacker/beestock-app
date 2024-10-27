@@ -1,7 +1,6 @@
-// src/services/clientService.js
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8000/clientes'; // Update with your API URL
+const API_URL = 'http://localhost:8000/ubicacion'; // Update with your API URL
 
 // Create an Axios instance with default settings
 const axiosInstance = axios.create({
@@ -17,16 +16,16 @@ const axiosInstance = axios.create({
 const handleResponse = async (request) => {
     try {
         const response = await request;
-        const data = await JSON.parse(response.data)
+        const data = await JSON.parse(response.data);
         console.log('Response:', data);
 
-        if(data.statusCodeValue >= 200 && data.statusCodeValue < 300){
+        if (data.statusCodeValue >= 200 && data.statusCodeValue < 300) {
             return {
                 data: data.body.data,
                 error: false,
                 message: data.body.message || "OK"
             };
-        }else{
+        } else {
             return {
                 data: data.body.data,
                 error: true,
@@ -44,28 +43,15 @@ const handleResponse = async (request) => {
     }
 };
 
-export const getClients = async () => {
-    return handleResponse(axiosInstance.get('/'));
+// Endpoints for Pais, Provincia, and Localidad
+export const getPaises = async () => {
+    return handleResponse(axiosInstance.get('/paises/'));
 };
 
-export const getOneClient = async (clientId) => {
-    return handleResponse(axiosInstance.get(`/${clientId}/`));
+export const getProvinciasByPaisId = async (paisId) => {
+    return handleResponse(axiosInstance.get(`/provincias/pais/${paisId}/`));
 };
 
-export const createClient = async (clientData) => {
-    return handleResponse(axiosInstance.post('/', clientData));
+export const getLocalidadesByProvinciaId = async (provinciaId) => {
+    return handleResponse(axiosInstance.get(`/localidades/provincia/${provinciaId}/`));
 };
-
-export const updateClient = async (clientId, clientData) => {
-    return handleResponse(axiosInstance.put(`/update/${clientId}/`, clientData));
-};
-
-export const deleteClient = async (clientId) => {
-    return handleResponse(axiosInstance.delete(`/${clientId}/`));
-};
-
-
-export const getCondicionesTributarias = async () => {
-    return handleResponse(axiosInstance.get('/condiciones-tributarias/'));
-};
-

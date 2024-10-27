@@ -33,7 +33,6 @@ public class ClienteDTO {
     @JsonProperty(required = true)
     private LocalDateTime fechaNacimiento;
 
-    @NotNull
     private Boolean borrado;
 
     @NotNull
@@ -115,11 +114,11 @@ public class ClienteDTO {
         this.fechaNacimiento = fechaNacimiento;
     }
 
-    public @NotNull Boolean getBorrado() {
+    public Boolean getBorrado() {
         return borrado;
     }
 
-    public void setBorrado(@NotNull Boolean borrado) {
+    public void setBorrado(Boolean borrado) {
         this.borrado = borrado;
     }
 

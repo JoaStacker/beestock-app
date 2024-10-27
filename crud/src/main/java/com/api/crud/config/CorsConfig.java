@@ -12,6 +12,7 @@ public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         // Mapeo general para todas las rutas
+//        registry.addMapping("/auth/**")
         registry.addMapping("/**")
                 .allowedOrigins("http://localhost:3000") // Permitir solicitudes desde este origen. 3000 es para react. ES LA URL DEL FRONTEND
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Métodos HTTP permitidos
@@ -21,8 +22,9 @@ public class CorsConfig implements WebMvcConfigurer {
 
         // Mapeo específico para la ruta de autenticación
         registry.addMapping("/auth/**")
+//        registry.addMapping("/**")
                 .allowedOrigins("*") // Permitir solicitudes desde cualquier origen
-                .allowedMethods("OPTIONS", "POST") // Solo permitir métodos OPTIONS y POST
+                .allowedMethods("OPTIONS", "POST", "GET") // Solo permitir métodos OPTIONS y POST
                 .allowedHeaders("Origin", "Content-Type", "Accept", "Authorization") // Encabezados permitidos
                 .allowCredentials(false) // No permitir el envío de credenciales RUTA PUBLICA
                 .maxAge(3600); // Tiempo en segundos que el navegador puede almacenar la configuración CORS

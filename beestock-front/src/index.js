@@ -3,11 +3,18 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import {GlobalProvider} from "./context/GlobalContext";
+import PositionedSnackbar from "./components/PopUps/PositionedSnackbar";
+import BackdropLoader from "./components/BackdropLoader";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <GlobalProvider>
+        <BackdropLoader />
+        <PositionedSnackbar />
+        <App />
+    </GlobalProvider>
   </React.StrictMode>
 );
 

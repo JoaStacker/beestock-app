@@ -1,62 +1,151 @@
 // src/components/ClientPopup.js
 import React, { useEffect, useState } from 'react';
-import { createClient, updateClient } from '../../services/clientService';
+import { createClient, getClients, getOneClient, updateClient } from '../../services/clientService';
+import { Button, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
+import locales from "../../local/en";
+import { useGlobalContext } from "../../context/GlobalContext";
 
-const EditClientPopup = ({ isOpen, onClose, client, onClientUpdated }) => {
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
+const EditClientPopup = ({ onClose, clientId, onClientUpdated }) => {
+    const { globalState, updateGlobalState } = useGlobalContext();
+
+    // Fields and Validations
+    const [client, setClient] = useState({
+        nombre: '',
+        apellido: '',
+        email: ''
+    });
+    const defaultInvalid = {
+        nombre: false,
+        apellido: false,
+        email: false
+    }
+    const [invalid, setInvalid] = useState(defaultInvalid);
+    const validForm = () => {
+        const newState = {
+            nombre: !client.nombre,
+            apellido: !client.apellido,
+            email: !client.email,
+        };
+        setInvalid(newState);
+        return Object.values(newState).every(el => el === false);
+    };
+
 
     useEffect(() => {
-        if (client) {
-            setName(client.name);
-            setEmail(client.email);
-        }
+        setInvalid(defaultInvalid);
     }, [client]);
+
+    useEffect(() => {
+        getOneClient(clientId)
+            .then((res) => {
+                updateGlobalState({ loadingPage: false });
+
+                if (res.error) {
+                    updateGlobalState({
+                        openSnackbar: true,
+                        snackbarSeverity: "error",
+                        snackbarMessage: res.message
+                    });
+                    return;
+                }
+
+                const cliente = res.data;
+                setClient(cliente);
+            })
+            .catch((error) => {
+                updateGlobalState({ loadingPage: false });
+                console.error(error);
+            });
+    }, [clientId]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const clientData = { name, email };
+        if (!validForm()) return;
 
-        if (client) {
-            await updateClient(client.id, clientData);
-        } else {
-            await createClient(clientData);
-        }
+        updateGlobalState({ loadingPage: true });
+        await updateClient(clientId, client)
+            .then((res) => {
+                updateGlobalState({ loadingPage: false });
 
-        onClientUpdated(); // Notify parent component
-        onClose(); // Close popup
+                if (res.error) {
+                    updateGlobalState({
+                        openSnackbar: true,
+                        snackbarSeverity: "error",
+                        snackbarMessage: res.message
+                    });
+                    return;
+                }
+
+                updateGlobalState({
+                    openSnackbar: true,
+                    snackbarSeverity: "success",
+                    snackbarMessage: locales.updatedCliente
+                });
+            })
+            .catch((error) => {
+                updateGlobalState({ loadingPage: false });
+                console.error(error);
+            });
+
+        onClientUpdated();
+        onClose();
     };
 
-    if (!isOpen) return null;
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setClient(prevClient => ({ ...prevClient, [name]: value }));
+    };
 
     return (
-        <div className="popup">
-            <div className="popup-content">
-                <h2>{client ? 'Edit Client' : 'Add Client'}</h2>
-                <form onSubmit={handleSubmit}>
-                    <label>
-                        Name:
-                        <input
-                            type="text"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            required
-                        />
-                    </label>
-                    <label>
-                        Email:
-                        <input
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                        />
-                    </label>
-                    <button type="submit">Save</button>
-                    <button type="button" onClick={onClose}>Cancel</button>
-                </form>
-            </div>
-        </div>
+        <>
+            <DialogTitle>{`Editar cliente`}</DialogTitle>
+            <DialogContent>
+                <TextField
+                    error={invalid.nombre}
+                    label="Nombre"
+                    required
+                    margin="dense"
+                    name="nombre"
+                    value={client.nombre || ''}
+                    type="text"
+                    onChange={handleChange}
+                    fullWidth
+                    variant="outlined"
+                />
+                <TextField
+                    error={invalid.apellido}
+                    label="Apellido"
+                    required
+                    margin="dense"
+                    name="apellido"
+                    value={client.apellido || ''}
+                    type="text"
+                    onChange={handleChange}
+                    fullWidth
+                    variant="outlined"
+                />
+                <TextField
+                    error={invalid.email}
+                    label="Email"
+                    required
+                    margin="dense"
+                    name="email"
+                    value={client.email || ''}
+                    type="email"
+                    onChange={handleChange}
+                    fullWidth
+                    variant="outlined"
+                />
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={onClose} color="primary">
+                    Cancelar
+                </Button>
+                <Button onClick={handleSubmit} color="primary">
+                    Guardar
+                </Button>
+            </DialogActions>
+        </>
     );
 };
 
