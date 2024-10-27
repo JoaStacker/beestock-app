@@ -5,7 +5,6 @@ import com.api.crud.services.models.response.direccion.DireccionResponseDTO;
 import com.api.crud.services.models.response.direccion.LocalidadResponseDTO;
 import com.api.crud.services.models.response.direccion.PaisResponseDTO;
 import com.api.crud.services.models.response.direccion.ProvinciaResponseDTO;
-import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.util.List;
 
