@@ -26,16 +26,16 @@ public class ProveedorController {
         return new ResponseEntity<>(proveedorServiceImpl.createProveedor(proveedorDTO), HttpStatus.OK);
     }
     //DELETE
-    @DeleteMapping("/proveedores/{id}")
-    public ResponseEntity<Object> eliminarProveedor(@PathVariable Long id) throws Exception {
+    @PutMapping("/delete/{id}")
+    public ResponseEntity<Object> eliminarProveedor(@PathVariable("id") Long id) throws Exception {
         return new ResponseEntity<>(proveedorServiceImpl.deleteProveedorById(id), HttpStatus.OK);
     }
     //GET
-    @GetMapping("/proveedores")
+    @GetMapping
     public ResponseEntity<Object> getAll() throws Exception {
         return new ResponseEntity<>(proveedorServiceImpl.findAll(), HttpStatus.OK);
     }
-    @GetMapping("/proveedores/{id}")
+    @GetMapping("/{id}")
     private ResponseEntity<Object> getOne(@PathVariable("id") Long id) throws Exception {
         return new ResponseEntity<>(proveedorServiceImpl.findOne(id), HttpStatus.OK);
     }
@@ -43,7 +43,7 @@ public class ProveedorController {
 
     //PUT
     @PutMapping("/{id}")
-    private ResponseEntity<Object> updateOne(@PathVariable("id") Long id, @RequestBody ProveedorDTO proveedorDTO) throws Exception {
+    private ResponseEntity<Object> updateOne(@PathVariable("id") Long id, @Valid @RequestBody ProveedorDTO proveedorDTO) throws Exception {
         return new ResponseEntity<>(proveedorServiceImpl.updateProveedor(id, proveedorDTO), HttpStatus.OK);
     }
 

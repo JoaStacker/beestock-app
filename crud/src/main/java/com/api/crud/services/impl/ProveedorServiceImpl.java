@@ -103,11 +103,7 @@ public class ProveedorServiceImpl implements IProveedorService {
 
     public ResponseEntity<Object> findAll() throws Exception {
         try{
-            List<Proveedor> allProveedores = proveedorRepository.findAll();
-
-            if (allProveedores.isEmpty()) {
-                return ResponseHandler.responseBuilder(HttpStatus.NO_CONTENT, "No hay proveedores disponibles");
-            }
+            List<Proveedor> allProveedores = proveedorRepository.findAllNotDeleted();
 
             List<ProveedorResponseDTO> proveedoresList = new ArrayList<>();
             for(Proveedor pov : allProveedores){
