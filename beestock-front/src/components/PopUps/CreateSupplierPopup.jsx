@@ -43,6 +43,13 @@ const CreateInteractionPopup = ({ onClose, onCreated }) => {
     const theme = useTheme();
     const { globalState, updateGlobalState } = useGlobalContext();
     const [dateFechaInteraccion, setDateFechaInteraccion] = useState(dayjs(''));
+    const [condicionesTributarias, setCondicionesTributarias] = useState([]);
+    const [paises, setPaises] = useState([]);
+    const [provincias, setProvincias] = useState([]);
+    const [localidades, setLocalidades] = useState([]);
+    const [selectedPais, setSelectedPais] = useState('');
+    const [selectedProvincia, setSelectedProvincia] = useState('');
+    const [tipoServicios, setTipoServicios] = useState([]);
 
     // Fields and Validations
     const [data, setData] = useState({
@@ -53,7 +60,7 @@ const CreateInteractionPopup = ({ onClose, onCreated }) => {
         correo: '',
         tipoServicios: [],
         localidadId: '',
-        nombre: 'Azure'
+        nombre: ''
     });
     const defaultInvalid = {
         piso: false,
@@ -81,32 +88,6 @@ const CreateInteractionPopup = ({ onClose, onCreated }) => {
         setInvalid(newState);
         return Object.values(newState).every(el => el === false);
     };
-
-    const [tipoServicios, setTipoServicios] = useState([]);
-    useEffect(() => {
-        getTiposServicio().then((res) => {
-            updateGlobalState({ loadingPage: false });
-
-            if (res.error) {
-                updateGlobalState({
-                    openSnackbar: true,
-                    snackbarSeverity: "error",
-                    snackbarMessage: res.message
-                });
-                return;
-            }
-
-            const tipoServicios = res.data.tiposServicio;
-            setTipoServicios(tipoServicios)
-        }).catch((error) => {
-            updateGlobalState({ loadingPage: false });
-            console.error(error);
-        });
-    }, []);
-
-    useEffect(() => {
-        setInvalid(defaultInvalid);
-    }, [data]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -158,12 +139,30 @@ const CreateInteractionPopup = ({ onClose, onCreated }) => {
         setData(prevData => ({ ...prevData, [name]: value }));
     };
 
-    const [condicionesTributarias, setCondicionesTributarias] = useState([]);
-    const [paises, setPaises] = useState([]);
-    const [provincias, setProvincias] = useState([]);
-    const [localidades, setLocalidades] = useState([]);
-    const [selectedPais, setSelectedPais] = useState('');
-    const [selectedProvincia, setSelectedProvincia] = useState('');
+    useEffect(() => {
+        getTiposServicio().then((res) => {
+            updateGlobalState({ loadingPage: false });
+
+            if (res.error) {
+                updateGlobalState({
+                    openSnackbar: true,
+                    snackbarSeverity: "error",
+                    snackbarMessage: res.message
+                });
+                return;
+            }
+
+            const tipoServicios = res.data.tiposServicio;
+            setTipoServicios(tipoServicios)
+        }).catch((error) => {
+            updateGlobalState({ loadingPage: false });
+            console.error(error);
+        });
+    }, []);
+
+    useEffect(() => {
+        setInvalid(defaultInvalid);
+    }, [data]);
 
     useEffect(() => {
         // Fetch the list of countries (paises)
@@ -283,6 +282,18 @@ const CreateInteractionPopup = ({ onClose, onCreated }) => {
                     margin="dense"
                     name="cuit"
                     value={data.cuit || ''}
+                    type="text"
+                    onChange={handleChange}
+                    fullWidth
+                    variant="outlined"
+                />
+                <TextField
+                    error={invalid.nombre}
+                    label="Nombre"
+                    required
+                    margin="dense"
+                    name="nombre"
+                    value={data.nombre || ''}
                     type="text"
                     onChange={handleChange}
                     fullWidth
