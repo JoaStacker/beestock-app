@@ -139,6 +139,16 @@ const CreateInteractionPopup = ({ onClose, onCreated }) => {
         setData(prevData => ({ ...prevData, [name]: value }));
     };
 
+     const handleChangeServicio = (event) => {
+        const {
+            target: { value },
+        } = event;
+        setData(prevData => ({
+            ...prevData,
+            tipoServicios: typeof value === 'string' ? value.split(',') : value
+        }));
+    };
+
     useEffect(() => {
         getTiposServicio().then((res) => {
             updateGlobalState({ loadingPage: false });
@@ -256,15 +266,7 @@ const CreateInteractionPopup = ({ onClose, onCreated }) => {
         }
     }, [selectedProvincia]);
 
-    const handleChangeServicio = (event) => {
-        const {
-            target: { value },
-        } = event;
-        setData(prevData => ({
-            ...prevData,
-            tipoServicios: typeof value === 'string' ? value.split(',') : value
-        }));
-    };
+   
 
     return (
         <>
