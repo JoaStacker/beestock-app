@@ -2,10 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import {
     createClient,
-    getClients,
     getCondicionesTributarias,
-    getOneClient,
-    updateClient
 } from '../../services/clientService';
 import {
     Button,
@@ -29,6 +26,12 @@ import excludeVariablesFromRoot from "@mui/material/styles/excludeVariablesFromR
 const EditClientPopup = ({ onClose, onClientCreated }) => {
     const { globalState, updateGlobalState } = useGlobalContext();
     const [dateFechaNacimiento, setDateFechaNacimiento] = useState(dayjs(''));
+    const [condicionesTributarias, setCondicionesTributarias] = useState([]);
+    const [paises, setPaises] = useState([]);
+    const [provincias, setProvincias] = useState([]);
+    const [localidades, setLocalidades] = useState([]);
+    const [selectedPais, setSelectedPais] = useState('');
+    const [selectedProvincia, setSelectedProvincia] = useState('');
 
     // Fields and Validations
     const [client, setClient] = useState({
@@ -127,14 +130,6 @@ const EditClientPopup = ({ onClose, onClientCreated }) => {
         }
         setClient(prevClient => ({ ...prevClient, [name]: value }));
     };
-
-
-    const [condicionesTributarias, setCondicionesTributarias] = useState([]);
-    const [paises, setPaises] = useState([]);
-    const [provincias, setProvincias] = useState([]);
-    const [localidades, setLocalidades] = useState([]);
-    const [selectedPais, setSelectedPais] = useState('');
-    const [selectedProvincia, setSelectedProvincia] = useState('');
 
     useEffect(() => {
         // Fetch the list of countries (paises)

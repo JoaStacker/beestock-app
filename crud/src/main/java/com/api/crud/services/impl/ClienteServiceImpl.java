@@ -143,6 +143,10 @@ public class ClienteServiceImpl implements IClienteService {
                 response.setNombre(cliente.getNombre());
                 response.setApellido(cliente.getApellido());
                 response.setFechaNacimiento(cliente.getFechaNacimiento());
+                CondicionTributaria condicionTributaria = cliente.getCondicionTributaria();
+                CondicionTributariaResponseDTO cond = new CondicionTributariaResponseDTO(condicionTributaria.getId(), condicionTributaria.getTipo());
+                response.setCondicionTributaria(cond);
+
                 Direccion direccion = cliente.getDireccion();
                 Localidad localidad = direccion.getLocalidad();
                 Provincia provincia = localidad.getProvincia();
@@ -196,6 +200,13 @@ public class ClienteServiceImpl implements IClienteService {
                 }
                 if(body.getFechaNacimiento() != null){
                     clienteToUpdate.setFechaNacimiento(body.getFechaNacimiento());
+                }
+                if(body.getCondicionTributariaId() != null){
+                    Optional<CondicionTributaria> condicionTributaria = condicionTributariaRepository.findById(body.getCondicionTributariaId());
+                    if(condicionTributaria.isEmpty()){
+                        return ResponseHandler.responseBuilder(HttpStatus.CONFLICT, "Condicion tributaria id no existe!", condicionTributaria);
+                    }
+                    clienteToUpdate.setCondicionTributaria(condicionTributaria.get());
                 }
                 if(body.getCalle() != null){
                     Direccion direccion = clienteToUpdate.getDireccion();
