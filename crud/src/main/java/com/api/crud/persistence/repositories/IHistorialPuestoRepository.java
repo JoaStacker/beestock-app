@@ -9,7 +9,7 @@ import java.util.List;
 
 @Repository
 public interface IHistorialPuestoRepository extends JpaRepository<HistorialPuesto, Long> {
-    @Query(value="SELECT * FROM historial_puesto WHERE empleado_id= :empleado_id", nativeQuery = true)
+    @Query(value="SELECT * FROM historial_puesto WHERE empleado_id= :empleado_id ORDER BY fecha_ingreso DESC", nativeQuery = true)
     List<HistorialPuesto> findByEmpleadoId(Long empleado_id);
 
     @Query(value="SELECT * FROM historial_puesto WHERE empleado_id= :empleado_id ORDER BY fecha_ingreso DESC LIMIT 1", nativeQuery = true)

@@ -16,7 +16,7 @@ import { useGlobalContext } from "../../context/GlobalContext";
 import { HorizontalRule} from "@mui/icons-material";
 import {getLocalidadesByProvinciaId, getPaises, getProvinciasByPaisId} from "../../services/locationService";
 import { createEmployee } from '../../services/employeesService';
-import { getPositions } from '../../services/employeesService copy';
+import { getPositions } from '../../services/positionsService';
 import { DateField, LocalizationProvider} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";

@@ -1,10 +1,7 @@
 package com.api.crud.services.impl;
 
 
-import com.api.crud.persistence.entities.Direccion;
-import com.api.crud.persistence.entities.Empleado;
-import com.api.crud.persistence.entities.HistorialPuesto;
-import com.api.crud.persistence.entities.Puesto;
+import com.api.crud.persistence.entities.*;
 import com.api.crud.persistence.repositories.IEmpleadoRepository;
 import com.api.crud.persistence.repositories.IHistorialPuestoRepository;
 import com.api.crud.persistence.repositories.IPuestoRepository;
@@ -15,13 +12,18 @@ import com.api.crud.services.models.response.empleado.EmpleadoResponseDTO;
 import com.api.crud.services.models.response.historialpuestos.HistorialPuestoEmpleadoResponseDTO;
 import com.api.crud.services.models.response.ResponseHandler;
 import com.api.crud.services.models.response.historialpuestos.HistorialPuestoResponseDTO;
+import com.api.crud.services.models.response.proveedor.ProveedorResponseDTO;
 import com.api.crud.services.models.response.puesto.PuestoResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -81,10 +83,38 @@ public class HistorialPuestoServiceImpl implements IHistorialPuestoService {
             if (emp.isEmpty()) {
                 return ResponseHandler.responseBuilder(HttpStatus.CONFLICT, "El empleado no existe.");
             }
-            List<HistorialPuesto> historialPuestos = historialPuestoRepository.findByEmpleadoId(id);
+            List<HistorialPuesto> allHistorial = historialPuestoRepository.findByEmpleadoId(id);
+            List<HistorialPuestoResponseDTO> historialList = new ArrayList<>();
+            String puestoNombre = null;
+            Long puestoId = null;
+
+            for(HistorialPuesto hispue : allHistorial){
+                HistorialPuestoResponseDTO historialPuestoResponseDTO = new HistorialPuestoResponseDTO();
+                historialPuestoResponseDTO.setPuestoId(hispue.getPuesto().getId());
+                historialPuestoResponseDTO.setPuestoNombre(hispue.getPuesto().getNombre());
+                historialPuestoResponseDTO.setFechaIngreso(hispue.getFechaIngreso());
+                historialPuestoResponseDTO.setFechaSalida(hispue.getFechaSalida());
+
+                // Parse the date strings into LocalDate objects
+                LocalDateTime date1 = hispue.getFechaIngreso();
+                LocalDateTime date2 = hispue.getFechaSalida();
+
+                if(date2 == null){
+                    puestoId = hispue.getPuesto().getId();
+                    puestoNombre = hispue.getPuesto().getNombre();
+                }
+                date2 = Objects.requireNonNullElse(date2, LocalDateTime.now());
+
+                // Calculate the difference in years
+                Long antiguedadAnos = ChronoUnit.YEARS.between(date1, date2);
+                historialPuestoResponseDTO.setAntiguedad(antiguedadAnos);
+
+                historialList.add(historialPuestoResponseDTO);
+            }
             HistorialPuestoEmpleadoResponseDTO response = new HistorialPuestoEmpleadoResponseDTO();
-            response.setEmpleadoId(id);
-            response.setHistorialPuestos(historialPuestos);
+            response.setPuestoId(puestoId);
+            response.setPuestoNombre(puestoNombre);
+            response.setHistorialPuestos(historialList);
 
             return ResponseHandler.responseBuilder(HttpStatus.OK, "Historial de puestos del empleado", response);
         }catch(Exception e){

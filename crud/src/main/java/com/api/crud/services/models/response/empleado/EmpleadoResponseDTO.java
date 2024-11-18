@@ -21,6 +21,7 @@ public class EmpleadoResponseDTO {
     private LocalidadResponseDTO localidad;
     private ProvinciaResponseDTO provincia;
     private PaisResponseDTO pais;
+    private Long puestoId;
     private String puesto;
 
     public EmpleadoResponseDTO() {
@@ -112,5 +113,13 @@ public class EmpleadoResponseDTO {
 
     public void setPuesto(String puesto) {
         this.puesto = puesto;
+    }
+
+    public Long getPuestoId() {
+        return puestoId;
+    }
+
+    public void setPuestoId(Long puestoId) {
+        this.puestoId = puestoId;
     }
 }

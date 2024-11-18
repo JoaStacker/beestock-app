@@ -23,6 +23,7 @@ import InteractionsPopup from "../components/PopUps/InteractionsPopup";
 import { deleteEmployee, getEmployees } from "../services/employeesService";
 import CreateEmployeePopup from "../components/PopUps/CreateEmployeePopup";
 import EditEmployeePopup from "../components/PopUps/EditEmployeePopup";
+import EmployeePositionsInfoPopup from "../components/PopUps/EmployeePositionsInfoPopup";
 
 const EmployeesPage = () => {
     const { globalState, updateGlobalState } = useGlobalContext();
@@ -66,8 +67,9 @@ const EmployeesPage = () => {
         setCreateDialogOpen(true);
     };
 
-    const handleEmployeePositionInfo = () => {
-      setPositionInfoDialogOpen(true);
+    const handleEmployeePositionInfo = (employee) => {
+        setSelectedEmployee(employee);
+        setPositionInfoDialogOpen(true);
   };
 
     const handleEditEmployee = (employee) => {
@@ -93,7 +95,6 @@ const EmployeesPage = () => {
         { id: 'nombre', label: 'Nombre' },
         { id: 'apellido', label: 'Apellido' },
         { id: 'email', label: 'Email' },
-        { id: 'puesto', label: 'Puesto' },
     ];
 
     const actions = [
@@ -159,12 +160,13 @@ const EmployeesPage = () => {
             </Dialog>
 
             {/*PUESTO*/}
-            {/* <Dialog open={positionInfoDialogOpen} onClose={() => setPositionInfoDialogOpen(false)}>
-                <EmployeePositionPopup
+            <Dialog open={positionInfoDialogOpen} onClose={() => setPositionInfoDialogOpen(false)}>
+                <EmployeePositionsInfoPopup
                     id={selectedEmployee?.id}
+                    nombre={selectedEmployee?.nombre + " " + selectedEmployee?.apellido}
                     onClose={() => setPositionInfoDialogOpen(false)}
                 />
-            </Dialog> */}
+            </Dialog>
         </Box>
     );
 };

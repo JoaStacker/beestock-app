@@ -40,7 +40,7 @@ public class EmpleadoController {
 
     @CrossOrigin(origins = "http://localhost:3000")
     @PutMapping("/{id}/")
-    private ResponseEntity<Object> updateOne(@PathVariable("id") Long id, @Valid @RequestBody EmpleadoDTO empleado) throws Exception {
+    private ResponseEntity<Object> updateOne(@PathVariable("id") Long id, @RequestBody EmpleadoDTO empleado) throws Exception {
         return new ResponseEntity<>(empleadoService.updateEmpleado(id, empleado), HttpStatus.OK);
     }
 
