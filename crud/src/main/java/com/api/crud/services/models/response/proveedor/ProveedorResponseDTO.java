@@ -15,6 +15,9 @@ public class ProveedorResponseDTO {
     private String nombre;
     private String cuit;
     private String correo;
+    private Long totalIncidentes;
+    private Integer ranking; // New field to store the ranking
+
     private List<TipoServicio> tipoServicios;
     private DireccionResponseDTO direccion;
     //private CondicionTributariaResponseDTO condicionTributaria;
@@ -107,5 +110,21 @@ public class ProveedorResponseDTO {
 
     public void setPais(PaisResponseDTO pais) {
         this.pais = pais;
+    }
+
+    public Long getTotalIncidentes() {
+        return totalIncidentes;
+    }
+
+    public void setTotalIncidentes(Long totalIncidentes) {
+        this.totalIncidentes = totalIncidentes;
+    }
+
+    public Integer getRanking() {
+        return ranking;
+    }
+
+    public void setRanking(Integer ranking) {
+        this.ranking = ranking;
     }
 }

@@ -15,4 +15,6 @@ public interface IProveedorService {
     public ResponseEntity<Object> findOne(Long id) throws Exception;
     public ResponseEntity<Object> updateProveedor(Long id,  ProveedorDTO proveedorDTO) throws Exception;
     public ResponseEntity<Object> findAllTiposServicios() throws Exception;
+    public ResponseEntity<Object> getRankingIncidentes() throws Exception;
+
 }

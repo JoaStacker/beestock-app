@@ -20,7 +20,7 @@ import {
 } from '@mui/material';
 import {Add} from "@mui/icons-material";
 
-const GenericTable = ({ columns, data=[], actions, onAddClient, entityType='' }) => {
+const GenericTable = ({ filter=true, columns, data=[], actions, onAddClient, entityType='' }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [searchQuery, setSearchQuery] = useState('');
@@ -59,15 +59,18 @@ const GenericTable = ({ columns, data=[], actions, onAddClient, entityType='' })
   return (
       <Paper>
         <Box sx={{padding: 2}}>
-          <h3>Filtros</h3>
-          <TextField
-              fullWidth
-              label="Término de busqueda"
-              variant="outlined"
-              value={searchQuery}
-              onChange={handleSearch}
-              sx={{mb: 2}}
-          />
+          {filter && (<>
+              <h3>Filtros</h3>
+              <TextField
+                fullWidth
+                label="Término de busqueda"
+                variant="outlined"
+                value={searchQuery}
+                onChange={handleSearch}
+                sx={{mb: 2}}
+              />
+            </>)
+          }
           {entityType === 'Cliente' && (
               <FormControl variant="outlined" fullWidth>
                 <InputLabel id="month-select-label">Mes de cumpleaños</InputLabel>

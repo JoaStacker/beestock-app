@@ -299,4 +299,60 @@ public class ProveedorServiceImpl implements IProveedorService {
         }
     }
 
+    public ResponseEntity<Object> getRankingIncidentes() throws Exception {
+        try{
+            List<Proveedor> allProveedores = proveedorRepository.findAllWithIncidentes();
+
+            List<ProveedorResponseDTO> proveedoresList = new ArrayList<>();
+            for(Proveedor pov : allProveedores){
+                ProveedorResponseDTO proveedorResponseDTO = new ProveedorResponseDTO();
+
+                proveedorResponseDTO.setId(pov.getId());
+                proveedorResponseDTO.setCuit(pov.getCuit());
+                proveedorResponseDTO.setNombre(pov.getNombre());
+                proveedorResponseDTO.setCorreo(pov.getCorreo());
+                proveedorResponseDTO.setTipoServicios(pov.getTipoServicios());
+                proveedorResponseDTO.setTotalIncidentes((long) pov.getIncidentes().size());
+                Direccion direccion = pov.getDireccion();
+                DireccionResponseDTO dir = new DireccionResponseDTO(
+                        direccion.getId(),
+                        direccion.getCalle(),
+                        direccion.getNumero(),
+                        direccion.getPiso()
+                );
+                proveedorResponseDTO.setDireccion(dir);
+                proveedoresList.add(proveedorResponseDTO);
+
+            }
+
+            // Sort proveedores by totalIncidentes in descending order and then by nombre alphabetically (ascending order) in case of a tie
+            proveedoresList.sort((p1, p2) -> {
+                // First, compare by totalIncidentes in descending order
+                int incidentComparison = Long.compare(p1.getTotalIncidentes(), p2.getTotalIncidentes());
+
+                // If totalIncidentes are the same, compare by nombre alphabetically (ascending order)
+                if (incidentComparison == 0) {
+                    return p1.getNombre().compareToIgnoreCase(p2.getNombre());
+                }
+
+                // Otherwise, return the result of the totalIncidentes comparison
+                return incidentComparison;
+            });
+
+            // Assign ranking positions
+            for (int i = 0; i < proveedoresList.size(); i++) {
+                // Ranking position is the index + 1 (1-based index)
+                proveedoresList.get(i).setRanking(i + 1);
+            }
+
+            ProveedoresResponseDTO response = new ProveedoresResponseDTO();
+            response.setProveedores(proveedoresList);
+
+            return ResponseHandler.responseBuilder(HttpStatus.OK, "Proveedores encontrados con exito", response);
+
+        }catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al obtener proveedores: " + e.getMessage());
+        }
+    }
 }

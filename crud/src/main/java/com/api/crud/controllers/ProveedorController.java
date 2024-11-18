@@ -57,4 +57,10 @@ public class ProveedorController {
     public ResponseEntity<Object> getAllTiposServicios() throws Exception {
         return new ResponseEntity<>(proveedorServiceImpl.findAllTiposServicios(), HttpStatus.OK);
     }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/ranking/")
+    private ResponseEntity<Object> getRankingIncidentes() throws Exception {
+        return new ResponseEntity<>(proveedorServiceImpl.getRankingIncidentes(), HttpStatus.OK);
+    }
 }

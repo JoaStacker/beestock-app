@@ -1,6 +1,6 @@
 import GenericTable from "../components/GenericTable";
 import {Box, Button, Dialog, Grid} from "@mui/material";
-import {Add, Delete, Edit, ViewAgenda} from "@mui/icons-material";
+import {Add, Delete, Edit, EmojiEvents, ViewAgenda} from "@mui/icons-material";
 import EditClientPopup from "../components/PopUps/EditClientPopup";
 import CreateClientPopup from "../components/PopUps/CreateClientPopup";
 import InteractionsPopup from "../components/PopUps/InteractionsPopup";
@@ -10,6 +10,7 @@ import {useGlobalContext} from "../context/GlobalContext";
 import {deleteClient, getClients} from "../services/clientService";
 import {getSuppliers} from "../services/supplierService";
 import EditSupplierPopup from "../components/PopUps/EditSupplierPopup";
+import SuppliersRankingPopUp from "../components/PopUps/SuppliersRankingPopUp";
 
 const SuppliersPage = () => {
     const { globalState, updateGlobalState } = useGlobalContext();
@@ -18,6 +19,7 @@ const SuppliersPage = () => {
 
     const [editDialogOpen, setEditDialogOpen] = useState(false);
     const [createDialogOpen, setCreateDialogOpen] = useState(false);
+    const [rankingDialogOpen, setRankingDialogOpen] = useState(false);
 
     const reloadData = () => {
         updateGlobalState({ loadingPage: true });
@@ -51,6 +53,10 @@ const SuppliersPage = () => {
     const handleAdd = () => {
         setCreateDialogOpen(true);
     };
+
+    const handleViewRanking = () => {
+        setRankingDialogOpen(true);
+    }
 
     const handleEdit = (proveedor) => {
         setSelectedData(proveedor);
@@ -108,6 +114,16 @@ const SuppliersPage = () => {
                           {`Nuevo proveedor`}
                       </Button>
                   </Grid>
+                  <Grid item xs={2}>
+                      <Button
+                          variant="contained"
+                          color="secondary"
+                          onClick={handleViewRanking}
+                      >
+                          <EmojiEvents />
+                          {`Ver calificaciones`}
+                      </Button>
+                  </Grid>
               </Grid>
               <Grid container spacing={2}>
                   <Grid item xs={12}>
@@ -129,6 +145,13 @@ const SuppliersPage = () => {
                   <CreateSupplierPopup
                       onClose={() => setCreateDialogOpen(false)}
                       onCreated={handleCreated}
+                  />
+              </Dialog>
+
+              {/*ADD PROVEEDOR*/}
+              <Dialog open={rankingDialogOpen} onClose={() => setRankingDialogOpen(false)}>
+                  <SuppliersRankingPopUp
+                      onClose={() => setRankingDialogOpen(false)}
                   />
               </Dialog>
           </Box>

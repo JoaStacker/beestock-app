@@ -29,6 +29,9 @@ public class Proveedor {
     @JoinColumn(name = "direccion_id", referencedColumnName = "id")
     private Direccion direccion;
 
+    @OneToMany(mappedBy = "proveedor", fetch = FetchType.LAZY)
+    private List<Incidente> incidentes;
+
     // Getters y Setters
     public Proveedor() {
     }
@@ -95,5 +98,13 @@ public class Proveedor {
 
     public void setDireccion(Direccion direccion) {
         this.direccion = direccion;
+    }
+
+    public List<Incidente> getIncidentes() {
+        return incidentes;
+    }
+
+    public void setIncidentes(List<Incidente> incidentes) {
+        this.incidentes = incidentes;
     }
 }

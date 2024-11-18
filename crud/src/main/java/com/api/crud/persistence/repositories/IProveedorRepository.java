@@ -1,6 +1,7 @@
 package com.api.crud.persistence.repositories;
 
 import com.api.crud.persistence.entities.Proveedor;
+import com.api.crud.services.models.response.proveedor.ProveedorResponseDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,6 +12,9 @@ import java.util.Optional;
 
 @Repository
 public interface IProveedorRepository extends JpaRepository<Proveedor, Long> {
+    @Query("SELECT p FROM Proveedor p LEFT JOIN FETCH p.incidentes WHERE p.estado = true")
+    List<Proveedor> findAllWithIncidentes();
+
     @Query(value="SELECT * FROM proveedor WHERE estado = true", nativeQuery = true)
     List<Proveedor> findAllNotDeleted();
 

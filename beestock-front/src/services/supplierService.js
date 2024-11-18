@@ -64,3 +64,8 @@ export const getTiposServicio = async () => {
     return handleResponse(axiosInstance.get('/tipos-servicio/'));
 };
 
+export const getRankingByIncidents = async () => {
+    return handleResponse(axiosInstance.get('/ranking/'));
+};
+
+
