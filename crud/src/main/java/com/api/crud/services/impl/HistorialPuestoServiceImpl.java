@@ -67,7 +67,7 @@ public class HistorialPuestoServiceImpl implements IHistorialPuestoService {
             Puesto puesto = nuevoHistorialPuesto.getPuesto();
             response.setPuesto(new PuestoResponseDTO(puesto.getId(), puesto.getNombre()));
             Empleado empleado = nuevoHistorialPuesto.getEmpleado();
-            response.setEmpleado(new EmpleadoResponseDTO(empleado.getId(), empleado.getDni(), empleado.getNombre(), empleado.getApellido()));
+            response.setEmpleado(new EmpleadoResponseDTO(empleado.getId(), empleado.getDni(), empleado.getNombre(), empleado.getApellido(), empleado.getEmail()));
 
             return ResponseHandler.responseBuilder(HttpStatus.CREATED, "Nuevo puesto asignado al empleado.", response);
         }catch(Exception e){

@@ -1,89 +1,61 @@
 // src/components/ClientPopup.js
 import React, { useEffect, useState } from 'react';
 import {
-    Box,
-    Button, Chip,
+    Button,
     DialogActions,
     DialogContent,
     DialogTitle,
     FormControl,
-    InputLabel, MenuItem, OutlinedInput, Select,
+    InputLabel, MenuItem, Select,
     TextField,
-    Typography,
+    Typography
 } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
 import locales from "../../local/en";
 import { useGlobalContext } from "../../context/GlobalContext";
-import { HorizontalRule} from "@mui/icons-material";
-import dayjs from "dayjs";
-import {createSupplier, getTiposServicio} from "../../services/supplierService";
-import {getCondicionesTributarias} from "../../services/clientService";
-import {getLocalidadesByProvinciaId, getPaises, getProvinciasByPaisId} from "../../services/locationService";
+import { getLocalidadesByProvinciaId, getPaises, getProvinciasByPaisId,  } from "../../services/locationService";
+import { getOneEmployee, updateEmployee } from '../../services/employeesService';
 
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-    PaperProps: {
-        style: {
-            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-            width: 250,
-        },
-    },
-};
-
-function getStyles(id, data, theme) {
-    return {
-        fontWeight: data.some(s => s.id === id)
-            ? theme.typography.fontWeightMedium
-            : theme.typography.fontWeightRegular,
-    };
-}
-
-const CreateSupplierPopup = ({ onClose, onCreated }) => {
-    const theme = useTheme();
+const EditEmployeePopup = ({ onClose, id, onUpdated }) => {
     const { globalState, updateGlobalState } = useGlobalContext();
-    const [dateFechaInteraccion, setDateFechaInteraccion] = useState(dayjs(''));
-    const [condicionesTributarias, setCondicionesTributarias] = useState([]);
     const [paises, setPaises] = useState([]);
     const [provincias, setProvincias] = useState([]);
     const [localidades, setLocalidades] = useState([]);
     const [selectedPais, setSelectedPais] = useState('');
     const [selectedProvincia, setSelectedProvincia] = useState('');
-    const [tipoServicios, setTipoServicios] = useState([]);
 
     // Fields and Validations
     const [data, setData] = useState({
-        piso: '',
-        cuit: '',
-        numero: '',
+        dni: '',
+        nombre: '',
+        apellido: '',
+        email: '',
         calle: '',
-        correo: '',
-        tipoServicios: [],
+        numero: '',
+        piso: '',
         localidadId: '',
-        nombre: ''
     });
     const defaultInvalid = {
-        piso: false,
-        cuit: false,
-        numero: false,
-        calle: false,
-        correo: false,
-        tipoServicios: false,
-        localidadId: false,
+        dni: false,
         nombre: false,
+        apellido: false,
+        email: false,
+        calle: false,
+        numero: false,
+        piso: false,
+        localidadId: false,
     }
     const [invalid, setInvalid] = useState(defaultInvalid);
-
     const validForm = () => {
         const newState = {
-            piso: !data.piso,
-            cuit: !data.cuit,
-            numero: !data.numero,
-            calle: !data.calle,
-            correo: !data.correo,
-            tipoServicios: !data.tipoServicios || data.tipoServicios?.length === 0,
-            localidadId: !data.localidadId,
+            dni: !data.dni,
             nombre: !data.nombre,
+            apellido: !data.apellido,
+            email: !data.email,
+            calle: !data.calle,
+            numero: !data.numero,
+            piso: !data.piso,
+            fechaNacimiento: !data.fechaNacimiento,
+            localidadId: !data.localidadId,
         };
         setInvalid(newState);
         return Object.values(newState).every(el => el === false);
@@ -91,19 +63,20 @@ const CreateSupplierPopup = ({ onClose, onCreated }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        if (!validForm()) {
-            updateGlobalState({
-                openSnackbar: true,
-                snackbarSeverity: "error",
-                snackbarMessage: "Datos invalidos"
-            });
-            return;
-        }
+        if (!validForm()) return;
 
         updateGlobalState({ loadingPage: true });
-
-        await createSupplier(data)
+        let payload = {
+            dni: data.dni,
+            nombre: data.nombre,
+            apellido: data.apellido,
+            email: data.email,
+            calle: data.calle,
+            numero: data.numero,
+            piso: data.piso,
+            localidadId: data.localidadId,
+        }
+        await updateEmployee(id, payload)
             .then((res) => {
                 updateGlobalState({ loadingPage: false });
 
@@ -119,7 +92,7 @@ const CreateSupplierPopup = ({ onClose, onCreated }) => {
                 updateGlobalState({
                     openSnackbar: true,
                     snackbarSeverity: "success",
-                    snackbarMessage: locales.created
+                    snackbarMessage: locales.updated
                 });
             })
             .catch((error) => {
@@ -127,7 +100,7 @@ const CreateSupplierPopup = ({ onClose, onCreated }) => {
                 console.error(error);
             });
 
-        onCreated();
+        onUpdated();
         onClose();
     };
 
@@ -136,48 +109,18 @@ const CreateSupplierPopup = ({ onClose, onCreated }) => {
         if (propName) {
             name = propName;
         }
-        setData(prevData => ({ ...prevData, [name]: value }));
+        setData(prevdata => ({ ...prevdata, [name]: value }));
     };
-
-     const handleChangeServicio = (event) => {
-        const {
-            target: { value },
-        } = event;
-        setData(prevData => ({
-            ...prevData,
-            tipoServicios: typeof value === 'string' ? value.split(',') : value
-        }));
-    };
-
-    useEffect(() => {
-        getTiposServicio().then((res) => {
-            updateGlobalState({ loadingPage: false });
-
-            if (res.error) {
-                updateGlobalState({
-                    openSnackbar: true,
-                    snackbarSeverity: "error",
-                    snackbarMessage: res.message
-                });
-                return;
-            }
-
-            const tipoServicios = res.data.tiposServicio;
-            setTipoServicios(tipoServicios)
-        }).catch((error) => {
-            updateGlobalState({ loadingPage: false });
-            console.error(error);
-        });
-    }, []);
 
     useEffect(() => {
         setInvalid(defaultInvalid);
     }, [data]);
 
     useEffect(() => {
-        // Fetch the list of countries (paises)
-        getCondicionesTributarias()
+        getOneEmployee(id)
             .then((res) => {
+                updateGlobalState({ loadingPage: false });
+
                 if (res.error) {
                     updateGlobalState({
                         openSnackbar: true,
@@ -187,14 +130,27 @@ const CreateSupplierPopup = ({ onClose, onCreated }) => {
                     return;
                 }
 
-                const condicionesData = res.data.condicionesTributarias;
-                setCondicionesTributarias(condicionesData);
+                const empleado = res.data;
+                setData(empleado)
+
+                setSelectedPais(empleado.pais.id)
+                setSelectedProvincia(empleado.provincia.id)
+                setData({
+                    dni: empleado.dni,
+                    nombre: empleado.nombre,
+                    apellido: empleado.apellido,
+                    email: empleado.email,
+                    calle: empleado.direccion.calle,
+                    numero: empleado.direccion.numero,
+                    piso: empleado.direccion.piso,
+                    localidadId: empleado.localidad.id,
+                });
             })
             .catch((error) => {
                 updateGlobalState({ loadingPage: false });
                 console.error(error);
             });
-    }, []);
+    }, [id]);
 
     useEffect(() => {
         // Fetch the list of countries (paises)
@@ -211,6 +167,7 @@ const CreateSupplierPopup = ({ onClose, onCreated }) => {
 
                 const paisesData = res.data.paises;
                 setPaises(paisesData);
+                
             })
             .catch((error) => {
                 updateGlobalState({ loadingPage: false });
@@ -266,24 +223,18 @@ const CreateSupplierPopup = ({ onClose, onCreated }) => {
         }
     }, [selectedProvincia]);
 
-   
 
     return (
         <>
-            <DialogTitle>
-                <Typography variant="h6" gutterBottom>
-                    Nuevo proveedor
-                </Typography>
-                <HorizontalRule />
-            </DialogTitle>
+            <DialogTitle>{`Editar empleado`}</DialogTitle>
             <DialogContent>
                 <TextField
-                    error={invalid.cuit}
-                    label="CUIT"
+                    error={invalid.dni}
+                    label="DNI"
                     required
                     margin="dense"
-                    name="cuit"
-                    value={data.cuit || ''}
+                    name="dni"
+                    value={data.dni || ''}
                     type="text"
                     onChange={handleChange}
                     fullWidth
@@ -301,43 +252,26 @@ const CreateSupplierPopup = ({ onClose, onCreated }) => {
                     fullWidth
                     variant="outlined"
                 />
-                <FormControl sx={{ m: 1, width: 300 }}>
-                    <InputLabel id="demo-multiple-chip-label">Servicios</InputLabel>
-                    <Select
-                        labelId="demo-multiple-chip-label"
-                        id="demo-multiple-chip"
-                        multiple
-                        value={data.tipoServicios}
-                        onChange={handleChangeServicio}
-                        input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
-                        renderValue={(selected) => (
-                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                {selected.map((value) => (
-                                    <Chip key={value} label={tipoServicios.find(el => el.id === value).nombre} />
-                                ))}
-                            </Box>
-                        )}
-                        MenuProps={MenuProps}
-                    >
-                        {tipoServicios.map((servicio) => (
-                            <MenuItem
-                                key={servicio.id}
-                                value={servicio.id}
-                                style={getStyles(servicio.id, data.tipoServicios, theme)}
-                            >
-                                {servicio.nombre}
-                            </MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
                 <TextField
-                    error={invalid.correo}
-                    label="Correo"
+                    error={invalid.apellido}
+                    label="Apellido"
                     required
                     margin="dense"
-                    name="correo"
-                    value={data.correo || ''}
-                    type="correo"
+                    name="apellido"
+                    value={data.apellido || ''}
+                    type="text"
+                    onChange={handleChange}
+                    fullWidth
+                    variant="outlined"
+                />
+                <TextField
+                    error={invalid.email}
+                    label="Email"
+                    required
+                    margin="dense"
+                    name="email"
+                    value={data.email || ''}
+                    type="email"
                     onChange={handleChange}
                     fullWidth
                     variant="outlined"
@@ -450,4 +384,4 @@ const CreateSupplierPopup = ({ onClose, onCreated }) => {
     );
 };
 
-export default CreateSupplierPopup;
+export default EditEmployeePopup;

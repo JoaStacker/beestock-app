@@ -3,7 +3,9 @@ package com.api.crud.services.impl;
 
 import com.api.crud.persistence.entities.*;
 import com.api.crud.persistence.repositories.IEmpleadoRepository;//check
+import com.api.crud.persistence.repositories.IHistorialPuestoRepository;
 import com.api.crud.persistence.repositories.ILocalidadRepository;
+import com.api.crud.persistence.repositories.IPuestoRepository;
 import com.api.crud.services.IEmpleadoService;
 import com.api.crud.services.models.dtos.EmpleadoDTO;
 import com.api.crud.services.models.response.direccion.DireccionResponseDTO;
@@ -13,6 +15,7 @@ import com.api.crud.services.models.response.direccion.ProvinciaResponseDTO;
 import com.api.crud.services.models.response.empleado.EmpleadoResponseDTO;
 import com.api.crud.services.models.response.empleado.EmpleadosResponseDTO;
 import com.api.crud.services.models.response.ResponseHandler;
+import com.api.crud.services.models.response.puesto.PuestoResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;//check
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +34,12 @@ public class EmpleadoServiceImpl implements IEmpleadoService {
     @Autowired
     private ILocalidadRepository localidadRepository;
 
+    @Autowired
+    private IPuestoRepository puestoRepository;
+
+    @Autowired
+    private IHistorialPuestoRepository historialPuestoRepository;
+
     public ResponseEntity<Object> createEmpleado(EmpleadoDTO body) throws Exception{
         try{
             Optional<Empleado> emp = empleadoRepository.findByDni(body.getDni());
@@ -43,25 +52,24 @@ public class EmpleadoServiceImpl implements IEmpleadoService {
                 return ResponseHandler.responseBuilder(HttpStatus.CONFLICT, "Localidad id no existe!", localidad);
             }
 
-            Empleado nuevoEmpleado = new Empleado(body.getNombre(), body.getApellido(), body.getDni(), body.getCalle(), body.getNumero(), body.getPiso(), localidad.get());
+            Optional<Puesto> pue = puestoRepository.findById(body.getPuestoId());
+            if (pue.isEmpty()) {
+                return ResponseHandler.responseBuilder(HttpStatus.CONFLICT, "El puesto no existe.");
+            }
+            Puesto puesto = pue.get();
+
+            Empleado nuevoEmpleado = new Empleado(body.getNombre(), body.getApellido(), body.getEmail(), body.getDni(), body.getCalle(), body.getNumero(), body.getPiso(), localidad.get(), puesto);
             empleadoRepository.save(nuevoEmpleado);
 
-            EmpleadoResponseDTO response = new EmpleadoResponseDTO();
-            response.setId(nuevoEmpleado.getId());
-            response.setDni(nuevoEmpleado.getDni());
-            response.setNombre(nuevoEmpleado.getNombre());
-            response.setApellido(nuevoEmpleado.getApellido());
+            HistorialPuesto nuevoHistorialPuesto = new HistorialPuesto();
+            nuevoHistorialPuesto.setFechaIngreso(body.getFechaIngreso());
+            nuevoHistorialPuesto.setFechaSalida(null);
+            nuevoHistorialPuesto.setEmpleado(nuevoEmpleado);
+            nuevoHistorialPuesto.setPuesto(puesto);
 
-            Direccion direccion = nuevoEmpleado.getDireccion();
-            DireccionResponseDTO dir = new DireccionResponseDTO(
-                    direccion.getId(),
-                    direccion.getCalle(),
-                    direccion.getNumero(),
-                    direccion.getPiso()
-            );
-            response.setDireccion(dir);
+            historialPuestoRepository.save(nuevoHistorialPuesto);
 
-            return ResponseHandler.responseBuilder(HttpStatus.CREATED, "Empleado creado con éxito!", response);
+            return ResponseHandler.responseBuilder(HttpStatus.CREATED, "Empleado creado con éxito!");
         }catch(Exception e){
             return ResponseHandler.responseBuilder(HttpStatus.INTERNAL_SERVER_ERROR, "Error al crear empleado: " + e.getMessage());
         }
@@ -80,7 +88,9 @@ public class EmpleadoServiceImpl implements IEmpleadoService {
                 emp.setId(empleado.getId());
                 emp.setDni(empleado.getDni());
                 emp.setNombre(empleado.getNombre());
+                emp.setEmail(empleado.getEmail());
                 emp.setApellido(empleado.getApellido());
+                emp.setPuesto(empleado.getPuesto().getNombre());
                 Direccion direccion = empleado.getDireccion();
                 DireccionResponseDTO dir = new DireccionResponseDTO(
                         direccion.getId(),
@@ -88,6 +98,7 @@ public class EmpleadoServiceImpl implements IEmpleadoService {
                         direccion.getNumero(),
                         direccion.getPiso()
                 );
+
                 emp.setDireccion(dir);
                 empleadoList.add(emp);
             }
@@ -111,6 +122,7 @@ public class EmpleadoServiceImpl implements IEmpleadoService {
                 response.setDni(empleado.getDni());
                 response.setNombre(empleado.getNombre());
                 response.setApellido(empleado.getApellido());
+                response.setEmail(empleado.getEmail());
                 Direccion direccion = empleado.getDireccion();
                 Localidad localidad = direccion.getLocalidad();
                 Provincia provincia = localidad.getProvincia();

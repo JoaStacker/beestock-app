@@ -14,7 +14,8 @@ public class PuestoController {
     @Autowired
     private IPuestoService puestoService;
 
-    @GetMapping
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/")
     private ResponseEntity<Object> getAll() throws Exception {
         return new ResponseEntity<>(puestoService.findAll(), HttpStatus.OK);
     }

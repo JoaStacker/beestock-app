@@ -56,7 +56,7 @@ public class VentaServiceImpl implements IVentaService {
                 ven.setMontoTotal(venta.getMontoTotal());
                 ven.setEstado(venta.getEstado());
                 Empleado empleado = venta.getEmpleado();
-                ven.setEmpleado(new EmpleadoResponseDTO(empleado.getId(), empleado.getDni(), empleado.getNombre(), empleado.getApellido()));
+                ven.setEmpleado(new EmpleadoResponseDTO(empleado.getId(), empleado.getDni(), empleado.getNombre(), empleado.getApellido(), empleado.getEmail()));
                 ventasList.add(ven);
             }
             response.setVentas(ventasList);
@@ -101,7 +101,7 @@ public class VentaServiceImpl implements IVentaService {
             response.setMontoTotal(venta.getMontoTotal());
             response.setCantidadCuotas(venta.getCantidadCuotas());
             response.setEstado(venta.getEstado());
-            response.setEmpleado(new EmpleadoResponseDTO(empleado.getId(), empleado.getDni(), empleado.getNombre(), empleado.getApellido()));
+            response.setEmpleado(new EmpleadoResponseDTO(empleado.getId(), empleado.getDni(), empleado.getNombre(), empleado.getApellido(), empleado.getEmail()));
             ClienteResponseDTO cli = new ClienteResponseDTO();
             cli.setId(cliente.getId());
             cli.setNombre(cliente.getNombre());
@@ -126,7 +126,7 @@ public class VentaServiceImpl implements IVentaService {
                 response.setFechaVenta(venta.getFechaVenta());
                 Empleado empleado = venta.getEmpleado();
 //                Cliente cliente = venta.getCliente();
-                response.setEmpleado(new EmpleadoResponseDTO(empleado.getId(), empleado.getDni(), empleado.getNombre(), empleado.getApellido()));
+                response.setEmpleado(new EmpleadoResponseDTO(empleado.getId(), empleado.getDni(), empleado.getNombre(), empleado.getApellido(), empleado.getEmail()));
 //                ven.setCliente(new ClienteResponseDTO());
 
                 return ResponseHandler.responseBuilder(HttpStatus.OK, "Venta encontrado con exito", response);
@@ -153,7 +153,7 @@ public class VentaServiceImpl implements IVentaService {
                 ven.setId(venta.getId());
                 ven.setFechaVenta(venta.getFechaVenta());
                 Empleado empleado = venta.getEmpleado();
-                ven.setEmpleado(new EmpleadoResponseDTO(empleado.getId(), empleado.getDni(), empleado.getNombre(), empleado.getApellido()));
+                ven.setEmpleado(new EmpleadoResponseDTO(empleado.getId(), empleado.getDni(), empleado.getNombre(), empleado.getApellido(), empleado.getEmail()));
                 ventasList.add(ven);
             }
             response.setVentas(ventasList);

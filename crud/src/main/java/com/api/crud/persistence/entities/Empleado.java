@@ -19,20 +19,29 @@ public class Empleado {
     private String apellido;
 
     @Column
+    private String email;
+
+    @Column
     private String dni;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "direccion_id", referencedColumnName = "id")
     private Direccion direccion;
 
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "puesto_id", nullable = false) // Clave foránea
+    private Puesto puesto;
+
     public Empleado() {
     }
 
-    public Empleado(String nombre, String apellido, String dni, String calle, String numero, String piso, Localidad localidad) {
+    public Empleado(String nombre, String apellido, String email, String dni, String calle, String numero, String piso, Localidad localidad, Puesto puesto) {
         this.nombre = nombre;
         this.apellido = apellido;
+        this.email = email;
         this.dni = dni;
         this.direccion = new Direccion(calle, numero, piso, localidad);
+        this.puesto = puesto;
     }
 
     // Getters y Setters
@@ -74,5 +83,21 @@ public class Empleado {
 
     public void setDireccion(Direccion direccion) {
         this.direccion = direccion;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public Puesto getPuesto() {
+        return puesto;
+    }
+
+    public void setPuesto(Puesto puesto) {
+        this.puesto = puesto;
     }
 }
