@@ -20,7 +20,10 @@ public class Incidente {
     private LocalDateTime fechaIncidente;
 
     @Column
-    private LocalDateTime fechaSolucion = null;
+    private LocalDateTime fechaSolucion;
+
+    @Column
+    private Long estado;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "proveedor_id", nullable = false) // Clave foránea
@@ -29,11 +32,12 @@ public class Incidente {
     public Incidente(){
     }
 
-    public Incidente(String descripcion, LocalDateTime fechaIncidente, LocalDateTime fechaSolucion, Proveedor proveedor) {
+    public Incidente(String descripcion, LocalDateTime fechaIncidente, LocalDateTime fechaSolucion, Proveedor proveedor, Long estado) {
         this.descripcion = descripcion;
         this.fechaIncidente = fechaIncidente;
         this.fechaSolucion = fechaSolucion;
         this.proveedor = proveedor;
+        this.estado = estado;
     }
 
     // Getters y Setters
@@ -76,5 +80,13 @@ public class Incidente {
 
     public void setProveedor(Proveedor proveedor) {
         this.proveedor = proveedor;
+    }
+
+    public Long getEstado() {
+        return estado;
+    }
+
+    public void setEstado(Long estado) {
+        this.estado = estado;
     }
 }

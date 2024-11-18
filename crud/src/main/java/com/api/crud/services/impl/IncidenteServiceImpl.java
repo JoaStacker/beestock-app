@@ -5,7 +5,12 @@ import com.api.crud.persistence.repositories.*;
 import com.api.crud.services.IIncidenteService;
 import com.api.crud.services.IInteraccionService;
 import com.api.crud.services.models.dtos.IncidenteDTO;
+import com.api.crud.services.models.response.Cliente.ClienteResponseDTO;
 import com.api.crud.services.models.response.ResponseHandler;
+import com.api.crud.services.models.response.direccion.DireccionResponseDTO;
+import com.api.crud.services.models.response.direccion.LocalidadResponseDTO;
+import com.api.crud.services.models.response.direccion.PaisResponseDTO;
+import com.api.crud.services.models.response.direccion.ProvinciaResponseDTO;
 import com.api.crud.services.models.response.incidentes.IncidenteResponseDTO;
 import com.api.crud.services.models.response.incidentes.IncidentesResponseDTO;
 import com.api.crud.services.models.response.interaccion.InteraccionResponseDTO;
@@ -38,7 +43,8 @@ public class IncidenteServiceImpl implements IIncidenteService {
                     body.getDescripcion(),
                     body.getFechaIncidente(),
                     body.getFechaSolucion(),
-                    proveedor.get()
+                    proveedor.get(),
+                    body.getEstado()
             );
             incidenteRepository.save(nuevoIncidente);
 
@@ -63,6 +69,11 @@ public class IncidenteServiceImpl implements IIncidenteService {
                 inc.setFechaIncidente(incidente.getFechaIncidente());
                 inc.setFechaSolucion(incidente.getFechaSolucion());
                 inc.setDescripcion(incidente.getDescripcion());
+                if(incidente.getEstado() != null){
+                    String estado = incidente.getEstado() == 1 ? "PENDIENTE" : "SOLUCIONADO";
+                    inc.setEstado(estado);
+                }
+                inc.setNombreProveedor(incidente.getProveedor().getNombre());
                 incidentesList.add(inc);
             }
             response.setIncidentes(incidentesList);
@@ -70,6 +81,66 @@ public class IncidenteServiceImpl implements IIncidenteService {
             return ResponseHandler.responseBuilder(HttpStatus.OK, "Incidentes devueltos con exito", response);
         }catch(Exception e){
             return ResponseHandler.responseBuilder(HttpStatus.INTERNAL_SERVER_ERROR, "Error al devolver Incidentes: " + e.getMessage());
+        }
+    }
+
+    public ResponseEntity<Object> getOne(Long incidenteId) throws Exception {
+        try {
+            Optional<Incidente> incidenteOptional = incidenteRepository.findById(incidenteId);
+            if (incidenteOptional.isEmpty()) {
+                return ResponseHandler.responseBuilder(HttpStatus.CONFLICT, "El incidente no existe.");
+            }
+            Incidente incidente = incidenteOptional.get();
+            IncidenteResponseDTO response = new IncidenteResponseDTO();
+            response.setId(incidente.getId());
+            response.setDescripcion(incidente.getDescripcion());
+            response.setProveedorId(incidente.getProveedor().getId());
+            response.setFechaIncidente(incidente.getFechaIncidente());
+            response.setFechaSolucion(incidente.getFechaSolucion());
+            response.setEstadoId(incidente.getEstado());
+
+            return ResponseHandler.responseBuilder(HttpStatus.OK, "Incidente devuelto con exito.", response);
+        } catch (Exception e) {
+            return ResponseHandler.responseBuilder(HttpStatus.INTERNAL_SERVER_ERROR, "internal Server Error.");
+        }
+    }
+
+    public ResponseEntity<Object> updateOne(Long incidenteId, IncidenteDTO body) throws Exception {
+        try{
+            Optional<Incidente> optionalIncidente = incidenteRepository.findById(incidenteId);
+
+            if (optionalIncidente.isPresent()) {
+                Incidente incidenteToUpdate = optionalIncidente.get();
+                if(body.getDescripcion() != null){
+                    incidenteToUpdate.setDescripcion(body.getDescripcion());
+                }
+                if(body.getFechaIncidente() != null){
+                    incidenteToUpdate.setFechaIncidente(body.getFechaIncidente());
+                }
+                if(body.getFechaSolucion() != null){
+                    incidenteToUpdate.setFechaSolucion(body.getFechaSolucion());
+                }else{
+                    incidenteToUpdate.setFechaSolucion(null);
+                }
+                if(body.getEstado() != null){
+                    incidenteToUpdate.setEstado(body.getEstado());
+                }
+                if(body.getProveedorId() != null){
+                    Optional<Proveedor> optionalProveedor = proveedorRepository.findById(body.getProveedorId());
+                    if(optionalProveedor.isEmpty()){
+                        return ResponseHandler.responseBuilder(HttpStatus.CONFLICT, "Proveedor id no existe!");
+                    }
+                    incidenteToUpdate.setProveedor(optionalProveedor.get());
+                }
+
+                incidenteRepository.save(incidenteToUpdate);
+
+                return ResponseHandler.responseBuilder(HttpStatus.OK, "Incidente actualizado con exito");
+            } else {
+                return ResponseHandler.responseBuilder(HttpStatus.CONFLICT, "Incidente no existe");
+            }
+        }catch(Exception e){
+            return ResponseHandler.responseBuilder(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error.");
         }
     }
 

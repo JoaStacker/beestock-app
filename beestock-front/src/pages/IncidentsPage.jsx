@@ -9,6 +9,8 @@ import {Box, Button, Dialog, Grid} from "@mui/material";
 import EditSupplierPopup from "../components/PopUps/EditSupplierPopup";
 import CreateSupplierPopup from "../components/PopUps/CreateSupplierPopup";
 import {getIncidents} from "../services/incidentsService";
+import CreateIncidentPopup from "../components/PopUps/CreateIncidentPopUp";
+import EditIncidentPopup from "../components/PopUps/EditIncidentPopUp";
 
 const IncidentsPage = () => {
     const { globalState, updateGlobalState } = useGlobalContext();
@@ -74,6 +76,8 @@ const IncidentsPage = () => {
       { id: 'descripcion', label: 'Descripcion' },
       { id: 'fechaIncidente', label: 'Fecha de incidente' },
       { id: 'fechaSolucion', label: 'Fecha de solucion' },
+      { id: 'estado', label: 'Estado' },
+      { id: 'nombreProveedor', label: 'Proveedor' },
     ];
 
     const actions = [
@@ -117,19 +121,19 @@ const IncidentsPage = () => {
 
           {/*EDIT INCIDIENT*/}
           <Dialog open={editDialogOpen} onClose={() => setEditDialogOpen(false)}>
-            {/*<EditSupplierPopup*/}
-            {/*    onClose={() => setEditDialogOpen(false)}*/}
-            {/*    supplierId={selectedData?.id}*/}
-            {/*    onUpdated={handleUpdated}*/}
-            {/*/>*/}
+            <EditIncidentPopup
+              onClose={() => setEditDialogOpen(false)}
+              incidentId={selectedData?.id}
+              onUpdated={handleUpdated}
+            />
           </Dialog>
 
           {/*ADD INCIDIENT*/}
           <Dialog open={createDialogOpen} onClose={() => setCreateDialogOpen(false)}>
-            {/*<CreateIncidentPopup*/}
-            {/*    onClose={() => setCreateDialogOpen(false)}*/}
-            {/*    onCreated={handleCreated}*/}
-            {/*/>*/}
+            <CreateIncidentPopup
+              onClose={() => setCreateDialogOpen(false)}
+              onCreated={handleCreated}
+            />
           </Dialog>
         </Box>
     );

@@ -24,13 +24,18 @@ public class IncidenteDTO {
     @JsonProperty(required = true)
     private Long proveedorId;
 
+    @NotNull
+    @JsonProperty(required = true)
+    private Long estado;
+
     public IncidenteDTO() {}
 
-    public IncidenteDTO(String descripcion, LocalDateTime fechaIncidente, LocalDateTime fechaSolucion, Long proveedorId) {
+    public IncidenteDTO(String descripcion, LocalDateTime fechaIncidente, LocalDateTime fechaSolucion, Long proveedorId, Long estado) {
         this.descripcion = descripcion;
         this.fechaIncidente = fechaIncidente;
         this.fechaSolucion = fechaSolucion;
         this.proveedorId = proveedorId;
+        this.estado = estado;
     }
 
     public @NotNull String getDescripcion() {
@@ -63,5 +68,13 @@ public class IncidenteDTO {
 
     public void setProveedorId(@NotNull Long proveedorId) {
         this.proveedorId = proveedorId;
+    }
+
+    public @NotNull Long getEstado() {
+        return estado;
+    }
+
+    public void setEstado(@NotNull Long estado) {
+        this.estado = estado;
     }
 }

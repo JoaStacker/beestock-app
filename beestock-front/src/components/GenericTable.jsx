@@ -108,7 +108,14 @@ const GenericTable = ({ columns, data=[], actions, onAddClient, entityType='' })
                   .map((row, index) => (
                       <TableRow key={index}>
                         {columns.map((column) => (
-                            <TableCell key={column.id}>{row[column.id]}</TableCell>
+                            <TableCell 
+                              key={column.id} 
+                              style={{ 
+                                  color: column.id === 'estado' ? (row[column.id] === 'SOLUCIONADO' ? 'green' : 'red') : 'None',
+                                  fontWeight: column.id === 'estado' ? '700': 'normal'
+                                }}>
+                                {row[column.id]}
+                            </TableCell>
                         ))}
                         <TableCell>
                           <Stack spacing={2} direction="row">

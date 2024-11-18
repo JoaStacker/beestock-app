@@ -1,7 +1,7 @@
 // src/services/clientService.js
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8000/interacciones'; // Update with your API URL
+const API_URL = 'http://localhost:8000/incidentes'; // Update with your API URL
 
 // Create an Axios instance with default settings
 const axiosInstance = axios.create({
@@ -52,3 +52,14 @@ export const createIncident = async (data) => {
     return handleResponse(axiosInstance.post('/', data));
 };
 
+export const getOneIncident = async (id) => {
+    return handleResponse(axiosInstance.get(`/${id}/`));
+};
+
+export const updateIncident = async (id, data) => {
+    return handleResponse(axiosInstance.put(`/${id}/`, data));
+};
+
+export const deleteIncident = async (id) => {
+    return handleResponse(axiosInstance.put(`/delete/${id}/`));
+};
