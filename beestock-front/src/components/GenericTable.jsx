@@ -109,36 +109,65 @@ const GenericTable = ({ filter=true, columns, data=[], actions, onAddClient, ent
               {filteredData
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => (
-                      <TableRow key={index}>
-                        {columns.map((column) => (
-                            <TableCell 
-                              key={column.id} 
-                              style={{ 
-                                  color: column.id === 'estado' ? (row[column.id] === 'SOLUCIONADO' ? 'green' : 'red') : 'None',
-                                  fontWeight: column.id === 'estado' ? '700': 'normal'
-                                }}>
-                                {row[column.id]}
-                            </TableCell>
+                    <TableRow key={index}>
+                    {columns.map((column) => {
+                      // Conditionally render TableCell only for 'Incidente'
+                      if (entityType === 'Incidente') {
+                        return (
+                          <TableCell 
+                            key={column.id} 
+                            style={{ 
+                              color: column.id === 'estado' ? (row[column.id] === 'SOLUCIONADO' ? 'green' : 'red') : 'none',
+                              fontWeight: column.id === 'estado' ? '700' : 'normal'
+                            }}>
+                            {row[column.id]}
+                          </TableCell>
+                        );
+                      }
+                      else if (entityType === 'Venta'){
+                        return (
+                          <TableCell 
+                            key={column.id} 
+                            style={{ 
+                              color: column.id === 'estadoNombre' ? (row[column.id] === "PAGADO" ? 'green' : 'red') : 'none',
+                              fontWeight: column.id === 'estadoNombre' ? '700' : 'normal'
+                            }}>
+                            {column.id === "montoTotal" ? `$ ${row[column.id]}` : row[column.id]}
+                          </TableCell>
+                        );
+                      }
+                      else{
+                        return (
+                          <TableCell 
+                            key={column.id}>
+                            {row[column.id]}
+                          </TableCell>
+                        );
+                      }
+                      // Return an empty cell if not 'Incidente' (or render something else if needed)
+                      return null;
+                    })}
+                  
+                    {/* Actions Cell */}
+                    <TableCell>
+                      <Stack spacing={2} direction="row">
+                        {actions.map((action, idx) => (
+                          <Button
+                            key={idx}
+                            variant="contained"
+                            color={action.color || 'primary'}
+                            onClick={() => {
+                              action.onClick(row);
+                              // Here you can set selectedClient if needed
+                            }}
+                          >
+                            {action.icon}
+                            {action.label}
+                          </Button>
                         ))}
-                        <TableCell>
-                          <Stack spacing={2} direction="row">
-                            {actions.map((action, idx) => (
-                                <Button
-                                    key={idx}
-                                    variant="contained"
-                                    color={action.color || 'primary'}
-                                    onClick={() => {
-                                      action.onClick(row);
-                                      // Here you can set selectedClient if needed
-                                    }}
-                                >
-                                  {action.icon}
-                                  {action.label}
-                                </Button>
-                            ))}
-                          </Stack>
-                        </TableCell>
-                      </TableRow>
+                      </Stack>
+                    </TableCell>
+                  </TableRow>
                   ))}
             </TableBody>
           </Table>

@@ -3,9 +3,11 @@ package com.api.crud.services.impl;
 
 import com.api.crud.persistence.entities.*;
 import com.api.crud.persistence.repositories.IClienteRepository;
+import com.api.crud.persistence.repositories.IDetalleVentaRepository;
 import com.api.crud.persistence.repositories.IEmpleadoRepository;
 import com.api.crud.persistence.repositories.IVentaRepository;
 import com.api.crud.services.IVentaService;
+import com.api.crud.services.models.dtos.DetalleVentaDTO;
 import com.api.crud.services.models.dtos.ProveedorDTO;
 import com.api.crud.services.models.dtos.VentaDTO;
 import com.api.crud.services.models.response.Cliente.ClienteResponseDTO;
@@ -39,6 +41,9 @@ public class VentaServiceImpl implements IVentaService {
     @Autowired
     private IClienteRepository clienteRepository;
 
+    @Autowired
+    private IDetalleVentaRepository detalleVentaRepository;
+
     public ResponseEntity<Object> getAll() throws Exception {
         try{
             List<Venta> allVentas = ventaRepository.findAll();
@@ -55,6 +60,9 @@ public class VentaServiceImpl implements IVentaService {
                 ven.setCantidadCuotas(venta.getCantidadCuotas());
                 ven.setMontoTotal(venta.getMontoTotal());
                 ven.setEstado(venta.getEstado());
+                ven.setEstadoNombre(venta.getEstado() == 1 ? "PAGADO" : "PENDIENTE");
+                Cliente cliente = venta.getCliente();
+                ven.setClienteNombre("[" + cliente.getCuit() + "] " + cliente.getNombre() + " " + cliente.getApellido());
                 Empleado empleado = venta.getEmpleado();
                 ven.setEmpleado(new EmpleadoResponseDTO(empleado.getId(), empleado.getDni(), empleado.getNombre(), empleado.getApellido(), empleado.getEmail()));
                 ventasList.add(ven);
@@ -68,33 +76,46 @@ public class VentaServiceImpl implements IVentaService {
     }
 
     public ResponseEntity<Object> createVenta(VentaDTO body) throws Exception {
-        try{
+        try {
             // Validar existencias en base de datos.
             Optional<Empleado> empleadoExistente = empleadoRepository.findById(body.getEmpleadoId());
-            if(empleadoExistente.isEmpty()){
+            if (empleadoExistente.isEmpty()) {
                 return ResponseHandler.responseBuilder(HttpStatus.CONFLICT, "El Empleado no existe.");
             }
 
             Optional<Cliente> clienteExistente = clienteRepository.findById(body.getClienteId());
-            if(clienteExistente.isEmpty()){
+            if (clienteExistente.isEmpty()) {
                 return ResponseHandler.responseBuilder(HttpStatus.CONFLICT, "El Cliente no existe.");
             }
 
             Empleado empleado = empleadoExistente.get();
             Cliente cliente = clienteExistente.get();
+
+
             Venta venta = new Venta(
                     body.getFechaVenta(),
-                    body.getMontoTotal(),
                     body.getCantidadCuotas(),
                     body.getEstado(),
                     empleado,
                     cliente
             );
+            // Calcular el monto total sumando los subtotales de las líneas de venta
+            Float montoTotal = 0f;
+            List<DetalleVenta> detallesVenta = new ArrayList<>();
+            for (DetalleVentaDTO linea : body.getDetallesVenta()) {
+                detallesVenta.add(new DetalleVenta(
+                        linea.getHorasVendidas(), linea.getPrecioHora(), venta, linea.getTipoServicio()
+                ));
+                Float subTotal = linea.getHorasVendidas() * linea.getPrecioHora();
+                montoTotal += subTotal;
+            }
 
-            // TODO Agregar detalles de venta
+            venta.setMontoTotal(montoTotal);
+            venta.setDetallesVenta(detallesVenta);
 
             ventaRepository.save(venta);
 
+            // Crear el response DTO
             VentaResponseDTO response = new VentaResponseDTO();
             response.setId(venta.getId());
             response.setFechaVenta(venta.getFechaVenta());
@@ -102,6 +123,7 @@ public class VentaServiceImpl implements IVentaService {
             response.setCantidadCuotas(venta.getCantidadCuotas());
             response.setEstado(venta.getEstado());
             response.setEmpleado(new EmpleadoResponseDTO(empleado.getId(), empleado.getDni(), empleado.getNombre(), empleado.getApellido(), empleado.getEmail()));
+
             ClienteResponseDTO cli = new ClienteResponseDTO();
             cli.setId(cliente.getId());
             cli.setNombre(cliente.getNombre());
@@ -110,12 +132,11 @@ public class VentaServiceImpl implements IVentaService {
             response.setCliente(cli);
 
             return ResponseHandler.responseBuilder(HttpStatus.CREATED, "Venta creada con éxito!", response);
-        }catch(Exception e){
+        } catch (Exception e) {
             return ResponseHandler.responseBuilder(HttpStatus.INTERNAL_SERVER_ERROR, "Error al crear Venta: "
                     + e.getMessage());
         }
     }
-
     public ResponseEntity<Object> findOne(Long id) throws Exception {
         try{
             Optional<Venta> ventaFound = ventaRepository.findById(id);
@@ -124,11 +145,19 @@ public class VentaServiceImpl implements IVentaService {
                 VentaResponseDTO response = new VentaResponseDTO();
                 response.setId(venta.getId());
                 response.setFechaVenta(venta.getFechaVenta());
+                response.setMontoTotal(venta.getMontoTotal());
+                List<DetalleVentaDTO> dv = new ArrayList<>();
+                List<DetalleVenta> detallesVenta = venta.getDetallesVenta();
+                for (DetalleVenta linea : detallesVenta) {
+                    dv.add(new DetalleVentaDTO(
+                            linea.getHorasVendidas(), linea.getPrecioHora(), linea.getTipoServicio()
+                    ));
+                }
+                response.setDetallesVenta(dv);
+                response.setCantidadCuotas(venta.getCantidadCuotas());
+                response.setEstadoNombre(venta.getEstado() == 1 ? "PAGADO" : "PENDIENTE");
                 Empleado empleado = venta.getEmpleado();
-//                Cliente cliente = venta.getCliente();
                 response.setEmpleado(new EmpleadoResponseDTO(empleado.getId(), empleado.getDni(), empleado.getNombre(), empleado.getApellido(), empleado.getEmail()));
-//                ven.setCliente(new ClienteResponseDTO());
-
                 return ResponseHandler.responseBuilder(HttpStatus.OK, "Venta encontrado con exito", response);
             }else{
                 return ResponseHandler.responseBuilder(HttpStatus.NO_CONTENT, "Venta no existe");
@@ -164,5 +193,24 @@ public class VentaServiceImpl implements IVentaService {
                     + e.getMessage());
         }
     }
+
+    public ResponseEntity<Object> pagarVenta(Long id) throws Exception {
+        try{
+            Optional<Venta> ventaFound = ventaRepository.findById(id);
+            if(ventaFound.isPresent()){
+                Venta venta = ventaFound.get();
+                venta.setEstado(1L);
+
+                ventaRepository.save(venta);
+                return ResponseHandler.responseBuilder(HttpStatus.OK, "Venta pagada con exito");
+            }else{
+                return ResponseHandler.responseBuilder(HttpStatus.NO_CONTENT, "Venta no existe");
+            }
+        }catch(Exception e){
+            throw new Exception(e.toString());
+        }
+    }
+
+
 
 }

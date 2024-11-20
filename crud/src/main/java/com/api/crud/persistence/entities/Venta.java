@@ -6,6 +6,7 @@ package com.api.crud.persistence.entities;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "venta")
@@ -36,12 +37,14 @@ public class Venta {
     @JoinColumn(name = "cliente_id", nullable = false) // Clave foránea
     private Cliente cliente;
 
+    @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<DetalleVenta> detallesVenta;
+
     public Venta() {
     }
 
-    public Venta(LocalDateTime fechaVenta, Float montoTotal, Long cantidadCuotas, Long estado, Empleado empleado, Cliente cliente) {
+    public Venta(LocalDateTime fechaVenta, Long cantidadCuotas, Long estado, Empleado empleado, Cliente cliente) {
         this.fechaVenta = fechaVenta;
-        this.montoTotal = montoTotal;
         this.cantidadCuotas = cantidadCuotas;
         this.estado = estado;
         this.empleado = empleado;
@@ -104,5 +107,13 @@ public class Venta {
 
     public void setCliente(Cliente cliente) {
         this.cliente = cliente;
+    }
+
+    public List<DetalleVenta> getDetallesVenta() {
+        return detallesVenta;
+    }
+
+    public void setDetallesVenta(List<DetalleVenta> detallesVenta) {
+        this.detallesVenta = detallesVenta;
     }
 }

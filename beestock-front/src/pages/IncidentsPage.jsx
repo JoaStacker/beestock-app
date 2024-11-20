@@ -115,7 +115,7 @@ const IncidentsPage = () => {
           </Grid>
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              <GenericTable columns={columns} data={data} actions={actions} entityType="Proveedores"/>
+              <GenericTable columns={columns} data={data} actions={actions} entityType="Incidente"/>
             </Grid>
           </Grid>
 

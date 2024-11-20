@@ -19,10 +19,6 @@ public class VentaDTO {
 
     @NotNull
     @JsonProperty(required = true)
-    private Float montoTotal;
-
-    @NotNull
-    @JsonProperty(required = true)
     private Long cantidadCuotas;
 
     @NotNull
@@ -52,14 +48,6 @@ public class VentaDTO {
 
     public void setFechaVenta(@NotNull LocalDateTime fechaVenta) {
         this.fechaVenta = fechaVenta;
-    }
-
-    public @NotNull Float getMontoTotal() {
-        return montoTotal;
-    }
-
-    public void setMontoTotal(@NotNull Float montoTotal) {
-        this.montoTotal = montoTotal;
     }
 
     public @NotNull Long getCantidadCuotas() {

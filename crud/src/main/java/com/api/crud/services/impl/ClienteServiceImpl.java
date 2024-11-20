@@ -120,6 +120,8 @@ public class ClienteServiceImpl implements IClienteService {
                         direccion.getNumero(),
                         direccion.getPiso()
                 );
+                CondicionTributaria condicionTributaria= cliente.getCondicionTributaria();
+                cli.setCondicionTributaria(new CondicionTributariaResponseDTO(condicionTributaria.getId(), condicionTributaria.getTipo()));
                 cli.setDireccion(dir);
                 clientesList.add(cli);
             }
