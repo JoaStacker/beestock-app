@@ -54,7 +54,6 @@ const EditEmployeePopup = ({ onClose, id, onUpdated }) => {
             calle: !data.calle,
             numero: !data.numero,
             piso: !data.piso,
-            fechaNacimiento: !data.fechaNacimiento,
             localidadId: !data.localidadId,
         };
         setInvalid(newState);
@@ -63,7 +62,14 @@ const EditEmployeePopup = ({ onClose, id, onUpdated }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!validForm()) return;
+        if (!validForm()) {
+            updateGlobalState({
+                openSnackbar: true,
+                snackbarSeverity: "error",
+                snackbarMessage: "Datos invalidos"
+            });
+            return;
+        }
 
         updateGlobalState({ loadingPage: true });
         let payload = {

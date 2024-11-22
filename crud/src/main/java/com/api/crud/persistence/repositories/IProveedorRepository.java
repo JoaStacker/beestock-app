@@ -12,10 +12,10 @@ import java.util.Optional;
 
 @Repository
 public interface IProveedorRepository extends JpaRepository<Proveedor, Long> {
-    @Query("SELECT p FROM Proveedor p LEFT JOIN FETCH p.incidentes WHERE p.estado = true")
+    @Query("SELECT p FROM Proveedor p LEFT JOIN FETCH p.incidentes WHERE p.borrado = false")
     List<Proveedor> findAllWithIncidentes();
 
-    @Query(value="SELECT * FROM proveedor WHERE estado = true", nativeQuery = true)
+    @Query(value="SELECT * FROM proveedor WHERE borrado = false", nativeQuery = true)
     List<Proveedor> findAllNotDeleted();
 
     @Query(value="SELECT * FROM proveedor WHERE cuit= :cuit", nativeQuery = true)

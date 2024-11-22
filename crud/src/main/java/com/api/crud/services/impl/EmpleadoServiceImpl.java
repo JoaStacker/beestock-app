@@ -77,7 +77,7 @@ public class EmpleadoServiceImpl implements IEmpleadoService {
 
     public ResponseEntity<Object> findAll() {
         try {
-            List<Empleado> allEmpleados = empleadoRepository.findAll();
+            List<Empleado> allEmpleados = empleadoRepository.findAllNotDeleted();
             if (allEmpleados.isEmpty()) {
                 return ResponseHandler.responseBuilder(HttpStatus.NO_CONTENT, "No hay empleados disponibles");
             }
@@ -194,6 +194,9 @@ public class EmpleadoServiceImpl implements IEmpleadoService {
                     }
                     direccion.setLocalidad(localidad.get());
                     empleadoToUpdate.setDireccion(direccion);
+                }
+                if(body.getBorrado() != null){
+                    empleadoToUpdate.setBorrado(body.getBorrado());
                 }
 
                 empleadoRepository.save(empleadoToUpdate);

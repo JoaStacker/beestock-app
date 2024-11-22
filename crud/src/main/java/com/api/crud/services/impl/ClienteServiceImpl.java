@@ -234,6 +234,9 @@ public class ClienteServiceImpl implements IClienteService {
                     direccion.setLocalidad(localidad.get());
                     clienteToUpdate.setDireccion(direccion);
                 }
+                if(body.getBorrado() != null){
+                    clienteToUpdate.setBorrado(body.getBorrado());
+                }
 
                 clienteRepository.save(clienteToUpdate);
 

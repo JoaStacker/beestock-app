@@ -32,6 +32,10 @@ public class Empleado {
     @JoinColumn(name = "puesto_id", nullable = false) // Clave foránea
     private Puesto puesto;
 
+    @Column
+    private Boolean borrado = false;
+
+
     public Empleado() {
     }
 
@@ -99,5 +103,13 @@ public class Empleado {
 
     public void setPuesto(Puesto puesto) {
         this.puesto = puesto;
+    }
+
+    public Boolean getBorrado() {
+        return borrado;
+    }
+
+    public void setBorrado(Boolean borrado) {
+        this.borrado = borrado;
     }
 }

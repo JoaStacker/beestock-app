@@ -95,7 +95,7 @@ public class ProveedorServiceImpl implements IProveedorService {
             Optional<Proveedor> proveedorExistente = proveedorRepository.findById(id);
             if(proveedorExistente.isPresent()){
                 Proveedor proveedor = proveedorExistente.get();
-                proveedor.setEstado(false);
+                proveedor.setBorrado(true);
                 proveedorRepository.save(proveedor);
             }else{
                 return ResponseHandler.responseBuilder(HttpStatus.NOT_FOUND, "El proveedor no existe!");
@@ -233,6 +233,9 @@ public class ProveedorServiceImpl implements IProveedorService {
                     }
                     direccion.setLocalidad(localidad.get());
                     proveedorToUpdate.setDireccion(direccion);
+                }
+                if(proveedorDTO.getBorrado() != null){
+                    proveedorToUpdate.setBorrado(proveedorDTO.getBorrado());
                 }
 
                 proveedorRepository.save(proveedorToUpdate);

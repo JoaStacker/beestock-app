@@ -49,6 +49,9 @@ public class EmpleadoDTO {
     @JsonProperty(required = true)
     private LocalDateTime fechaIngreso;
 
+    @JsonProperty(required = false)
+    private Boolean borrado;
+
     public EmpleadoDTO() {
     }
 
@@ -141,5 +144,13 @@ public class EmpleadoDTO {
 
     public void setFechaIngreso(@NotNull LocalDateTime fechaIngreso) {
         this.fechaIngreso = fechaIngreso;
+    }
+
+    public Boolean getBorrado() {
+        return borrado;
+    }
+
+    public void setBorrado(Boolean borrado) {
+        this.borrado = borrado;
     }
 }

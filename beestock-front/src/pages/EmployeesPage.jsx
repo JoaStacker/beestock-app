@@ -1,26 +1,19 @@
 import React, { useEffect, useState } from "react";
 import EditClientPopup from "../components/PopUps/EditClientPopup";
-import { getClients, deleteClient } from '../services/clientService';
+import { getEmployees, markEmployeeAsDeleted, updateEmployee } from "../services/employeesService"; // Nuevo servicio para marcar como borrado
 import {
     Button,
     Dialog,
-    Select,
-    MenuItem,
-    InputLabel,
-    FormControl,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
     Grid,
     Box,
-    DialogTitle,
-    DialogContent, DialogContentText, TextField, DialogActions
+    DialogContentText,
 } from "@mui/material";
-import { useGlobalContext } from "../context/GlobalContext";
+import { Add, Delete, Edit, Work } from "@mui/icons-material";
 import GenericTable from "../components/GenericTable";
-import {Add, Delete, Edit, ViewAgenda, Work} from "@mui/icons-material";
-import CreateClientPopup from "../components/PopUps/CreateClientPopup";
-import TopBar from "../components/TopBar";
-import Sidebar from "../components/Sidebar";
-import InteractionsPopup from "../components/PopUps/InteractionsPopup";
-import { deleteEmployee, getEmployees } from "../services/employeesService";
+import { useGlobalContext } from "../context/GlobalContext";
 import CreateEmployeePopup from "../components/PopUps/CreateEmployeePopup";
 import EditEmployeePopup from "../components/PopUps/EditEmployeePopup";
 import EmployeePositionsInfoPopup from "../components/PopUps/EmployeePositionsInfoPopup";
@@ -29,10 +22,12 @@ const EmployeesPage = () => {
     const { globalState, updateGlobalState } = useGlobalContext();
     const [employees, setEmployees] = useState([]);
     const [selectedEmployee, setSelectedEmployee] = useState(null);
-
     const [editDialogOpen, setEditDialogOpen] = useState(false);
     const [createDialogOpen, setCreateDialogOpen] = useState(false);
     const [positionInfoDialogOpen, setPositionInfoDialogOpen] = useState(false);
+    
+    // Estado para manejar el popup de confirmación
+    const [confirmDeleteDialogOpen, setConfirmDeleteDialogOpen] = useState(false);
 
     const reloadData = () => {
         updateGlobalState({ loadingPage: true });
@@ -40,7 +35,6 @@ const EmployeesPage = () => {
         getEmployees()
             .then((res) => {
                 updateGlobalState({ loadingPage: false });
-
                 if (res.error) {
                     updateGlobalState({
                         openSnackbar: true,
@@ -49,7 +43,6 @@ const EmployeesPage = () => {
                     });
                     return;
                 }
-
                 const data = res.data.empleados;
                 setEmployees(data);
             })
@@ -70,16 +63,30 @@ const EmployeesPage = () => {
     const handleEmployeePositionInfo = (employee) => {
         setSelectedEmployee(employee);
         setPositionInfoDialogOpen(true);
-  };
+    };
 
     const handleEditEmployee = (employee) => {
         setSelectedEmployee(employee);
         setEditDialogOpen(true);
     };
 
-    const handleDeleteEmployee = async (id) => {
-        await deleteEmployee(id);
-        setEmployees(employees.filter(el => el.id !== id));
+    // Nueva función para abrir el popup de confirmación
+    const handleDeleteEmployee = (employee) => {
+        setSelectedEmployee(employee);
+        setConfirmDeleteDialogOpen(true);
+    };
+
+    // Función para confirmar la eliminación
+    const confirmDelete = async () => {
+        setConfirmDeleteDialogOpen(false);
+        if (selectedEmployee) {
+            await updateEmployee(selectedEmployee.id, {borrado:true}); // Llamada a la API para marcar como borrado
+            setEmployees(employees.filter(el => el.id !== selectedEmployee.id)); // Actualizamos la lista de empleados
+        }
+    };
+
+    const cancelDelete = () => {
+        setConfirmDeleteDialogOpen(false); // Cierra el popup sin realizar la acción
     };
 
     const handleUpdated = async () => {
@@ -105,13 +112,13 @@ const EmployeesPage = () => {
           icon: <Edit />
         },
         {
-          label: 'Ver informacion de puesto',
+          label: 'Ver información de puesto',
           onClick: (row) => handleEmployeePositionInfo(row),
           icon: <Work />
         },
         {
           label: 'Borrar',
-          onClick: (row) => handleDeleteEmployee(row.id),
+          onClick: (row) => handleDeleteEmployee(row),
           color: 'secondary',
           icon: <Delete />
         },
@@ -132,7 +139,7 @@ const EmployeesPage = () => {
                         onClick={handleAddClient}
                     >
                         <Add />
-                        {`Nuevo cliente`}
+                        {`Nuevo empleado`}
                     </Button>
                 </Grid>
             </Grid>
@@ -142,7 +149,7 @@ const EmployeesPage = () => {
                 </Grid>
             </Grid>
 
-            {/*EDIT CLIENT*/}
+            {/* EDIT EMPLOYEE */}
             <Dialog open={editDialogOpen} onClose={() => setEditDialogOpen(false)}>
                 <EditEmployeePopup
                     onClose={() => setEditDialogOpen(false)}
@@ -151,7 +158,7 @@ const EmployeesPage = () => {
                 />
             </Dialog>
 
-            {/*ADD CLIENT*/}
+            {/* ADD EMPLOYEE */}
             <Dialog open={createDialogOpen} onClose={() => setCreateDialogOpen(false)}>
                 <CreateEmployeePopup
                     onClose={() => setCreateDialogOpen(false)}
@@ -159,13 +166,31 @@ const EmployeesPage = () => {
                 />
             </Dialog>
 
-            {/*PUESTO*/}
+            {/* PUESTO */}
             <Dialog open={positionInfoDialogOpen} onClose={() => setPositionInfoDialogOpen(false)}>
                 <EmployeePositionsInfoPopup
                     id={selectedEmployee?.id}
                     nombre={selectedEmployee?.nombre + " " + selectedEmployee?.apellido}
                     onClose={() => setPositionInfoDialogOpen(false)}
                 />
+            </Dialog>
+
+            {/* Confirmación de Borrado */}
+            <Dialog open={confirmDeleteDialogOpen} onClose={cancelDelete}>
+                <DialogTitle>¿Estás seguro de que deseas eliminar este empleado?</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Esta acción marcará al empleado como eliminado (borrado) en el sistema. ¿Estás seguro?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={cancelDelete} color="primary">
+                        Cancelar
+                    </Button>
+                    <Button onClick={confirmDelete} color="secondary">
+                        Confirmar
+                    </Button>
+                </DialogActions>
             </Dialog>
         </Box>
     );

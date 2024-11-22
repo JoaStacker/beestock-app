@@ -86,12 +86,6 @@ const IncidentsPage = () => {
         onClick: (row) => handleEdit(row),
         icon: <Edit />
       },
-      {
-        label: 'Borrar',
-        onClick: (row) => handleDelete(row.id),
-        color: 'secondary',
-        icon: <Delete />
-      },
     ];
 
     return (

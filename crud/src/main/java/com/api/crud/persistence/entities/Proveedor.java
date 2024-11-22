@@ -16,7 +16,7 @@ public class Proveedor {
     private String nombre;
     private String cuit;
     private String correo;
-    private boolean estado;
+    private boolean borrado = false;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinTable(
@@ -41,15 +41,15 @@ public class Proveedor {
         this.cuit = cuit;
         this.correo = correo;
         this.direccion = new Direccion(calle, numero, piso, localidad);
-        estado = true;
+        this.borrado = false;
     }
 
-    public boolean isEstado() {
-        return estado;
+    public boolean getBorrado() {
+        return borrado;
     }
 
-    public void setEstado(boolean estado) {
-        this.estado = estado;
+    public void setBorrado(boolean borrado) {
+        this.borrado = borrado;
     }
 
     public Long getId() {
