@@ -58,7 +58,7 @@ const SuppliersRankingPopUp = ({ onClose }) => {
         { id: 'ranking', label: 'Puesto' },
         { id: 'nombre', label: 'Proveedor' },
         { id: 'cuit', label: 'CUIT' },
-        { id: 'totalIncidentes', label: 'Total de incidentes' },
+        { id: 'promedioTiempoSolucion', label: 'Promedio tiempo soluciones (min)' },
     ];
 
     return (

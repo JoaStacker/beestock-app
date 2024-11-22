@@ -15,6 +15,8 @@ import {
     Typography
 } from "@mui/material";
 import locales from "../../local/en";
+
+import { DatePicker } from '@mui/x-date-pickers';
 import { useGlobalContext } from "../../context/GlobalContext";
 import { HorizontalRule} from "@mui/icons-material";
 import { getLocalidadesByProvinciaId, getPaises, getProvinciasByPaisId } from "../../services/locationService";
@@ -62,6 +64,7 @@ const EditClientPopup = ({ onClose, onClientCreated }) => {
     const [invalid, setInvalid] = useState(defaultInvalid);
 
     const validForm = () => {
+        
         const newState = {
             cuit: !client.cuit,
             nombre: !client.nombre,
@@ -301,7 +304,7 @@ const EditClientPopup = ({ onClose, onClientCreated }) => {
                     fullWidth
                     variant="outlined"
                 />
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DateField
                         error={invalid.fechaNacimiento}
                         name="fechaNacimiento"
@@ -323,6 +326,29 @@ const EditClientPopup = ({ onClose, onClientCreated }) => {
                         }
                     />
 
+                </LocalizationProvider> */}
+
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker 
+                    error={invalid.fechaNacimiento}
+                    name="fechaNacimiento"
+                    label="Fecha de Nacimiento"
+                    value={dateFechaNacimiento}
+                    onChange={(newValue) => {
+                        console.log(newValue)
+                        let value = undefined
+                        try {
+                            value = newValue.toISOString()
+                        }catch(err) {
+
+                        }
+                        setClient({
+                            ...client,
+                            fechaNacimiento: value,
+                        })
+                        setDateFechaNacimiento(newValue)}
+                    }
+                    />
                 </LocalizationProvider>
                 <Typography variant="subtitle1" gutterBottom>
                     Direccion

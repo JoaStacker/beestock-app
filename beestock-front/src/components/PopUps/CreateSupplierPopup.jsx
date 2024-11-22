@@ -437,6 +437,15 @@ const CreateSupplierPopup = ({ onClose, onCreated }) => {
                         ))}
                     </Select>
                 </FormControl>
+                 {/* DateTimePicker for Fecha de Interacción */}
+                {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DateTimePicker
+                        label="Fecha de Interacción"
+                        value={dateFechaInteraccion}
+                        onChange={(newValue) => setDateFechaInteraccion(newValue)}
+                        renderInput={(params) => <TextField {...params} fullWidth margin="dense" />}
+                    />
+                </LocalizationProvider> */}
             </DialogContent>
             <DialogActions>
                 <Button onClick={onClose} color="primary">

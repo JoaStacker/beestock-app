@@ -2,9 +2,11 @@ package com.api.crud.services.impl;
 
 
 import com.api.crud.persistence.entities.*;
+import com.api.crud.persistence.repositories.IIncidenteRepository;
 import com.api.crud.persistence.repositories.ILocalidadRepository;
 import com.api.crud.persistence.repositories.IProveedorRepository;
 import com.api.crud.persistence.repositories.ITipoServicioRepository;
+import com.api.crud.services.IIncidenteService;
 import com.api.crud.services.IProveedorService;
 import com.api.crud.services.models.dtos.EmpleadoDTO;
 import com.api.crud.services.models.dtos.ProveedorDTO;
@@ -24,6 +26,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -38,6 +41,9 @@ public class ProveedorServiceImpl implements IProveedorService {
 
     @Autowired
     private ILocalidadRepository localidadRepository;
+
+    @Autowired
+    private IIncidenteRepository repositorioIncidentes;
 
     public ResponseEntity<Object> createProveedor(ProveedorDTO body) throws Exception {
         try{
@@ -328,23 +334,39 @@ public class ProveedorServiceImpl implements IProveedorService {
 
             }
 
-            // Sort proveedores by totalIncidentes in descending order and then by nombre alphabetically (ascending order) in case of a tie
-            proveedoresList.sort((p1, p2) -> {
-                // First, compare by totalIncidentes in descending order
-                int incidentComparison = Long.compare(p1.getTotalIncidentes(), p2.getTotalIncidentes());
-
-                // If totalIncidentes are the same, compare by nombre alphabetically (ascending order)
-                if (incidentComparison == 0) {
-                    return p1.getNombre().compareToIgnoreCase(p2.getNombre());
-                }
-
-                // Otherwise, return the result of the totalIncidentes comparison
-                return incidentComparison;
-            });
-
-            // Assign ranking positions
+            // Asignar el promedio de tiempo de solución
             for (int i = 0; i < proveedoresList.size(); i++) {
-                // Ranking position is the index + 1 (1-based index)
+                Long idProveedor = proveedoresList.get(i).getId();
+                List<Incidente> incidentesProveedor = repositorioIncidentes.getAllPendingByProveedor(idProveedor);
+
+                Long totalMin = 0L;
+
+                // Asegúrate de que los incidentes no estén vacíos antes de proceder
+                if (!incidentesProveedor.isEmpty()) {
+                    for (Incidente incidente : incidentesProveedor) {
+                        // Verificar que las fechas no sean nulas
+                        if (incidente.getFechaIncidente() != null && incidente.getFechaSolucion() != null) {
+                            // Calcular la diferencia en minutos entre las fechas
+                            Long diffTiempo = ChronoUnit.MINUTES.between(incidente.getFechaIncidente(), incidente.getFechaSolucion());
+                            totalMin += diffTiempo;
+                        } else {
+                            // Si alguna fecha es nula, puedes asignar un valor predeterminado o continuar
+                            // Aquí, el caso de error puede ser registrado o tratado de alguna manera
+                            System.out.println("Fecha nula encontrada para el incidente con ID: " + incidente.getId());
+                        }
+                    }
+
+                    // Evitar la división por cero
+                    Float promedioTiempoProveedor = (float) (totalMin / incidentesProveedor.size());
+                    proveedoresList.get(i).setPromedioTiempoSolucion(promedioTiempoProveedor);
+                } else {
+                    // Si no hay incidentes, puedes asignar un valor predeterminado, por ejemplo, 0
+                    proveedoresList.get(i).setPromedioTiempoSolucion(0f);
+                }
+            }
+
+            // Asignar posiciones de ranking
+            for (int i = 0; i < proveedoresList.size(); i++) {
                 proveedoresList.get(i).setRanking(i + 1);
             }
 

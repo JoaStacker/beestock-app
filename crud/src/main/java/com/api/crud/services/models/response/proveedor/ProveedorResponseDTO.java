@@ -24,6 +24,7 @@ public class ProveedorResponseDTO {
     private LocalidadResponseDTO localidad;
     private ProvinciaResponseDTO provincia;
     private PaisResponseDTO pais;
+    private Float promedioTiempoSolucion = 0.0f;
 
     public ProveedorResponseDTO() {}
 
@@ -126,5 +127,13 @@ public class ProveedorResponseDTO {
 
     public void setRanking(Integer ranking) {
         this.ranking = ranking;
+    }
+
+    public Float getPromedioTiempoSolucion() {
+        return promedioTiempoSolucion;
+    }
+
+    public void setPromedioTiempoSolucion(Float promedioTiempoSolucion) {
+        this.promedioTiempoSolucion = promedioTiempoSolucion;
     }
 }
