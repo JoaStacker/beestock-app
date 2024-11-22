@@ -21,6 +21,7 @@ public class InteraccionResponseDTO {
     private String medio;
     private ClienteResponseDTO cliente;
     private EmpleadoResponseDTO empleado;
+    private String setEmpleadoNombre;
 
     public InteraccionResponseDTO() {}
 
@@ -62,5 +63,13 @@ public class InteraccionResponseDTO {
 
     public void setEmpleado(EmpleadoResponseDTO empleado) {
         this.empleado = empleado;
+    }
+
+    public String getSetEmpleadoNombre() {
+        return setEmpleadoNombre;
+    }
+
+    public void setSetEmpleadoNombre(String setEmpleadoNombre) {
+        this.setEmpleadoNombre = setEmpleadoNombre;
     }
 }

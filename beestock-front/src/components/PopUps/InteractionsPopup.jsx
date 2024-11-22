@@ -84,6 +84,7 @@ const InteractionsPopup = ({ idCliente, onClose }) => {
         { id: 'id', label: 'ID' },
         { id: 'fechaInteraccion', label: 'Fecha' },
         { id: 'medio', label: 'Medio de interacción' },
+        { id: 'setEmpleadoNombre', label: 'Empleado' },
     ];
 
     const actions = [

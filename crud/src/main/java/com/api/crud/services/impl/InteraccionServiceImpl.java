@@ -97,6 +97,8 @@ public class InteraccionServiceImpl implements IInteraccionService {
                 inter.setFechaInteraccion(interaccion.getFechaInteraccion());
                 inter.setMedio(interaccion.getMedio());
                 Cliente cliente = interaccion.getCliente();
+                inter.setSetEmpleadoNombre(interaccion.getEmpleado().getNombre() + " " + interaccion.getEmpleado().getDni());
+
                 ClienteResponseDTO cli = new ClienteResponseDTO();
                 cli.setId(cliente.getId());
                 cli.setNombre(cliente.getNombre());

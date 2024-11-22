@@ -75,7 +75,7 @@ const LoginPage = () => {
   return (
     <div style={styles.container}>
       <div style={styles.logoContainer}>
-        <img src="./logo_empresa.png" alt="Logo" style={styles.logo} />
+        {/* <img src="../../public/logo_empresa.png" alt="Logo" style={styles.logo} /> */}
       </div>
       <h2 style={styles.title}>Bienvenido de nuevo</h2>
       <p style={styles.subtitle}>Inicia sesión para continuar</p>
