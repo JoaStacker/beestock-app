@@ -47,6 +47,7 @@ const GenericTable = ({ filter=true, columns, data=[], actions, onAddClient, ent
 
   const filteredData = data.filter((row) =>
       columns.some((column) => {
+        if(!row[column.id]) return false
         let conditionB = true
         if(entityType === 'Cliente' && selectedMonth){
             const birthMonth = new Date(row.fechaNacimiento).getMonth(); // 0-11

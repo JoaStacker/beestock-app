@@ -58,13 +58,14 @@ public class AuthServiceImpl implements IAuthService {
                 emp.setNombre(empleado.getNombre());
                 emp.setApellido(empleado.getApellido());
                 emp.setDni(empleado.getDni());
+                emp.setPuesto(empleado.getPuesto().getNombre());
                 userResponseDTO.setEmpleado(emp);
                 userResponseDTO.setJwt(jwtUtilityService.generateJWT(user.getId()));
                 return ResponseHandler.responseBuilder(HttpStatus.OK,
-                        "User successfully logged in!!",userResponseDTO);
+                        "Inicio de sesion exitoso",userResponseDTO);
             }else{
                 return ResponseHandler.responseBuilder(HttpStatus.UNAUTHORIZED,
-                        "Authentication failed!",userResponseDTO);
+                        "Credenciales incorrectas!",userResponseDTO);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);

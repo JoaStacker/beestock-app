@@ -53,6 +53,9 @@ const TopBar = () => {
                       <Typography variant="subtitle1">
                           Usuario: {globalState.user.empleado.nombre} {globalState.user.empleado.apellido}
                       </Typography>
+                      <Typography variant="subtitle1">
+                          Puesto: {globalState.user.empleado.puesto}
+                      </Typography>
                   </Stack>
                   <IconButton color="inherit" onClick={handleCloseSession} aria-label="Cerrar sesión" sx={{ marginLeft: 2 }}>
                       <Logout />

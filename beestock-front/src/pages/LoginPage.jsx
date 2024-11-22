@@ -1,57 +1,77 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {useGlobalContext} from "../context/GlobalContext";
-import {loginUser} from "../services/authService";
+import { useGlobalContext } from "../context/GlobalContext";
+import { loginUser } from "../services/authService";
 
 const LoginPage = () => {
   const { globalState, updateGlobalState } = useGlobalContext();
 
-  const [email, setEmail] = useState('joaquin@gmail.com');
-  const [password, setPassword] = useState('1234');
+  const [email, setEmail] = useState('pedro.lopez@gmail.com');
+  const [password, setPassword] = useState('123456');
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   const navigate = useNavigate(); // Hook for navigation
 
-  const handleSubmit = (e) => {
-    updateGlobalState({ loadingPage: true });
+  // Regex for email validation
+  const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
 
+  const handleSubmit = (e) => {
     e.preventDefault();
-    let payload = {
-        email: email,
-        password: password
+    setEmailError('');
+    setPasswordError('');
+
+    // Validate email
+    if (!emailRegex.test(email)) {
+      setEmailError('Please enter a valid email address.');
+      return;
     }
 
-    loginUser(payload)
-        .then((res) => {
-          updateGlobalState({ loadingPage: false });
+    // Validate password (at least 6 characters)
+    if (password.length < 6) {
+      setPasswordError('Password must be at least 6 characters long.');
+      return;
+    }
 
-          if (res.error) {
-            updateGlobalState({
-              openSnackbar: true,
-              snackbarSeverity: "error",
-              snackbarMessage: res.message
-            });
-            return;
-          }
+    updateGlobalState({ loadingPage: true });
 
+    let payload = {
+      email: email,
+      password: password
+    };
+
+    loginUser(payload, updateGlobalState)
+      .then((res) => {
+        updateGlobalState({ loadingPage: false });
+
+        if (res.error) {
           updateGlobalState({
             openSnackbar: true,
-            snackbarSeverity: "success",
+            snackbarSeverity: "error",
             snackbarMessage: res.message
           });
+          return;
+        }
 
-          const userData = res.data;
+        updateGlobalState({
+          openSnackbar: true,
+          snackbarSeverity: "success",
+          snackbarMessage: res.message
+        });
 
-          updateGlobalState({
-            isAuthenticated: true,
-            user: userData,
-          })
+        const userData = res.data;
 
-          localStorage.setItem("user", JSON.stringify(userData));
-            navigate('/home');
-        })
-        .catch((error) => {
-          updateGlobalState({ loadingPage: false });
-          console.error(error);
-        })
+        updateGlobalState({
+          isAuthenticated: true,
+          user: userData,
+        });
+
+        localStorage.setItem("user", JSON.stringify(userData));
+        navigate('/home');
+      })
+      .catch((error) => {
+        updateGlobalState({ loadingPage: false });
+        console.error(error);
+      });
   };
 
   return (
@@ -65,9 +85,9 @@ const LoginPage = () => {
             id="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            // required
             style={styles.input}
           />
+          {emailError && <div style={styles.error}>{emailError}</div>}
         </div>
         <div style={styles.formGroup}>
           <label htmlFor="password">Password:</label>
@@ -76,9 +96,9 @@ const LoginPage = () => {
             id="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            // required
             style={styles.input}
           />
+          {passwordError && <div style={styles.error}>{passwordError}</div>}
         </div>
         <button type="submit" style={styles.button}>Login</button>
       </form>
@@ -114,6 +134,11 @@ const styles = {
     backgroundColor: '#007BFF',
     color: 'white',
     cursor: 'pointer',
+  },
+  error: {
+    color: 'red',
+    fontSize: '12px',
+    marginTop: '5px',
   },
 };
 
