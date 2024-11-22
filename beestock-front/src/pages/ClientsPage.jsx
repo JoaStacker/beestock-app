@@ -1,28 +1,72 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import EditClientPopup from "../components/PopUps/EditClientPopup";
 import { getClients, deleteClient } from '../services/clientService';
+import {
+    Button,
+    Dialog,
+    Select,
+    MenuItem,
+    InputLabel,
+    FormControl,
+    Grid,
+    Box,
+    DialogTitle,
+    DialogContent, DialogContentText, TextField, DialogActions
+} from "@mui/material";
+import { useGlobalContext } from "../context/GlobalContext";
+import GenericTable from "../components/GenericTable";
+import {Add, Delete, Edit, ViewAgenda} from "@mui/icons-material";
+import CreateClientPopup from "../components/PopUps/CreateClientPopup";
+import TopBar from "../components/TopBar";
+import Sidebar from "../components/Sidebar";
+import InteractionsPopup from "../components/PopUps/InteractionsPopup";
 
 const ClientsPage = () => {
+    const { globalState, updateGlobalState } = useGlobalContext();
     const [clients, setClients] = useState([]);
-    const [isPopupOpen, setIsPopupOpen] = useState(false);
+    const [filteredClients, setFilteredClients] = useState([]);
     const [selectedClient, setSelectedClient] = useState(null);
 
+    const [editDialogOpen, setEditDialogOpen] = useState(false);
+    const [createDialogOpen, setCreateDialogOpen] = useState(false);
+    const [interaccionesDialogOpen, setInteraccionesDialogOpen] = useState(false);
+
+    const reloadData = () => {
+        updateGlobalState({ loadingPage: true });
+        setClients([]);
+        getClients()
+            .then((res) => {
+                updateGlobalState({ loadingPage: false });
+
+                if (res.error) {
+                    updateGlobalState({
+                        openSnackbar: true,
+                        snackbarSeverity: "error",
+                        snackbarMessage: res.message
+                    });
+                    return;
+                }
+
+                const clientsData = res.data.clientes;
+                setClients(clientsData);
+            })
+            .catch((error) => {
+                updateGlobalState({ loadingPage: false });
+                console.error(error);
+            });
+    };
+
     useEffect(() => {
-          getClients().then((data) => {
-            console.log(data)
-            const clientsData = data.data.clientes;
-            setClients(data);
-          }).catch((error) => console.log(error));
+        reloadData();
     }, []);
 
     const handleAddClient = () => {
-        setSelectedClient(null);
-        setIsPopupOpen(true);
+        setCreateDialogOpen(true);
     };
 
     const handleEditClient = (client) => {
         setSelectedClient(client);
-        setIsPopupOpen(true);
+        setEditDialogOpen(true);
     };
 
     const handleDeleteClient = async (clientId) => {
@@ -31,31 +75,97 @@ const ClientsPage = () => {
     };
 
     const handleClientUpdated = async () => {
-        const data = await getClients(); // Refresh clients list
-        setClients(data);
+        reloadData();
     };
-      
-      return (
-        <div>
-          <h2>Clientes</h2>
-          <button onClick={handleAddClient}>Añadir cliente</button>
-          <ul>
-              {clients.map(client => (
-                  <li key={client.id}>
-                      {client.name} ({client.email})
-                      <button onClick={() => handleEditClient(client)}>Edit</button>
-                      <button onClick={() => handleDeleteClient(client.id)}>Delete</button>
-                  </li>
-              ))}
-          </ul>
-          <EditClientPopup
-                isOpen={isPopupOpen}
-                onClose={() => setIsPopupOpen(false)}
-                client={selectedClient}
-                onClientUpdated={handleClientUpdated}
-            />
-        </div>
-      );
+
+    const handleClientCreated = async () => {
+        reloadData();
+    };
+
+    const handleOpenInteracciones = async (client) => {
+        setInteraccionesDialogOpen(true)
+        setSelectedClient(client);
+    }
+
+    const columns = [
+        { id: 'cuit', label: 'CUIT' },
+        { id: 'nombre', label: 'Nombre' },
+        { id: 'apellido', label: 'Apellido' },
+        { id: 'email', label: 'Email' },
+        { id: 'fechaNacimiento', label: 'Fecha de nacimiento' },
+    ];
+
+    const actions = [
+        {
+            label: 'Editar',
+            onClick: (row) => handleEditClient(row),
+            icon: <Edit />
+        },
+        {
+            label: 'Borrar',
+            onClick: (row) => handleDeleteClient(row.id),
+            color: 'secondary',
+            icon: <Delete />
+        },
+        {
+            label: 'Ver interacciones',
+            onClick: (row) => handleOpenInteracciones(row),
+            color: 'secondary',
+            icon: <ViewAgenda />
+        },
+    ];
+
+    return (
+        <Box sx={{ flexGrow: 1, padding: 2 }}>
+            <Grid container spacing={2} alignItems="flex-end" justifyContent="flex-start">
+                <Grid item xs={2}>
+                    <h2>Clientes</h2>
+                </Grid>
+            </Grid>
+            <Grid container spacing={2} alignItems="flex-end" justifyContent="flex-start">
+                <Grid item xs={2}>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handleAddClient}
+                    >
+                        <Add />
+                        {`Nuevo cliente`}
+                    </Button>
+                </Grid>
+            </Grid>
+            <Grid container spacing={2}>
+                <Grid item xs={12}>
+                    <GenericTable columns={columns} data={clients} actions={actions} entityType="Cliente"/>
+                </Grid>
+            </Grid>
+
+            {/*EDIT CLIENT*/}
+            <Dialog open={editDialogOpen} onClose={() => setEditDialogOpen(false)}>
+                <EditClientPopup
+                    onClose={() => setEditDialogOpen(false)}
+                    clientId={selectedClient?.id}
+                    onClientUpdated={handleClientUpdated}
+                />
+            </Dialog>
+
+            {/*ADD CLIENT*/}
+            <Dialog open={createDialogOpen} onClose={() => setCreateDialogOpen(false)}>
+                <CreateClientPopup
+                    onClose={() => setCreateDialogOpen(false)}
+                    onClientCreated={handleClientCreated}
+                />
+            </Dialog>
+
+            {/*INTERACCIONES*/}
+            <Dialog open={interaccionesDialogOpen} onClose={() => setInteraccionesDialogOpen(false)}>
+                <InteractionsPopup
+                    idCliente={selectedClient?.id}
+                    onClose={() => setInteraccionesDialogOpen(false)}
+                />
+            </Dialog>
+        </Box>
+    );
 };
 
 export default ClientsPage;

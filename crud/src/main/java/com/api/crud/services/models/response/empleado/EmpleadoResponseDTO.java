@@ -5,6 +5,7 @@ import com.api.crud.services.models.response.direccion.DireccionResponseDTO;
 import com.api.crud.services.models.response.direccion.LocalidadResponseDTO;
 import com.api.crud.services.models.response.direccion.PaisResponseDTO;
 import com.api.crud.services.models.response.direccion.ProvinciaResponseDTO;
+import com.api.crud.services.models.response.puesto.PuestoResponseDTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 
@@ -15,18 +16,22 @@ public class EmpleadoResponseDTO {
     private String dni;
     private String nombre;
     private String apellido;
+    private String email;
     private DireccionResponseDTO direccion;
     private LocalidadResponseDTO localidad;
     private ProvinciaResponseDTO provincia;
     private PaisResponseDTO pais;
+    private Long puestoId;
+    private String puesto;
 
     public EmpleadoResponseDTO() {
     }
 
-    public EmpleadoResponseDTO(Long id, String dni, String nombre, String apellido) {
+    public EmpleadoResponseDTO(Long id, String dni, String nombre, String apellido, String email) {
         this.id = id;
         this.dni = dni;
         this.nombre = nombre;
+        this.email = email;
         this.apellido = apellido;
     }
 
@@ -92,5 +97,29 @@ public class EmpleadoResponseDTO {
 
     public void setPais(PaisResponseDTO pais) {
         this.pais = pais;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPuesto() {
+        return puesto;
+    }
+
+    public void setPuesto(String puesto) {
+        this.puesto = puesto;
+    }
+
+    public Long getPuestoId() {
+        return puestoId;
+    }
+
+    public void setPuestoId(Long puestoId) {
+        this.puestoId = puestoId;
     }
 }

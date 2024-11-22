@@ -18,6 +18,10 @@ public class HistorialPuestoResponseDTO {
     private EmpleadoResponseDTO empleado;
     private PuestoResponseDTO puesto;
 
+    private Long puestoId;
+    private String puestoNombre;
+    private Long antiguedad;
+
     public HistorialPuestoResponseDTO() {
     }
 
@@ -67,5 +71,29 @@ public class HistorialPuestoResponseDTO {
 
     public void setPuesto(PuestoResponseDTO puesto) {
         this.puesto = puesto;
+    }
+
+    public Long getPuestoId() {
+        return puestoId;
+    }
+
+    public void setPuestoId(Long puestoId) {
+        this.puestoId = puestoId;
+    }
+
+    public String getPuestoNombre() {
+        return puestoNombre;
+    }
+
+    public void setPuestoNombre(String puestoNombre) {
+        this.puestoNombre = puestoNombre;
+    }
+
+    public Long getAntiguedad() {
+        return antiguedad;
+    }
+
+    public void setAntiguedad(Long antiguedad) {
+        this.antiguedad = antiguedad;
     }
 }

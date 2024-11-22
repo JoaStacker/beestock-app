@@ -18,22 +18,32 @@ public class VentaController {
     @Autowired
     IVentaService ventaService;
 
-    @GetMapping
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/")
     private ResponseEntity<Object> getAllVentas() throws Exception {
         return new ResponseEntity<>(ventaService.getAll(), HttpStatus.OK);
     }
 
-    @PostMapping
+    @CrossOrigin(origins = "http://localhost:3000")
+    @PostMapping("/")
     private ResponseEntity<Object> create(@Valid @RequestBody VentaDTO venta) throws Exception {
         return new ResponseEntity<>(ventaService.createVenta(venta), HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
+    @CrossOrigin(origins = "http://localhost:3000")
+    @PostMapping("/{id}/pagar")
+    private ResponseEntity<Object> pagarVenta(@PathVariable("id") Long id) throws Exception {
+        return new ResponseEntity<>(ventaService.pagarVenta(id), HttpStatus.OK);
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/{id}/")
     private ResponseEntity<Object> getOne(@PathVariable("id") Long id) throws Exception {
         return new ResponseEntity<>(ventaService.findOne(id), HttpStatus.OK);
     }
 
-    @GetMapping("/cliente/{id}")
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/cliente/{id}/")
     private ResponseEntity<Object> getVentasByCliente(@PathVariable("id") Long id) throws Exception {
         return new ResponseEntity<>(ventaService.getAllByCliente(id), HttpStatus.OK);
     }

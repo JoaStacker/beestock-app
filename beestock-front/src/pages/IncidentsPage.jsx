@@ -1,69 +1,136 @@
 import GenericTable from "../components/GenericTable";
 import IncidentList from "../components/IncidentList";
+import {useGlobalContext} from "../context/GlobalContext";
+import React, {useEffect, useState} from "react";
+import {getSuppliers} from "../services/supplierService";
+import {deleteClient} from "../services/clientService";
+import {Add, Delete, Edit} from "@mui/icons-material";
+import {Box, Button, Dialog, Grid} from "@mui/material";
+import EditSupplierPopup from "../components/PopUps/EditSupplierPopup";
+import CreateSupplierPopup from "../components/PopUps/CreateSupplierPopup";
+import {getIncidents} from "../services/incidentsService";
+import CreateIncidentPopup from "../components/PopUps/CreateIncidentPopUp";
+import EditIncidentPopup from "../components/PopUps/EditIncidentPopUp";
 
 const IncidentsPage = () => {
-    const columns = [
-        { id: 'name', label: 'Name' },
-        { id: 'age', label: 'Age' },
-        { id: 'email', label: 'Email' },
-      ];
-    
-      const data = [
-        { name: 'John Doe', age: 30, email: 'john@example.com' },
-        { name: 'Jane Smith', age: 25, email: 'jane@example.com' },
-        { name: 'Alice Johnson', age: 35, email: 'alice@example.com' },
-      ];
-    
-      const actions = [
-        {
-          label: 'Edit',
-          onClick: (row) => alert(`Editing ${row.name}`),
-        },
-        {
-          label: 'Delete',
-          onClick: (row) => alert(`Deleting ${row.name}`),
-          color: 'secondary',
-        },
-      ];
+    const { globalState, updateGlobalState } = useGlobalContext();
+    const [data, setData] = useState([]);
+    const [selectedData, setSelectedData] = useState(null);
 
-      const incidents = [
-        {
-          title: 'AWS RDS Database no responde',
-          description: 'Se reporta la falta de respuesta del servicio de base de datos.',
-          actions: [
-            { label: 'Asignar Tecnico', id: 'assign_technician' },
-            { label: 'Cerrar Ticket', id: 'close_ticket' },
-          ],
-        },
-        {
-          title: 'Azure DEVOPS ssh keys caducadas',
-          description: 'Se ha reportado una SSH Key obsoleta para un desarrollador.',
-          actions: [
-            { label: 'Asignar DevOps', id: 'assign_devops' },
-            { label: 'Cerrar Ticket', id: 'close_ticket' },
-          ],
-        },
-        {
-          title: 'Problemas de Internet',
-          description: 'Los usuarios reportan lentitud en la conexión a Internet.',
-          actions: [
-            { label: 'Reiniciar Router', id: 'restart_router' },
-            { label: 'Cerrar Ticket', id: 'close_ticket' },
-          ],
-        },
-      ];
-    
-      const handleAction = (incident, action) => {
-        alert(`Acción '${action.label}' realizada para: ${incident.title}`);
-      };
-    
-      return (
-        <div>
-          <h2>Incidentes</h2>
-          <GenericTable columns={columns} data={data} actions={actions} entityType="Incidente" />
-          <IncidentList incidents={incidents} onAction={handleAction}></IncidentList>
-        </div>
-      );
+    const [editDialogOpen, setEditDialogOpen] = useState(false);
+    const [createDialogOpen, setCreateDialogOpen] = useState(false);
+
+    const reloadData = () => {
+      updateGlobalState({ loadingPage: true });
+      setData([]);
+      getIncidents()
+          .then((res) => {
+            updateGlobalState({ loadingPage: false });
+
+            if (res.error) {
+              updateGlobalState({
+                openSnackbar: true,
+                snackbarSeverity: "error",
+                snackbarMessage: res.message
+              });
+              return;
+            }
+
+            const incidentsData = res.data.incidentes;
+            setData(incidentsData);
+          })
+          .catch((error) => {
+            updateGlobalState({ loadingPage: false });
+            console.error(error);
+          });
+    };
+
+    useEffect(() => {
+      reloadData();
+    }, []);
+
+    const handleAdd = () => {
+      setCreateDialogOpen(true);
+    };
+
+    const handleEdit = (proveedor) => {
+      setSelectedData(proveedor);
+      setEditDialogOpen(true);
+    };
+
+    const handleDelete = async (id) => {
+      await deleteClient(id);
+      setData(data.filter(el => el.id !== id));
+    };
+
+    const handleUpdated = async () => {
+      reloadData();
+    };
+
+    const handleCreated = async () => {
+      reloadData();
+    };
+
+    const columns = [
+      { id: 'id', label: 'ID' },
+      { id: 'descripcion', label: 'Descripcion' },
+      { id: 'fechaIncidente', label: 'Fecha de incidente' },
+      { id: 'fechaSolucion', label: 'Fecha de solucion' },
+      { id: 'estado', label: 'Estado' },
+      { id: 'nombreProveedor', label: 'Proveedor' },
+    ];
+
+    const actions = [
+      {
+        label: 'Editar',
+        onClick: (row) => handleEdit(row),
+        icon: <Edit />
+      },
+    ];
+
+    return (
+        <Box sx={{ flexGrow: 1, padding: 2 }}>
+          <Grid container spacing={2} alignItems="flex-end" justifyContent="flex-start">
+            <Grid item xs={2}>
+              <h2>Incidentes</h2>
+            </Grid>
+          </Grid>
+          <Grid container spacing={2} alignItems="flex-end" justifyContent="flex-start">
+            <Grid item xs={2}>
+              <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleAdd}
+              >
+                <Add />
+                {`Nuevo incidente`}
+              </Button>
+            </Grid>
+          </Grid>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <GenericTable columns={columns} data={data} actions={actions} entityType="Incidente"/>
+            </Grid>
+          </Grid>
+
+          {/*EDIT INCIDIENT*/}
+          <Dialog open={editDialogOpen} onClose={() => setEditDialogOpen(false)}>
+            <EditIncidentPopup
+              onClose={() => setEditDialogOpen(false)}
+              incidentId={selectedData?.id}
+              onUpdated={handleUpdated}
+            />
+          </Dialog>
+
+          {/*ADD INCIDIENT*/}
+          <Dialog open={createDialogOpen} onClose={() => setCreateDialogOpen(false)}>
+            <CreateIncidentPopup
+              onClose={() => setCreateDialogOpen(false)}
+              onCreated={handleCreated}
+            />
+          </Dialog>
+        </Box>
+    );
 };
 
 export default IncidentsPage;

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @JsonInclude(JsonInclude.Include.NON_NULL) // Exclude null fields during serialization
@@ -22,6 +23,10 @@ public class EmpleadoDTO {
 
     @NotNull
     @JsonProperty(required = true)
+    private String email;
+
+    @NotNull
+    @JsonProperty(required = true)
     private String numero;
 
     @NotNull
@@ -36,13 +41,25 @@ public class EmpleadoDTO {
     @JsonProperty(required = true)
     private Long localidadId;
 
+    @NotNull
+    @JsonProperty(required = true)
+    private Long puestoId;
+
+    @NotNull
+    @JsonProperty(required = true)
+    private LocalDateTime fechaIngreso;
+
+    @JsonProperty(required = false)
+    private Boolean borrado;
+
     public EmpleadoDTO() {
     }
 
-    public EmpleadoDTO(String dni, String nombre, String apellido, String numero, String calle, String piso, Long localidadId) {
+    public EmpleadoDTO(String dni, String nombre, String apellido, String email, String numero, String calle, String piso, Long localidadId) {
         this.dni = dni;
         this.nombre = nombre;
         this.apellido = apellido;
+        this.email = email;
         this.numero = numero;
         this.calle = calle;
         this.piso = piso;
@@ -71,6 +88,14 @@ public class EmpleadoDTO {
 
     public void setApellido(@NotNull String apellido) {
         this.apellido = apellido;
+    }
+
+    public @NotNull String getEmail() {
+        return email;
+    }
+
+    public void setEmail(@NotNull String email) {
+        this.email = email;
     }
 
     public @NotNull String getNumero() {
@@ -103,5 +128,29 @@ public class EmpleadoDTO {
 
     public void setLocalidadId(@NotNull Long localidadId) {
         this.localidadId = localidadId;
+    }
+
+    public @NotNull Long getPuestoId() {
+        return puestoId;
+    }
+
+    public void setPuestoId(@NotNull Long puestoId) {
+        this.puestoId = puestoId;
+    }
+
+    public @NotNull LocalDateTime getFechaIngreso() {
+        return fechaIngreso;
+    }
+
+    public void setFechaIngreso(@NotNull LocalDateTime fechaIngreso) {
+        this.fechaIngreso = fechaIngreso;
+    }
+
+    public Boolean getBorrado() {
+        return borrado;
+    }
+
+    public void setBorrado(Boolean borrado) {
+        this.borrado = borrado;
     }
 }

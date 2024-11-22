@@ -17,18 +17,17 @@ public class DetalleVenta {
     @Column
     private Float precioHora;
 
+    @Column
+    private String tipoServicio;
+
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "venta_id", nullable = false) // Clave foránea
     private Venta venta;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "tipo_servicio_id", nullable = false) // Clave foránea
-    private TipoServicio tipoServicio;
-
     public DetalleVenta() {
     }
 
-    public DetalleVenta(Float horasVendidas, Float precioHora, Venta venta, TipoServicio tipoServicio) {
+    public DetalleVenta(Float horasVendidas, Float precioHora, Venta venta, String tipoServicio) {
         this.horasVendidas = horasVendidas;
         this.precioHora = precioHora;
         this.venta = venta;
@@ -67,11 +66,11 @@ public class DetalleVenta {
         this.venta = venta;
     }
 
-    public TipoServicio getTipoServicio() {
+    public String getTipoServicio() {
         return tipoServicio;
     }
 
-    public void setTipoServicio(TipoServicio tipoServicio) {
+    public void setTipoServicio(String tipoServicio) {
         this.tipoServicio = tipoServicio;
     }
 }

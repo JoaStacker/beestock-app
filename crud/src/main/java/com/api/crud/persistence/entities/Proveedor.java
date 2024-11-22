@@ -14,12 +14,9 @@ public class Proveedor {
 
     @Column
     private String nombre;
-
-    @Column
     private String cuit;
-
-    @Column
     private String correo;
+    private boolean borrado = false;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinTable(
@@ -32,6 +29,9 @@ public class Proveedor {
     @JoinColumn(name = "direccion_id", referencedColumnName = "id")
     private Direccion direccion;
 
+    @OneToMany(mappedBy = "proveedor", fetch = FetchType.LAZY)
+    private List<Incidente> incidentes;
+
     // Getters y Setters
     public Proveedor() {
     }
@@ -41,6 +41,15 @@ public class Proveedor {
         this.cuit = cuit;
         this.correo = correo;
         this.direccion = new Direccion(calle, numero, piso, localidad);
+        this.borrado = false;
+    }
+
+    public boolean getBorrado() {
+        return borrado;
+    }
+
+    public void setBorrado(boolean borrado) {
+        this.borrado = borrado;
     }
 
     public Long getId() {
@@ -89,5 +98,13 @@ public class Proveedor {
 
     public void setDireccion(Direccion direccion) {
         this.direccion = direccion;
+    }
+
+    public List<Incidente> getIncidentes() {
+        return incidentes;
+    }
+
+    public void setIncidentes(List<Incidente> incidentes) {
+        this.incidentes = incidentes;
     }
 }

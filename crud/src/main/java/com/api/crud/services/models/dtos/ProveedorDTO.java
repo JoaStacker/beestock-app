@@ -41,6 +41,9 @@ public class ProveedorDTO {
     @JsonProperty(required = true)
     private List<Long> tipoServicios;
 
+    @JsonProperty(required = false)
+    private Boolean borrado;
+
     public ProveedorDTO() {
     }
 
@@ -54,6 +57,7 @@ public class ProveedorDTO {
         this.localidadId = localidadId;
         this.tipoServicios = tipoServicios;
     }
+
 
     // Getters y Setters
 
@@ -119,5 +123,13 @@ public class ProveedorDTO {
 
     public void setTipoServicios(@NotNull List<Long> tipoServicios) {
         this.tipoServicios = tipoServicios;
+    }
+
+    public Boolean getBorrado() {
+        return borrado;
+    }
+
+    public void setBorrado(Boolean borrado) {
+        this.borrado = borrado;
     }
 }

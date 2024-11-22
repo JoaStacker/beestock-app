@@ -16,9 +16,15 @@ public class DetalleVentaDTO {
 
     @NotNull
     @JsonProperty(required = true)
-    private Long tipoServicioId;
+    private String tipoServicio;
 
     public DetalleVentaDTO() {
+    }
+
+    public DetalleVentaDTO(Float horasVendidas, Float precioHora, String tipoServicio) {
+        this.horasVendidas = horasVendidas;
+        this.precioHora = precioHora;
+        this.tipoServicio = tipoServicio;
     }
 
     public @NotNull Float getHorasVendidas() {
@@ -37,11 +43,11 @@ public class DetalleVentaDTO {
         this.precioHora = precioHora;
     }
 
-    public @NotNull Long getTipoServicioId() {
-        return tipoServicioId;
+    public @NotNull String getTipoServicio() {
+        return tipoServicio;
     }
 
-    public void setTipoServicioId(@NotNull Long tipoServicioId) {
-        this.tipoServicioId = tipoServicioId;
+    public void setTipoServicio(@NotNull String tipoServicio) {
+        this.tipoServicio = tipoServicio;
     }
 }

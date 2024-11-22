@@ -5,12 +5,12 @@ import com.api.crud.persistence.entities.UserEntity;
 import com.api.crud.persistence.repositories.IEmpleadoRepository;
 import com.api.crud.persistence.repositories.IUserRepository;//check
 import com.api.crud.services.IAuthService;//check
-import com.api.crud.services.IEmpleadoService;
 import com.api.crud.services.IJWTUtilityService;
 import com.api.crud.services.models.dtos.*;
 import com.api.crud.services.models.response.ResponseHandler;
 import com.api.crud.services.models.response.UserResponseDTO;
 import com.api.crud.services.models.dtos.SignupDTO;
+import com.api.crud.services.models.response.empleado.EmpleadoResponseDTO;
 import com.api.crud.services.models.validation.UserValidation;
 import org.springframework.beans.factory.annotation.Autowired;//check
 import org.springframework.http.HttpStatus;
@@ -40,23 +40,32 @@ public class AuthServiceImpl implements IAuthService {
     public ResponseEntity<Object> login(LoginDTO login) throws Exception{
         try{
             UserResponseDTO userResponseDTO = new UserResponseDTO();
-            Optional<UserEntity> user=userRepository.findByEmail(login.getEmail());
-            if(user.isEmpty()){
+            Optional<UserEntity> userFound = userRepository.findByEmail(login.getEmail());
+            if(userFound.isEmpty()){
                 return ResponseHandler.responseBuilder(HttpStatus.UNAUTHORIZED,
                         "User not registered!",userResponseDTO);
             }
-            if(verifyPassword(login.getPassword(), user.get().getPassword())){
-                userResponseDTO.setEmail(user.get().getEmail());
-                userResponseDTO.setAdminClientes(user.get().getAdminClientes());
-                userResponseDTO.setAdminVentas(user.get().getAdminVentas());
-                userResponseDTO.setAdminProveedores(user.get().getAdminProveedores());
-                userResponseDTO.setAdminRRHH(user.get().getAdminRRHH());
-                userResponseDTO.setJwt(jwtUtilityService.generateJWT(user.get().getId()));
+            UserEntity user = userFound.get();
+            if(verifyPassword(login.getPassword(),user.getPassword())){
+                userResponseDTO.setEmail(user.getEmail());
+                userResponseDTO.setAdminClientes(user.getAdminClientes());
+                userResponseDTO.setAdminVentas(user.getAdminVentas());
+                userResponseDTO.setAdminProveedores(user.getAdminProveedores());
+                userResponseDTO.setAdminRRHH(user.getAdminRRHH());
+                Empleado empleado = user.getEmpleado();
+                EmpleadoResponseDTO emp = new EmpleadoResponseDTO();
+                emp.setId(empleado.getId());
+                emp.setNombre(empleado.getNombre());
+                emp.setApellido(empleado.getApellido());
+                emp.setDni(empleado.getDni());
+                emp.setPuesto(empleado.getPuesto().getNombre());
+                userResponseDTO.setEmpleado(emp);
+                userResponseDTO.setJwt(jwtUtilityService.generateJWT(user.getId()));
                 return ResponseHandler.responseBuilder(HttpStatus.OK,
-                        "User successfully logged in!!",userResponseDTO);
+                        "Inicio de sesion exitoso",userResponseDTO);
             }else{
                 return ResponseHandler.responseBuilder(HttpStatus.UNAUTHORIZED,
-                        "Authentication failed!",userResponseDTO);
+                        "Credenciales incorrectas!",userResponseDTO);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);

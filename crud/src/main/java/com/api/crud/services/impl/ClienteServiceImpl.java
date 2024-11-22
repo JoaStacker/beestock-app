@@ -10,15 +10,18 @@ import com.api.crud.services.models.dtos.ClienteDTO;
 import com.api.crud.services.models.response.Cliente.ClienteResponseDTO;
 import com.api.crud.services.models.response.ClientesResponseDTO;
 import com.api.crud.services.models.response.CondicionTributaria.CondicionTributariaResponseDTO;
+import com.api.crud.services.models.response.CondicionTributaria.CondicionesTributariasResponseDTO;
 import com.api.crud.services.models.response.ResponseHandler;
 import com.api.crud.services.models.response.direccion.DireccionResponseDTO;
 import com.api.crud.services.models.response.direccion.LocalidadResponseDTO;
 import com.api.crud.services.models.response.direccion.PaisResponseDTO;
 import com.api.crud.services.models.response.direccion.ProvinciaResponseDTO;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,7 +92,7 @@ public class ClienteServiceImpl implements IClienteService {
 
 
         }catch(Exception e){
-            return ResponseHandler.responseBuilder(HttpStatus.INTERNAL_SERVER_ERROR, "Error al crear cliente: " + e.getMessage());
+            return ResponseHandler.responseBuilder(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error");
         }
     }
 
@@ -106,6 +109,7 @@ public class ClienteServiceImpl implements IClienteService {
                 ClienteResponseDTO cli = new ClienteResponseDTO();
                 cli.setId(cliente.getId());
                 cli.setCuit(cliente.getCuit());
+                cli.setEmail(cliente.getEmail());
                 cli.setNombre(cliente.getNombre());
                 cli.setApellido(cliente.getApellido());
                 cli.setFechaNacimiento(cliente.getFechaNacimiento());
@@ -116,6 +120,8 @@ public class ClienteServiceImpl implements IClienteService {
                         direccion.getNumero(),
                         direccion.getPiso()
                 );
+                CondicionTributaria condicionTributaria= cliente.getCondicionTributaria();
+                cli.setCondicionTributaria(new CondicionTributariaResponseDTO(condicionTributaria.getId(), condicionTributaria.getTipo()));
                 cli.setDireccion(dir);
                 clientesList.add(cli);
             }
@@ -123,8 +129,7 @@ public class ClienteServiceImpl implements IClienteService {
 
             return ResponseHandler.responseBuilder(HttpStatus.OK, "Clientes encontrados con exito", response);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al obtener clientes: " + e.getMessage());
+            return ResponseHandler.responseBuilder(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error.");
         }
     }
 
@@ -136,9 +141,14 @@ public class ClienteServiceImpl implements IClienteService {
                 ClienteResponseDTO response = new ClienteResponseDTO();
                 response.setId(cliente.getId());
                 response.setCuit(cliente.getCuit());
+                response.setEmail(cliente.getEmail());
                 response.setNombre(cliente.getNombre());
                 response.setApellido(cliente.getApellido());
                 response.setFechaNacimiento(cliente.getFechaNacimiento());
+                CondicionTributaria condicionTributaria = cliente.getCondicionTributaria();
+                CondicionTributariaResponseDTO cond = new CondicionTributariaResponseDTO(condicionTributaria.getId(), condicionTributaria.getTipo());
+                response.setCondicionTributaria(cond);
+
                 Direccion direccion = cliente.getDireccion();
                 Localidad localidad = direccion.getLocalidad();
                 Provincia provincia = localidad.getProvincia();
@@ -168,7 +178,7 @@ public class ClienteServiceImpl implements IClienteService {
                 return ResponseHandler.responseBuilder(HttpStatus.NO_CONTENT, "Cliente no existe");
             }
         }catch(Exception e){
-            throw new Exception(e.toString());
+            return ResponseHandler.responseBuilder(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error.");
         }
     }
 
@@ -187,8 +197,18 @@ public class ClienteServiceImpl implements IClienteService {
                 if(body.getApellido() != null){
                     clienteToUpdate.setApellido(body.getApellido());
                 }
+                if(body.getEmail() != null){
+                    clienteToUpdate.setEmail(body.getEmail());
+                }
                 if(body.getFechaNacimiento() != null){
                     clienteToUpdate.setFechaNacimiento(body.getFechaNacimiento());
+                }
+                if(body.getCondicionTributariaId() != null){
+                    Optional<CondicionTributaria> condicionTributaria = condicionTributariaRepository.findById(body.getCondicionTributariaId());
+                    if(condicionTributaria.isEmpty()){
+                        return ResponseHandler.responseBuilder(HttpStatus.CONFLICT, "Condicion tributaria id no existe!", condicionTributaria);
+                    }
+                    clienteToUpdate.setCondicionTributaria(condicionTributaria.get());
                 }
                 if(body.getCalle() != null){
                     Direccion direccion = clienteToUpdate.getDireccion();
@@ -213,6 +233,9 @@ public class ClienteServiceImpl implements IClienteService {
                     }
                     direccion.setLocalidad(localidad.get());
                     clienteToUpdate.setDireccion(direccion);
+                }
+                if(body.getBorrado() != null){
+                    clienteToUpdate.setBorrado(body.getBorrado());
                 }
 
                 clienteRepository.save(clienteToUpdate);
@@ -252,7 +275,7 @@ public class ClienteServiceImpl implements IClienteService {
                 return ResponseHandler.responseBuilder(HttpStatus.CONFLICT, "Cliente no existe");
             }
         }catch(Exception e){
-            throw new Exception(e.toString());
+            return ResponseHandler.responseBuilder(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error.");
         }
     }
 
@@ -280,7 +303,7 @@ public class ClienteServiceImpl implements IClienteService {
                 return ResponseHandler.responseBuilder(HttpStatus.CONFLICT, "Cliente no existe");
             }
         }catch(Exception e){
-            throw new Exception(e.toString());
+            return ResponseHandler.responseBuilder(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error.");
         }
     }
 
@@ -300,7 +323,32 @@ public class ClienteServiceImpl implements IClienteService {
                 return ResponseHandler.responseBuilder(HttpStatus.NO_CONTENT, "Cliente no existe");
             }
         }catch(Exception e){
-            throw new Exception(e.toString());
+            return ResponseHandler.responseBuilder(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error.");
         }
     }
+
+    public ResponseEntity<Object> findAllCondicionesTributarias() {
+        try {
+            List<CondicionTributaria> allCondiciones = condicionTributariaRepository.findAll();
+            if (allCondiciones.isEmpty()) {
+                return ResponseHandler.responseBuilder(HttpStatus.NO_CONTENT, "No hay condiciones tributarias disponibles");
+            }
+
+            CondicionesTributariasResponseDTO response = new CondicionesTributariasResponseDTO();
+            List<CondicionTributariaResponseDTO> condicionesList = new ArrayList<>();
+            for(CondicionTributaria condicion: allCondiciones){
+                CondicionTributariaResponseDTO cond = new CondicionTributariaResponseDTO(
+                    condicion.getId(),
+                    condicion.getTipo()
+                );
+                condicionesList.add(cond);
+            }
+            response.setCondicionesTributarias(condicionesList);
+
+            return ResponseHandler.responseBuilder(HttpStatus.OK, "Clientes encontrados con exito", response);
+        } catch (Exception e) {
+            return ResponseHandler.responseBuilder(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error.");
+        }
+    }
+
 }

@@ -25,12 +25,14 @@ public class HistorialPuestoController {
     @Autowired
     private IAuthService authService;
 
-    @PostMapping
+    @CrossOrigin(origins = "http://localhost:3000")
+    @PostMapping("/")
     private ResponseEntity<Object> create(@Valid @RequestBody HistorialPuestoDTO body) throws Exception {
         return new ResponseEntity<>(historialPuestoService.create(body), HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/{id}/")
     private ResponseEntity<Object> getAllByEmpleado(@PathVariable("id") Long id) throws Exception {
         return new ResponseEntity<>(historialPuestoService.getAllByEmpleado(id), HttpStatus.OK);
     }
